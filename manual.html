@@ -1,0 +1,538 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=Shift_JIS">
+<title>Super Maryo Bros document</title>
+<style type="text/css">
+dt {font-weight:bolder;font-size:110%;margin-top:5%;}
+</style>
+<script type="text/javascript">
+var scrollFlag=false;
+var topWindow=true;
+
+function scr(){
+	if(!scrollFlag)return;
+	document.body.scrollTop+=document.body.clientHeight*.01+1;
+	
+	
+	setTimeout('scr();',200);
+} //
+
+
+var cpuTM;
+function init(){
+
+	if(window.name=="manual"){
+	 topWindow=false;
+	 scrollFlag=true;
+	 setTimeout('scr();',5000);
+	}else{
+	 document.body.scroll="yes";
+	 document.body.style.overflowY="scroll";
+	}
+} //
+
+function clk(){
+	scrollFlag=false;
+	 document.body.scroll="yes";
+	 document.body.style.overflowY="scroll";
+} //
+
+onload=init;
+onclick=clk;
+
+</script>
+</head>
+<body style="margin:0;padding:0;background:orange;overflow-y:hidden;" onclick="clk()">
+<div style="font-size:800%;text-align:center;color:white;font-family:impact;background:brown;height:100%;vertical-align:middle;">
+<a name="top"></a>
+SUPER MARYO<br>
+　　WORLD(仮)
+</div>
+<div>
+<h3>■スーパーマリョーワールド(仮)って？</h3>
+<div style="margin-left:5%;">
+	HTMLとJavaScriptだけを使って、スクロール型のアクションゲームを
+	作ってしまおうという無謀な計画です。<br>
+	<br>
+	テーブルレイアウト・多重フレーム・GIFアニメーションとJavaScriptの集大成です。<br>
+</div>
+<h3>■操作方法</h3>
+<div style="margin-left:5%;">
+	<img src="img/PLwalkR.gif" width="32" height="48" align="left" />
+	[←] [→] or [S][F] 左右に移動<br >
+<br >
+	[↑]or[E]	ツタに登る・土管に入る<br>
+	[↓]or[D]	しゃがむ・土管に入る<br>
+<br >
+	[WiiUの+]or[SPACE]or[X]or[K] ジャンプ・泳ぐ<br >
+	[WiiUの-]or[Z]or[J]  押しっぱなしで走る ＆ ファイアー発射！<br >
+	<br>
+</div>
+<h3>■ゲームのルール</h3>
+<div style="margin-left:5%;">
+	マリョーを操作してゴールまでたどり着けばステージクリアです。<br>
+	<br>
+	敵に当たったり穴に落ちたりすると死んでしまいます。<br>
+	マリョーの数がゼロになったらゲームオーバーです。<br>
+</div>
+<h3>■リプレイ機能(テスト中)について</h3>
+<div style="margin-left:5%;">
+	ゲームオーバー画面では、「リプレイ」ボタンを押すと<br>
+	自分のプレイを最初から再生することができ、「リプレイ停止」を<br>
+	押すと、そこからゲームを操作することが出来ます。<br>
+
+</div>
+
+<h3>■動作環境について</h3>
+<div style="margin-left:5%;">
+	動作確認は、WindowsXP SP2上のInternetExplorer 6 / FireFox 1.0.6で行っています。<br>
+	Linux/Mac版Mozillaでも<span style="text-decoration:line-through">動くのかどうかは不明</span>動くらしいです。<br>
+	<br>
+	Operaでは動かないようです。
+
+</div>
+<h3>■推奨スペック</h3>
+<div style="margin-left:5%;">
+  <table border="1">
+   <tr><td>Internet Explorer</td><td>Pentium4 3Ghz / Athlon2500+ 以上</td></tr>
+   <tr><td>Mozilla</td><td>1Ghz以上のCPU</td></tr>
+  </table>
+	IEだと、Pentium4 3.6Ghz / Athlon64 3800+以上でも重いかもしれません。<br>
+</div>
+<br >
+<br >
+<h3>■ストーリー</h3>
+<div style="margin-left:5%;">
+	 カメ帝国の一族にさらわれたピンチひめを助け出せ！
+</div>
+<br >
+<br >
+<br >
+<h3>■登場人?物</h3>
+<table style="width:100%;" border>
+ <tr>
+  <th width=70 height=70>
+	<img src="img/PLswimR.gif" width="64" height="64" alt="Maryo the Monar" />
+  </th>
+  <td rowspan="2" width="100%">
+	このゲームの主人公。<br>
+	<br>
+	海外ではキティちゃんに間違えられていることがあるようです
+  </td>
+ </tr>
+ <tr>
+  <th nowrap="nowrap">
+	マリョー！
+  </th>
+ </tr>
+</table>
+
+
+<table style="width:100%;" border>
+ <tr>
+  <th width=70 height=70>
+	<img src="img/Lyugi.gif" width="64" height="64" alt="Lyugi the Moralar" />
+  </th>
+  <td rowspan="2" width="100%">
+	キミと友達。　モララー族15歳。<br>
+
+  </td>
+ </tr>
+ <tr>
+  <th nowrap="nowrap">
+	りゅうじ
+  </th>
+ </tr>
+</table>
+
+
+<table style="width:100%;" border>
+ <tr>
+  <th width=70 height=70>
+	<img src="img/pinch.gif" width="48" height="64" alt="Pinch-hime" />
+  </th>
+  <td rowspan="2" width="100%">
+	ピノコ王国の王女。<br>
+	<br>
+	カメ帝国の基準では絶世の美女らしい。<br>
+  </td>
+ </tr>
+ <tr>
+  <th nowrap="nowrap">
+	ピンチひめ
+  </th>
+ </tr>
+</table>
+
+<table style="width:100%;" border>
+ <tr>
+  <th width=70 height=70>
+	<img src="img/hiroyuko.gif" width="48" height="64" alt="Hiroyuko" />
+  </th>
+  <td rowspan="2" width="100%">
+	ピンチひめの侍女<br>
+  </td>
+ </tr>
+ <tr>
+  <th nowrap="nowrap">
+	ひろゆこ
+  </th>
+ </tr>
+</table>
+
+
+<h3>■アイテム</h3>
+<table style="width:100%;" border>
+ <tr>
+  <th width=70 height=70>
+	<img src="img/kinoko.gif" width="64" height="64" alt="きのこ" />
+  </th>
+  <td rowspan="2" width="100%">
+	ある有名な先生が開発したキノコ<br>
+  </td>
+ </tr>
+ <tr>
+  <th>
+	コノ先生きのこ
+  </th>
+ </tr>
+</table>
+
+
+<table style="width:100%;" border>
+ <tr>
+  <th width=70 height=70>
+	<img src="img/flower.gif" width="64" height="64" alt="Saitama-flower" />
+  </th>
+  <td rowspan="2" width="100%">
+	ファイヤーボールを発射できるようになる。<br>
+  </td>
+ </tr>
+ <tr>
+  <th>
+	さいたまフラワー
+  </th>
+ </tr>
+</table>
+
+
+<table style="width:100%;" border>
+ <tr>
+  <th width=70 height=70>
+	<img src="img/1up.gif" width="64" height="64" alt="+ 1GET +" />
+  </th>
+  <td rowspan="2" width="100%">
+	＋激しく 1GET＋<br>
+  </td>
+ </tr>
+ <tr>
+  <th nowrap="nowrap">
+	＋1GETキノコ＋
+  </th>
+ </tr>
+</table>
+
+
+<h3>■敵キャラクター</h3>
+
+<table style="width:100%;" border>
+ <tr>
+  <th width=70 height=70>
+	<img src="img/KRwalkL.gif" width="64" height="64" alt="カズマ" />
+  </th>
+  <td rowspan="2" width="100%">
+	ピノコ王国の反逆者。<br>
+	<br>
+	社会とか権力とか親とかに反抗してみたいお年頃らしい。
+  </td>
+ </tr>
+ <tr>
+  <th nowrap="nowrap">
+	チューボー
+  </th>
+ </tr>
+</table>
+
+
+
+
+<table style="width:100%;" border>
+ <tr>
+  <th width=70 height=70>
+	<img src="img/KMGwalkL.gif" width="64" height="64" alt="ドラ焼き" />
+  </th>
+  <td rowspan="2" width="100%">
+	カメ帝国の兵士。<br>
+	あんこがたくさんつまってる。<br>
+  </td>
+ </tr>
+ <tr>
+  <th nowrap="nowrap">
+	カメノコ
+  </th>
+ </tr>
+</table>
+
+
+
+
+<table style="width:100%;" border>
+ <tr>
+  <th width=70 height=70>
+	<img src="img/PATAredL.gif" width="64" height="64" alt="UINGU KAMENOKO" />
+  </th>
+  <td rowspan="2" width="100%">
+	空戦用タイプ
+  </td>
+ </tr>
+ <tr>
+  <th nowrap="nowrap">
+	羽カメノコ
+  </th>
+ </tr>
+</table>
+
+
+
+<table style="width:100%;" border>
+ <tr>
+  <th width=70 height=70>
+	<img src="img/KMBwalkL.gif" width="64" height="64" alt="War-Machine" />
+  </th>
+  <td rowspan="2" width="100%">
+	戦争用に改造された亀。<br>
+	<br>
+	その装甲は、マリョーのファイアボールを弾く。<br>
+  </td>
+ </tr>
+ <tr>
+  <th>
+	ウォーマシン
+  </th>
+ </tr>
+</table>
+
+
+
+<table style="width:100%;" border>
+ <tr>
+  <th width=70 height=70>
+	<img src="img/togeL.gif" width="64" height="64" alt="棘亀" />
+  </th>
+  <td rowspan="2" width="100%">
+	戦闘用に品種改良された亀。<br>
+	<br>
+	防御よりも攻撃力を優先させている。<br>
+	背中のトゲのせいで、踏みつけることが出来ない。
+  </td>
+ </tr>
+ <tr>
+  <th>
+	トゲノコ
+  </th>
+ </tr>
+</table>
+
+<table style="width:100%;" border>
+ <tr>
+  <th width=70 height=70>
+	<img src="img/kumozo.gif" width="48" height="64" alt="Kumozo" />
+  </th>
+  <td rowspan="2" width="100%">
+	常に上空にいて、トゲノコの卵を落としてくる。<br>
+  </td>
+ </tr>
+ <tr>
+  <th>
+	くもぞう
+  </th>
+ </tr>
+</table>
+
+
+<table style="width:100%;" border>
+ <tr>
+  <th width=70 height=70>
+	<img src="img/bakiL.gif" width="48" height="64" alt="hammer" />
+  </th>
+  <td rowspan="2" width="100%">
+	ハンマーを投げつけてくる強敵<br>
+	<br>
+	<br>
+	ぬるぽするやつは見逃さない
+  </td>
+ </tr>
+ <tr>
+  <th>
+	ハンマ兄弟
+  </th>
+ </tr>
+</table>
+
+
+
+<table style="width:100%;" border>
+ <tr>
+  <th width=70 height=70>
+	<img src="img/kage.gif" width="96" height="96" alt="Kamezo" />
+  </th>
+  <td rowspan="2" width="100%">
+	カメ帝国のリーダー的存在。　46歳。おやっさん。<br>
+
+	<br>
+	<br>
+	背中のトゲは775本。
+  </td>
+ </tr>
+ <tr>
+  <th>
+	かめぞう
+  </th>
+ </tr>
+</table>
+
+
+
+
+<br >
+<br >
+<br >
+<h3>■よくありそうな質問と回答</h3>
+<br >
+<dl>
+ <dt>・あのゲームと挙動がちがいます</dt>
+ <dd>
+	スーパーマリョーワールド(仮)は、あのゲームを参考にしながら作っていますが、
+	あのゲームのプログラムを解析しているわけではないので、まったく同じ挙動にはなりません。
+	(あえて挙動を変えている部分もあります)
+	<br>
+	<br>
+	記憶や攻略サイトを頼りに「この辺はこうだったかなあ…」と思い出しながら作っています。
+ </dd>
+
+ <dt>・なんだか当たり判定がおかしい</dt>
+ <dd>
+	一フレームの移動単位が大きかったり処理速度の都合上、
+	どうしても判定がおおざっぱになってしまいます。<br>
+	<br>
+	今後はもうすこし調整していこうと思います。
+ </dd>
+
+ <dt>・なぜ解像度が可変になっているのですか</dt>
+ <dd>
+	今までのブラウザゲームというと、パソコンの小さいモニターの中の、<br>
+	ブラウザウィンドウの中の、さらにその中の四角い小さな枠に囲われた<br>
+	ゲームウィンドウを覗き込むようにしながらプレイする…という物ばかり<br>
+	だったので、ウィンドウの全面に表示できるようにしたいと思っていました。<br>
+	<br>
+	画面サイズに依存しない設計にしたおかげで、ステージごとに仮想解像度を<br>
+	自在に設定することができます。<br>
+ </dd>
+
+ <dt>・ゲームパッドを使いたい</dt>
+ <dd>
+	JoyToKeyなどのツールを使ってキーを割り当てるしかないと思います。
+ </dd>
+
+ <dt>・やたら動作が重いんですけど</dt>
+ <dd>
+	IEだとゲームにならないくらい重いかもしれませんが、<br>
+	Mozillaにすると、なんとか遊べるようになります。<br>
+	<br>
+	<br>
+	今後、スクリプトをチューニングしていけば、多少は速くなるかもしれませんが、<br>
+	HTMLの生成や書換えが重さの原因なので、あまり変わらないかもしれません。
+	<br>
+	<br>
+ </dd>
+
+ <dt>
+・なんでわざわざHTMLで作るんですか？<br>
+・なにもマークアップ言語でアクションゲーム作らなくても…</dt>
+ <dd>
+	今までゲームを作った経験すら無いですし、自分でも無謀だと思っています。<br>
+	<br>
+	しかし、HTMLのTABLEとレイヤーを見て、ゲーム機のバックグラウンド＆スプライトに似ているなあ…と思った人は、自分以外にも結構いるのではないでしょうか。
+	<br>
+	<br>
+	HTMLで作成することのメリットを挙げるとすれば、<br>
+	「JAVA Appletやプラグイン系と違って、HTML文書とゲーム部分をボーダーレスに融合できる」<br>
+	という点でしょうか。<br>
+	ゲーム画面中にそのままバナーや文章を埋め込むことができます。<br>
+ </dd>
+
+ <dt>・ステージの作り込みが甘い</dt>
+ <dd>
+	とりあえず８－４まで作ってから細かいところを調整しようと思います。<br>
+ </dd>
+
+ <dt>・1-2の土管の手前のコインはどうやって取るの？</dt>
+ <dd>
+	敵を踏みつけた反動で大ジャンプしましょう。<br>
+	このゲーム全般で必要なテクニックです。
+ </dd>
+
+ <dt>・サウンドが聞こえません。故障でしょうか？</dt>
+ <dd>
+	故障ではありません。　このゲームでは音は出ません。<br>
+	<br>
+	HTMLで、リアルタイムに音声を鳴らしたり切り替えたりするのは難しいと思います。<br>
+ </dd>
+
+ <dt>・どうしてMozillaはキビキビなのにIEはもっさりなの？</dt>
+ <dd>
+	なぜここまで速度差が出るのかについては、よくわかりません。<br>
+	<br>
+	なにか書き方を変えれば、IEでも速くなるのかもしれません。<br>
+	<br>
+	HTMLの生成や書き換えはMozillaのほうが速いですが、<br>
+	IEは巨大なキャラを動かしたりエフェクトをかけたりするのが得意なようです。
+ </dd>
+
+ <dt>・Mozillaだと、跳ね飛ばしたキャラクターが逆さまになりません。</dt>
+ <dd>
+	Mozillaには画像を上下や左右に反転させる機能がないので、<br>
+	そのまま表示されるようになっています。<br>
+	<br>
+	(反転機能が無くても、上下逆さまになった画像を用意しておけば<br>
+	いいのですが、データが倍増するので省略しています)
+ </dd>
+
+ <dt>・100% HTML+Javascriptなのに、ActiveXを切っていると動かないのは何故？</dt>
+ <dd>
+	どうやらIEは、ActiveXを切ると半透明表示やモザイク等のエフェクト系も<br>
+	使えなくなってしまう仕様のようで、そこでスクリプトエラーが<br>
+	発生して止まってしまうようです。<br>
+	<br>
+	(ActiveXが無効の場合にエラーを出すのではなく、その部分を無視するような<br>
+	仕様にしてくれれば最低限動作すると思うのですが、どうも融通が利かないようです。)
+ </dd>
+
+ <dt>・制作期間はどのくらい？</dt>
+ <dd>
+	まだ完成していないので制作期間終了してませんが、<br>
+	制作開始からWEB公開(2004/7/4)までは１ヶ月半ぐらいです。
+ </dd>
+
+ <dt>・ヒロインがかわいくない</dt>
+ <dd>
+	現実はこんなものです。
+	<img src="img/pinch.gif" width="48" height="64" alt="こわいい" />
+ </dd>
+
+ <dt>・ソース・画像データの扱いについて</dt>
+ <dd>
+	勉強目的で作っただけの物なので、著作権は放棄します。<br>
+	無断転載・無断ミラーサイト・無断改造・無断配布・無断キャラ替え等々、すべて自由です。<br>
+	ベーマガに投稿したり学校の課題として提出してしまってもかまいません。<br>
+	こちらへの連絡も不要です。
+</dd>
+
+ <dt></dt>
+ <dd>
+ </dd>
+
+</dl>
+</div>
+</body>
+</html>

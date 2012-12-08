@@ -1,0 +1,473 @@
+<!-- 
+#  Javascript Virtual Machine
+#  Copyright 2004- Kunio Makimoto <kunio@makimo.to>
+#  
+#  http://makimo.to/
+# 
+-->
+<html>
+<head><title>Javascript Virtual Machine  Stageloader </title>
+<meta http-equiv="Content-type" content="text/html; charset=Shift_JIS">
+<script>
+<!--
+var LOADER=false;
+var CPU,SCR1,SCR2;
+ var SCREEN_X=512;
+ var SCREEN_Y=448;
+
+	//スタート地点
+ var PLSTART_X  = 32*2-12;
+ var PLSTART_Y  = 32*13-24;	// 開始時の顔の向き (1= 左 2=右)
+ var PLSTART_HFACE= 1; // 開始時のモーション "DOKAN_UP_OUT" "DOKAN_DOWN_OUT" "DOKAN_LEFT_OUT" "DOKAN_RIGHT_OUT"
+ var PLSTART_ANIME=""; // var PLSTART_ANIME="DOKAN_UP_OUT"; 
+	//途中から復活の場合の開始地点
+ var PLSTART_X2 = 32*76-20;
+ var PLSTART_Y2 = 32*4-24;
+  PLSTART_X2 = 32*2-12;
+  PLSTART_Y2 = 32*13-24;
+ var PLSTART_HFACE2= 1; 
+ var PLSTART_ANIME2=""; 
+
+
+ var WARPSTART_X=Array();
+ var WARPSTART_Y=Array();
+ var WARPSTART_HFACE=Array();
+ var WARPSTART_ANIME=Array();
+
+	// 土管などのワープからの開始点(配列)
+ WARPSTART_X[0]=32*20;
+ WARPSTART_Y[0]=32*12-24;
+ WARPSTART_HFACE[0]=1;
+ WARPSTART_ANIME[0]="DOKAN_LEFT_OUT";
+
+
+	// メイン画面の背景色
+ var SCREENBGCOLOR  = "#660066";//"#333333";
+	// 上下枠の背景色
+ var SCREENBGCOLOR2 = "#333366";
+
+	//ボーナスゾーンなどでタイムを引き継ぐ場合は-1とする
+ var GAMETIMER=200;
+
+
+	// それぞれの方向へのスクロールを許可するかどうか
+ var LEFTSCROLL =true;
+ var RIGHTSCROLL=true;
+ var UPSCROLL   =false;
+ var DOWNSCROLL =false;
+
+	// 開始までのプレイヤー残数表示時間。
+	// ボーナスゾーンなど、すぐに開始したい場合はゼロにする
+ var firstWaitTime=1000;
+// firstWaitTime=0;
+	// 開始時の画面切替えエフェクト(IEのみ)
+ var stageInitTrans="progid:DXImageTransform.Microsoft.pixelate(duration=1,maxsquare=50)";
+
+ var STAGEMODE= "FIELD"; // FIELD WATER
+ var GAMEMODE = "PLAY"; // PLAY AUTOPLAY REPLAY
+
+ // border:Xpxと指定したブロックがあると、その太さだけ
+ // 縦方向に加算されてしまうので、引いておく。
+ // charTable内でborderを使用しないなら 0
+ var MozillaTableBoarderFix=0;
+
+ var infotable1='';
+ var infotable2='';
+
+if(parent){
+	CPU  = parent.cpu.window;
+	SCR1 = parent.screen1.window;
+	SCR2 = parent.screen2.window;
+	SCREEN_X_OLD=parent.SCREEN_X;
+	SCREEN_Y_OLD=parent.SCREEN_Y;
+stage = Array(
+"0000000000000000000000303030300404040404000000000000000000000000000000000004040404040400000000006c000000000000df00000000000000000000000000000000000000000000000000000000084c0d0d0d0d0d0d0d0d4d4c0d0d0d0d0d0d0d0d4d4c0f0000000000000000000000000004040000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000070000000000000000000000000000",
+"0000000000000000000000000000000000006c04000000000000000000000000000001040000000000000400000000006c00000505000505000000000000000006060000000000000000000000000000000000000809000000000000000008090000000000000000080900000000880000000000000000000404000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000006d070000000000000000000000000000",
+"0000000000000000000000000000000000006c040404040404040404040404111004000004040404040004008f0000006c0004000000000000000000000000000006060000000000000000000000000000000000080900000083000000000809000083000000880008090088000a0b0000000000000000000404000000000000000000008200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000006e070000000000000000000000000000",
+"0000000000000000000000000000000000006c04000000000000000000000000000000000004000000000400000000006c04040000000000000000000000000000000600000000000000060600000000000000000a0b00000e0c0c0c0c0c4f4e0c0c0e00000a0b0608090a0b060809000000000000e40000c004000000000000000004040400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000040400000000000000006e070000000000000000000000000000",
+"0000000000000000000000000000000404006c04000000000000000000000000000000000004000404040404040404046c0404000000000000000000000000000000000000000000000006000606060000000000000000000f0d0d0d0d0d4d4c0d0d0f000008090608090809060809000000000000000000040400040400000000000404040000040082000400820004040000000000000000000000000000040000000000000090000004000000000000e900000000000000000000000004000000000000000000006e000000000000000000000000000000",
+"0000850000000000000000000000040404006c04000000000000000000000000000000000004000400000000000000006c0604000000000600000000000000000000000600000000000600004041420000060606000000000000000000000a0b0000000000080906080908090608090000000000000000000404000000000000000000040404060006040600060406040400000000000000000000000000000404040404040404040404040000000000000000000000000000000000000400000000000000000000006e000000000000000000000000000000",
+"0000000000000000000000008004040404006c04050505050505050505050505050504000000000000000000000000006c06040000000000060000000000000000000000060000000600000000510000004041420000060606000000000000000000000000080985080908090608090000000000000000000404000000000000000000000400060406000604060006000000000000000000000000000000000404040404040404040404040000000000000000000000000000000000000000003100000000000000006e000000000000000000000000000000",
+"0000000000000000000000000404040404006c00000000000000000000000000000404000000000000000000000000006c06040000000000000600000000000000000000000000000000000000510000000051000000404142000000000000880000000000080900080908090008090000000000000000000404000000000000000000000404060006040600060406000000000000000000000000000000000000000000000000000000000000000000000000000000d000000000c3000000000000000000000000006e000000000000000000000000000000",
+"0000000000000000000000040404040425006c00000000000000000000009000000404000000000000000000000000006c0004000606060606060600000000000000000000060006000000000051000000005100000000510000000000000a0b00000000800809300a0b0a0b0008090000000000000000000404000000000000000000000400000406000604060000040000000000000000000000008b00000000000000000000000000000000000000000000000000000000000000000000000000000000000000006e000000000000000000000000000000",
+"0000000000000000000004040404040400006c00000000000000000000000004040404000000000000000000000000066c000400000000000006000000000000000000000000000000000000005100000000510000000051000000000000084e0c0c0c0c0c4f09000000000000080900000000000000000004c1000000000000000000000404000000040600000400040004000000000090000000008b00000000000000000000000000000000000000000000000000000000040000000000300000000000000000006e000000000000000000000000000000",
+"0000000000000000000000000404040400006c000e0c0c0c0c0c0c0c0c0c0c4f090404000083000000000000000000066c0004000000000006000000000000000000000000000600000000000051000000005100000000510000000e0c0c4f4c0d0d0d0d0d4d0900008800880008090000000000000000000400000000000000000000000400000400000004000000040004040404040404040404040400000000000000000000000000000000000000000000000000000004000000000000000000000000000000006e000000000000000000000000000000",
+"0000000000000000000000000404040404006c000f0d0d0d0d0d0d0d0d0d0d4d090404040404000000000000000000066c0004000000000600000000000000000000000000000000000000000051000000005100000000510000000f0d0d4d0900000000000809000a0b0a0b000809000000000000000000000000000000000000000000040000000000000000000004000404040404040404040404040000040404040400000404040404000000000000000000000000040000000000000000000000000000000000048d000000cb00000000000000000000",
+"0000ca0000000000008600000404040404006c00000000000000008e000000080900000000000404040400000000008e6c0004000000000000000000000000000000000000008200000000000051000000005100000000510000000000000809000000000008090008090809c8080900000000000000000000000000000000000000000000040404040404040404040000000000000000000000000000000004040404040000040404040400000000000000000000000400000000000000000000000000000000000002020202020202020202020202020202",
+"0202020202000000000000000202020202000000000000000000000000000008090000000000000000000000000000006c000400000000000000000000000000000000000000040000000000005100000000510000000051000000000000080900000000000809000809084e0c4f090000000000000000000404000000c800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000040000000000000000000400000000000000000002020202020202020202020202020202",
+
+"");
+charTable=Array(
+//00
+'',
+//01
+'img/block1.gif',
+//02
+'img/block2.gif',
+//03
+'img/block3.gif',
+//04
+'img/block5D.gif',
+//05
+'img/block6.gif',
+//06
+'img/coinA.gif',
+//07
+'',
+//8
+'img/dokanVL-B.gif',
+//9
+'img/dokanVR-B.gif',
+//a
+'img/dokanVHL-B.gif',
+//b
+'img/dokanVHR-B.gif',
+//c
+'img/dokanHU-B.gif',
+//d
+'img/dokanHD-B.gif',
+//e
+'img/dokanHHU-B.gif',
+//f
+'img/dokanHHD-B.gif',
+
+//10
+'img/hatenaA.gif',
+//11
+'img/hatenaA.gif',
+//12
+'img/hatenaA.gif',
+//13
+'img/hatenaA.gif',
+//14
+'img/hatenaA.gif',
+
+//15 16 17 18 19 1a 1b 1c 1d 1e 1f
+  '','','','','','','','','','','',
+//20
+'img/block1.gif',
+//21
+'img/block1.gif',
+//22
+'img/block1.gif',
+//23
+'img/block1.gif',
+//24
+'img/block1.gif',
+//25
+'img/block1.gif',
+//26 27 28 29 2a 2b 2c 2d 2e 2f
+  '','','','','','','','','','',
+
+//30 31 32 33 34 35 36 37 38 39 3a 3b 3c 3d 3e 3f
+  '','','','','','','','','','','','','','','','',
+
+//40 背景用(当たり判定あり)
+'img/grnfloorL.gif',
+//41 背景用(当たり判定あり)
+'img/grnfloor.gif',
+//42 背景用(当たり判定あり)
+'img/grnfloorR.gif',
+//43
+'',
+//44
+'',
+//45
+'img/cannonstand.gif',
+//46
+'',
+//47
+'',
+//48
+'',
+//49
+'',
+//4a
+'',
+//4b
+'',
+//4c
+'img/dokanDR-B.gif',
+//4d
+'img/dokanLD-B.gif',
+//4e
+'img/dokanUR-B.gif',
+//4f
+'img/dokanLU-B.gif',
+//50
+'img/block.gif',
+//51
+'img/grntreebg.gif',
+'',
+'',
+'',
+'',
+'');
+
+charTable[0x6c]='img/tsuta.gif';
+charTable[0x6d]='img/ball.gif';
+charTable[0x6e]='img/bar.gif';
+charTable[0x7f]='<div style="width:100%;height:100%;background:black;filter:alpha(opacity=50);z-index:1200;opacity:0.5;mozOpacity:0.5"></div>';
+
+
+ for(var i=0;i<stage.length;i++)stage[i]=stage[i].replace(/[ ]/gi,"0").replace(/[^0-9^a-f]/gi,"");
+  parent.stage=stage;
+  parent.charTable=charTable;
+}
+ for(var i=1;i<256;i++)if(!charTable[i])charTable[i]="";
+
+// オブジェクト作成例外
+function createObject(win,group,x,y,num,option,obj){
+ with(win){
+	var tmp;
+  switch(num){
+	case 0xc5:
+
+		tmp = new Firebar(obj,"LONG",x,y,1);
+		 tmp.rotate=0;
+		 tmp.entry(group);
+		tmp = new Firebar(obj,"LONG",x,y,1);
+		 tmp.rotate=90;
+		 tmp.entry(group);
+		tmp = new Firebar(obj,"LONG",x,y,1);
+		 tmp.rotate=180;
+		 tmp.entry(group);
+		tmp = new Firebar(obj,"LONG",x,y,1);
+		 tmp.rotate=270;
+		return tmp.entry(group);
+	break;
+	case 0xd0:
+	break;
+		var z=7;
+		tmp= new Kuri(obj,"CANNONBALL",x,y,option);
+		tmp.charBodyWidth*=z;
+		tmp.charBodyHeight*=z;
+		tmp.charSpriteWidth*=z;
+		tmp.charSpriteHeight*=z;
+		tmp.stepScore*=z;
+		tmp.registFire=1;
+		tmp.score*=z;
+		tmp.o.setSize(tmp.charSpriteWidth,tmp.charSpriteHeight);
+		tmp.cSprX*=z;
+		tmp.cSprY*=z;
+		return tmp.entry(group);
+	break;
+	case 0xd1:
+		var z=6;
+		tmp= new Kame(obj,"KURO",x,y,option);
+		tmp.charBodyWidth*=z;
+		tmp.charBodyHeight*=z;
+		tmp.charSpriteWidth*=z;
+		tmp.charSpriteHeight*=z;
+		tmp.stepScore*=z;
+		tmp.score*=z;
+		tmp.sleepCounterStart=300;
+		tmp.o.setSize(tmp.charSpriteWidth,tmp.charSpriteHeight);
+		tmp.cSprX*=z;
+		tmp.cSprY*=z;
+		return tmp.entry(group);
+	break;
+	case 0xd2:
+		var z=8;
+		tmp= new Kuri(obj,"SQUID",x,y,option);
+		tmp.charBodyWidth*=z;
+		tmp.charBodyHeight*=z;
+		tmp.charSpriteWidth*=z;
+		tmp.charSpriteHeight*=z;
+		tmp.stepScore*=z;
+		tmp.registFire=1;
+		tmp.score*=z;
+		tmp.sleepCounterStart=300;
+		tmp.o.setSize(tmp.charSpriteWidth,tmp.charSpriteHeight);
+		tmp.cSprX*=z;
+		tmp.cSprY*=z;
+		return tmp.entry(group);
+	break;
+	case 0xd3:
+		var z=6;
+		tmp= new FireBubble(obj,"FIREBUBBLE",x,y,option);
+		tmp.charBodyWidth*=z;
+		tmp.charBodyHeight*=z;
+		tmp.charSpriteWidth*=z;
+		tmp.charSpriteHeight*=z;
+		tmp.stepScore*=z;
+		tmp.registFire=1;
+		tmp.score*=z;
+		tmp.sleepCounterStart=300;
+		tmp.o.setSize(tmp.charSpriteWidth,tmp.charSpriteHeight);
+		tmp.cSprX*=z;
+		tmp.cSprY*=z;
+		return tmp.entry(group);
+	break;
+	case 0xdf:
+	 var img="img/PL2standR.gif";
+	 var w=32,h=32;
+	 BackgroundObject(img,x,y,w,h,50);
+	 setXYpointObject(x,y,0);
+	break;
+  
+  }
+ }
+} //
+
+// イベント属性ブロックに触れた時にコールされる
+function eventPointBlock(obj,win,block){
+ with(win){
+  switch(block){
+  }
+	return -1;
+ }
+} //
+
+//ブロックを叩いた時にコールされる
+function eventUpperBlock(obj,win,block){
+ with(win){
+  switch(block){
+  }
+	return -1;
+ }
+} //
+
+// ゴールポイントに触れた時にコールされる
+function eventGoalBlock(obj,win,block){
+ with(win){
+  switch(block){
+  }
+  stageClear();
+	return -1;
+ }
+} //
+
+// ワープポイントに触れた時にコールされる
+function eventWarpBlock(obj,win,block,WARPPTR){
+ with(win){
+	switch(WARPPTR){
+	 case 0:
+		parent.stageChange("bonus5-1.html");
+	 break;
+		
+	}
+	return -1;
+ }
+} //
+
+// プレイヤーが落下した時にコールされる
+function eventPlayerDrop(obj,win){
+ with(win){
+	return 1;
+ }
+} //
+
+
+function screen1BeforeInit(){ // screen1 のロード直後に呼ばれる
+ SCR1.SCREEN_X=SCREEN_X;
+ SCR1.SCREEN_Y=SCREEN_Y;
+	if(document.all && firstWaitTime > 300){
+		var sdb=SCR1.document.body;
+		if(stageInitTrans !=""){
+		 sdb.style.filter=stageInitTrans;
+		 sdb.filters[0].Apply();
+		}
+	}
+} //
+function screen1Init(){ // screen1 のロード終了後に呼ばれる
+
+ var sdb=SCR1.document.body;
+	sdb.style.background=SCREENBGCOLOR;
+	document.body.style.background=
+	SCREENBGCOLOR2;
+
+ if(parent.warpFlag){
+	var wp=parent.warpNum;
+	SCR1.PL1START_X = WARPSTART_X[wp];
+	SCR1.PL1START_Y = WARPSTART_Y[wp];
+	SCR1.PL1START_HFACE=WARPSTART_HFACE[wp];
+	SCR1.PL1START_ANIME=WARPSTART_ANIME[wp];
+ }else
+ if(parent.retryFlag){
+	SCR1.PL1START_X = PLSTART_X2;
+	SCR1.PL1START_Y = PLSTART_Y2;
+	SCR1.PL1START_HFACE=PLSTART_HFACE2;
+	SCR1.PL1START_ANIME=PLSTART_ANIME2;
+ }
+
+	SCR1.firstWaitTime=firstWaitTime;
+	if(document.all){
+		if(stageInitTrans !="" && firstWaitTime>300){
+		 sdb.filters[0].duration=Math.abs((firstWaitTime*.7-parent.RATE_DRAW_FAST)/1000);
+		}
+	}
+
+
+} // 
+
+function screen1BeforeUnload(){ // screen1 のアンロード時に呼ばれる
+
+} // 
+
+function screen2BeforeInit(){ // screen2 のロード直後に呼ばれる
+	SCR2.document.body.style.background=SCREENBGCOLOR2;
+} //
+function screen2Init(){ // screen2 のロード終了後に呼ばれる
+} // 
+function screen2BeforeUnload(){ // screen2 のロード終了後に呼ばれる
+} // 
+
+
+
+function cpuBeforeInit(){ // CPU のロード直後に呼ばれる
+
+} // 
+function cpuInit(){ // CPU のロード終了後に呼ばれる
+	SCR1.onCpuInit();
+} // 
+
+
+function cpuBeforeUnload(){ // CPU のアンロード時に呼ばれる
+
+} // 
+
+function onCPUTimer(win,P1,tm){ // CPUのタイマーイベントごとに呼ばれる
+ with(win){
+//	WIN.SCROLL_LEFT+=1; //強制スクロールなど
+ }
+} //
+
+
+
+function init(){
+	LOADER=true;
+	parent.LOADEROK=true;
+	infotable1=document.getElementById('infotable1').innerHTML;
+	infotable2=document.getElementById('infotable2').innerHTML;
+	SCR1.location.replace("screen1.html");
+	SCR2.location.replace("screen2.html");
+	parent.ff();
+} //
+
+function bye(){
+
+/*
+	CPU.location.replace("blank.html");
+	SCR1.location.replace("blank.html");
+	SCR2.location.replace("blank.html");
+*/
+} //
+
+onload=init;
+onunload=bye;
+
+-->
+</script>
+</head>
+<body bgcolor="black" onfocus="parent.cpu.focus();">
+<span style="background:#888888;color:black">ダッシュ-[CTRL] ジャンプ-[SHIFT]</span>
+
+<span id="infotable1" style="display:none;">
+<span style="font-family:'ＭＳ 明朝';font-size:100%;">一発でクリアしたら神</span>
+</span>
+<span id="infotable2" style="display:none;">
+</span>
+
+</body>
+</html>

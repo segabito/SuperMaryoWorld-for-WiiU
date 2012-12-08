@@ -1,0 +1,388 @@
+<!-- 
+#  Javascript Virtual Machine
+#  Copyright 2004- Kunio Makimoto <kunio@makimo.to>
+#  
+#  http://makimo.to/
+# 
+-->
+<html>
+<head><title>Javascript Virtual Machine  Stageloader </title>
+<meta http-equiv="Content-type" content="text/html; charset=Shift_JIS">
+<script>
+<!--
+var LOADER=false;
+var CPU,SCR1,SCR2;
+	// 画面解像度
+ var SCREEN_X=512/2;
+ var SCREEN_Y=448/2;
+
+	//スタート地点
+ var PLSTART_X  = 32*0;
+ var PLSTART_Y  = 32*12-24;
+	// 開始時の顔の向き (1= 左 2=右)
+ var PLSTART_HFACE= 1; 
+	// 開始時のモーション "DOKAN_UP_OUT" "DOKAN_DOWN_OUT" "DOKAN_LEFT_OUT" "DOKAN_RIGHT_OUT"
+ var PLSTART_ANIME=""; 
+ var PLSTART_ANIME=""; 
+
+	//途中から復活の場合の開始地点 ボーナス面は-にしておく
+ var PLSTART_X2 = -1;
+ var PLSTART_Y2 = -1;
+ var PLSTART_HFACE2= 1; // 顔の向き (-1= 左 1=右)
+ var PLSTART_ANIME2=""; 
+
+	// メイン画面の背景色
+ var SCREENBGCOLOR  = "black";//"#333333";
+	// 上下枠の背景色
+ var SCREENBGCOLOR2 = "black";
+
+	//残りタイム
+ var GAMETIMER=-1;//parent.GAMETIMER;
+
+
+	// それぞれの方向へのスクロールを許可するかどうか
+ var LEFTSCROLL =true;
+ var RIGHTSCROLL=true;
+ var UPSCROLL   =true;
+ var DOWNSCROLL =true;
+
+	// 開始までのプレイヤー残数表示時間。
+	// ボーナスゾーンなど、すぐに開始したい場合はゼロにする
+ var firstWaitTime=0;
+// firstWaitTime=0;
+	// 開始時の画面切替えエフェクト(IEのみ)
+ var stageInitTrans="progid:DXImageTransform.Microsoft.pixelate(duration=1,maxsquare=50)";
+
+ var STAGEMODE= "FIELD"; // FIELD WATER
+ var GAMEMODE = "PLAY"; // PLAY AUTOPLAY REPLAY
+
+ // border:Xpxと指定したブロックがあると、その太さだけ
+ // 縦方向に加算されてしまうので、引いておく。
+ // charTable内でborderを使用しないなら 0
+ var MozillaTableBoarderFix=0;
+
+ var infotable1='';
+ var infotable2='';
+
+	CPU  = parent.cpu.window;
+	SCR1 = parent.screen1.window;
+	SCR2 = parent.screen2.window;
+	SCREEN_X_OLD=parent.SCREEN_X;
+	SCREEN_Y_OLD=parent.SCREEN_Y;
+
+
+
+
+
+
+
+
+stage = Array(
+"0000000000000000000000000000000000000000000000000000000000",
+"0000000000000000000000000000000000000000000000000000000000",
+"0000000000000000000000000000000000000000000000000000000000",
+"0000000000000000000000000000000000000000000000000000000000",
+"0000000000000000000000000000000000000000000000000000000000",
+"0000000000000000000000000000000000000000000000000000000000",
+"0000000000000000000000000000000000000000000000000000000000",
+"0000000000000000000000000000000000000000000000000000000000",
+"0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c",
+"0000000000000000000000000000000000000000000000000000000000",
+"00000011000606060000000000c0000000000000060606000000000000",
+"00000000000000000000000000000000000000000000000000000000f4",
+"0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d",
+"0000000000000000000000000000000000000000000000000000000000",
+"0000000000000000000000000000000000000000000000000000000000",
+"0000000000000000000000000000000000000000000000000000000000",
+"0000000000000000000000000000000000000000000000000000000000",
+"0000000000000000000000000000000000000000000000000000000000",
+"0000000000000000000000000000000000000000000000000000000000",
+"0000000000000000000000000000000000000000000000000000000000",
+"0000000000000000000000000000000000000000000000000000000000",
+"0000000000000000000000000000000000000000000000000000000000",
+
+"");
+charTable=Array(
+//00
+'',
+//01
+'img/block1.gif',
+//02
+'img/block2.gif',
+//03
+'img/block3.gif',
+//04
+'img/block3.gif',
+//05
+'img/block4.gif',
+//06
+'img/coinA.gif',
+//07
+'',
+//8
+'img/dokanVL-C.gif',
+//9
+'img/dokanVR-C.gif',
+//a
+'img/dokanVHL-C.gif',
+//b
+'img/dokanVHR-C.gif',
+//c
+'img/dokanHU-C.gif',
+//d
+'img/dokanHD-C.gif',
+//e
+'img/dokanHHU-C.gif',
+//f
+'img/dokanHHD-C.gif',
+
+//10
+'img/hatenaA.gif',
+//'<div style="border:1px outset silver;width:100%;height:100%;text-align:center;vertical-align:middle;margin:0;padding:0;background:gray;">＄</div>',
+//11
+'img/hatenaA.gif',
+//12
+'img/hatenaA.gif',
+//13
+'img/hatenaA.gif',
+
+//14
+'',
+//15
+'img/block1.gif',
+//16 17 18 19 1a 1b 1c 1d 1e 1f
+  '','','','','','','','','','',
+//20
+'img/block1D.gif',
+//21
+'img/block1D.gif',
+//22
+'img/block1D.gif',
+//23
+'img/block1D.gif',
+//24
+'img/block1D.gif',
+//25
+'img/block1D.gif',
+
+//26 27 28 29 2a 2b 2c 2d 2e 2f
+  '','','','','','','','','','',
+//30
+'',
+//31
+'',
+//32
+'',
+//33
+'',
+//34
+'',
+//35
+'',
+//36 37 38 39 3a 3b 3c 3d 3e 3f
+  '','','','','','','','','','',
+//40
+'',
+//41
+'',
+//42
+'',
+//43
+'',
+//44
+'',
+//45
+'',
+//46 47 48 49 4a 4b 4c 4d 4e 4f
+'',
+//47
+'',
+//48
+'',
+//49
+'',
+//4a
+'',
+//4b
+'',
+//4c
+'img/dokanDR-C.gif',
+//4d
+'img/dokanLD-C.gif',
+//4e
+'img/dokanUR-C.gif',
+//4f
+'img/dokanLU-C.gif',
+
+
+'',
+'',
+'',
+'',
+'');
+charTable[0x6c]='img/tsuta.gif';
+charTable[0x6d]='img/ball.gif';
+charTable[0x6e]='img/bar.gif';
+
+
+ for(var i=0;i<stage.length;i++)stage[i]=stage[i].replace(/[ ]/gi,"0").replace(/[^0-9^a-f]/gi,"");
+  parent.stage=stage;
+  parent.charTable=charTable;
+
+//}
+
+ for(var i=1;i<256;i++)if(!charTable[i])charTable[i]="";
+
+
+// イベント属性ブロックに触れた時にコールされる
+function eventPointBlock(obj,win,block){
+ with(win){
+  switch(block){
+  }
+	return -1;
+ }
+} //
+
+//ブロックを叩いた時にコールされる
+function eventUpperBlock(obj,win,block){
+ with(win){
+  switch(block){
+  }
+	return -1;
+ }
+} //
+
+// ゴールポイントに触れた時にコールされる
+function eventGoalBlock(obj,win,block){
+ with(win){
+  switch(block){
+  }
+  parent.stageClear();
+	return -1;
+ }
+} //
+
+// ワープポイントに触れた時にコールされる
+function eventWarpBlock(obj,win,block){
+ with(win){
+	parent.backToLastStage(1);
+	return -1;
+ }
+} //
+
+// プレイヤーが落下した時にコールされる
+function eventPlayerDrop(obj,win){
+ with(win){
+	parent.backToLastStage(1);
+	return 1;
+ }
+} //
+
+
+function screen1BeforeInit(){ // screen1 のロード直後に呼ばれる
+ SCR1.document.write(
+	'');
+
+
+
+ SCR1.SCREEN_X=SCREEN_X;
+ SCR1.SCREEN_Y=SCREEN_Y;
+	if(document.all && firstWaitTime > 300){
+		var sdb=SCR1.document.body;
+		if(stageInitTrans !=""){
+		 sdb.style.filter=stageInitTrans;
+		 sdb.filters[0].Apply();
+		}
+	}
+} //
+function screen1Init(){ // screen1 のロード終了後に呼ばれる
+
+ var sdb=SCR1.document.body;
+	sdb.style.background=SCREENBGCOLOR;
+	document.body.style.background=
+					SCREENBGCOLOR2;
+
+
+	SCR1.firstWaitTime=firstWaitTime;
+	if(document.all){
+		if(stageInitTrans !="" && firstWaitTime>300){
+		 sdb.filters[0].duration=Math.abs((firstWaitTime*.7-parent.RATE_DRAW_FAST)/1000);
+//		 SCR1.document.getElementById('INFOTABLE1').style.display="none";
+//		 sdb.filters[0].Play();
+			//setTimeout('parent.screen1.document.body.style.filter=""',firstWaitTime+parent.RATE_DRAW_FAST);
+		}
+	}
+
+
+} // 
+
+function screen1BeforeUnload(){ // screen1 のアンロード時に呼ばれる
+
+} // 
+
+
+function screen2BeforeInit(){ // screen2 のロード直後に呼ばれる
+	SCR2.document.body.style.background=SCREENBGCOLOR2;
+} //
+function screen2Init(){ // screen2 のロード終了後に呼ばれる
+} // 
+function screen2BeforeUnload(){ // screen2 のロード終了後に呼ばれる
+} // 
+
+
+
+function cpuBeforeInit(){ // CPU のロード直後に呼ばれる
+
+} // 
+function cpuInit(){ // CPU のロード終了後に呼ばれる
+	SCR1.onCpuInit();
+} // 
+
+
+function cpuBeforeUnload(){ // CPU のアンロード時に呼ばれる
+
+} // 
+
+function onCPUTimer(win,P1,tm){ // CPUのタイマーイベントごとに呼ばれる
+ with(win){
+//	WIN.SCROLL_LEFT+=1; //強制スクロールなど
+ }
+} //
+
+
+
+function init(){
+	parent.LOADEROK=true;
+	LOADER=true;
+	infotable1=document.getElementById('infotable1').innerHTML;
+	infotable2=document.getElementById('infotable2').innerHTML;
+	SCR1.location.replace("screen1.html");
+	SCR2.location.replace("screen2.html");
+	parent.ff();
+} //
+
+function bye(){
+
+/*
+	CPU.location.replace("blank.html");
+	SCR1.location.replace("blank.html");
+	SCR2.location.replace("blank.html");
+*/
+} //
+
+onload=init;
+onunload=bye;
+
+-->
+</script>
+</head>
+<body bgcolor="black" onfocus="parent.cpu.focus();">
+<span style="background:#888888;color:black">ダッシュ-[CTRL] ジャンプ-[SHIFT]</span>
+
+<span id="infotable1" style="display:none;">
+</span>
+<span id="infotable2" style="display:none;">
+</span>
+
+</body>
+</html>

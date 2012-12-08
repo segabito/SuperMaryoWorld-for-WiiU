@@ -1,0 +1,576 @@
+<!-- 
+#  Javascript Virtual Machine
+#  Copyright 2004- Kunio Makimoto <kunio@makimo.to>
+#  
+#  http://makimo.to/
+# 
+-->
+<html>
+<head>
+<title>"Super Maryo World" - Javascript Virtual Machine</title>
+<meta http-equiv="imagetoolbar" content="no">
+<meta http-equiv="Content-type" content="text/html; charset=Shift_JIS">
+<meta http-equiv="MSThemeCompatible" content="no" />
+<meta name="viewport" content="width=854 height=450 user-scalable=no" />
+<script type="text/javascript">
+<!--
+var CPUOK=false;
+var SCR1OK=false;
+var SCR2OK=false;
+var LOADEROK=false;
+
+var D=document,DA=false,DB=false,DG=false;
+D.onkeypress = function(){ return false; }
+window.name="GAMEOVER";
+//<------DISP CONFIG----
+var SPRITES_MAX=128;
+var spriteCnt=0;
+var SCREEN_X=640;
+var SCREEN_Y=480;
+
+var SCROLL_X_MAX=640;
+var SCROLL_X_MIN=0;
+var SCROLL_Y_MAX=480;
+var SCROLL_Y_MIN=-32*5;
+var WIN=window;
+var RATE_DRAW  = 50;	 // 描画レート
+var RATE_DRAW_SLOW = 500; // 非アクティブ時の描画レート
+var RATE_DRAW_FAST = RATE_DRAW;
+var RATE_CPU = 33;	 // 処理レート
+
+if (window.wiiu) {
+	RATE_DRAW_FAST=RATE_DRAW=50;
+	RATE_CPU=16;
+}
+
+var BGBLOCKSIZE_X = 32;
+var BGBLOCKSIZE_Y = 32;
+var NOEFFECT = false;
+
+ var LEFTSCROLL =true;
+ var RIGHTSCROLL=true;
+ var UPSCROLL   =true;
+ var DOWNSCROLL =true;
+//------DISP CONFIG----->
+
+var STARTLIFE  = 3;
+var STARTSCORE = 0;
+var GAMEOVERSCORE = 0;;
+var HIGHSCORE  = 10000;
+
+
+var PL1MODE    = 0;
+var PL1DEFAULT = 0;
+var PL1FIRE    = false;
+var PL1START_X = 64;
+var PL1START_Y = 0;
+var PL1SCORE   = 0;
+var PL1LIFE    = STARTLIFE;
+var PL1COINS   = 0;
+
+var PL2MODE    = 0;
+var PL2DEFAULT = 0;
+var PL2FIRE    = false;
+var PL2START_X = 96;
+var PL2START_Y = 0;
+var PL2SCORE   = STARTSCORE;
+var PL2LIFE    = STARTLIFE;
+
+
+var GAMETIMER=500;
+var DEFAULTGAMETIMER=500;
+var GAMECLOCK=parseInt(Math.random()*1024);
+
+ // http://hogehoge/fuga/ など
+ // 画像だけ別のサーバーに置きたい時に設定したり、、
+ // ステージごとにキャラクターグラフィックをチェンジしたりできる
+var IMAGEBASEURL="";
+
+
+var REPLAYMODE=false;
+var REPLAYLOG=Array();
+var REPLAYCNT=0;
+var REPLAYLOGDBG=Array();
+var REPLAYCNTDBG=0;
+
+var DEBUGMODE=false;
+
+var lastStage="";
+var lostWorld=1;
+var lostWorldRP=1;
+var currentStage=0;
+var warpFlag=false;
+var warpNum=0;
+var retryFlag=false;
+var continueStage=0;
+var stagesrc=Array(
+	"stage0.html",
+	"stage1-1.html",
+	"stage1-2.html",
+	"stage1-3.html",
+	"stage1-4.html",
+
+	"stage2-1.html",
+	"stage2-2.html",
+	"stage2-3.html",
+	"stage2-4.html",
+
+	"stage3-1.html",
+	"stage3-2.html",
+	"stage3-3.html",
+	"stage3-4.html",
+
+	"stage4-1.html",
+	"stage4-2.html",
+	"stage4-3.html",
+	"stage4-4.html",
+
+	"stage5-1.html",
+	"stage5-2.html",
+	"stage5-3.html",
+	"stage5-4.html",
+
+	"stage6-1.html",
+	"stage6-2.html",
+	"stage6-3.html",
+	"stage6-4.html",
+
+	"stage7-1.html",
+	"stage7-2.html",
+	"stage7-3.html",
+	"stage7-4.html",
+
+	"stage8-1.html",
+	"stage8-2.html",
+	"stage8-3.html",
+	"stage8-4.html",
+
+"");stagesrc.pop();
+
+var lastStage=Array(stagesrc[0]);
+var URASTAGE=false;
+
+var stage = Array();
+var charTable=Array();
+
+
+function init(){
+	if(!document.getElementById) return;
+
+// フレーム幅
+	var frm=document.getElementById("gameframe") || {rows: ''};
+	var dbh=document.body.clientHeight;
+	var dbw=document.body.clientWidth;
+	if(dbh*4/3 >dbw){
+		var ddh=parseInt((dbh-dbw*3/4)/2);
+	   if(ddh>=32)
+		frm.rows="0,*,"+( dbw*3/4 )+",*";
+//	   else	frm.rows="0,32,*,32";
+//		frm.rows="0,"+ddh+","+( dbw*3/4 )+","+ddh;
+//		frm.rows="0,"+ddh+",*,"+ddh;
+	}else{
+		dbh=dbh-64;
+		frm.rows="0,32,*,32";
+	}
+
+
+	getCookie();
+
+	gameStart(false);
+
+	ff();
+} //
+function bye(){
+	cpu.location.replace("blank.html");
+	screen1.location.replace("blank.html");
+	screen2.location.replace("blank.html");
+	loader.location.replace("blank.html");
+	
+	setCookie();
+} //
+
+function setCookie(){
+//	if(isNaN(HIGHSCORE))return;
+//	if(isNaN(lostWorld))return;
+	var now=new Date(),dt=new Date();
+	dt.setDate("+365");
+	var gmt=dt.toGMTString();
+	var dktmp=""+
+		HIGHSCORE+"<>"+
+		lostWorld+"<>"+
+		"<><><><><><>";
+	dktmp=dktmp.split(";").join(escape(";"));
+	document["co"+"okie"]="NAME=MARYO<>"+dktmp+";"+"expires="+gmt+";";
+
+} //
+
+function getCookie(){
+	var tmp=document["co"+"okie"]+"";
+	if(tmp.indexOf("<>") < 0 )return;
+
+	tmp=tmp.replace(/^PARAM=/,'');
+	tmp=tmp.replace(/^.+MARYO<>/,'');
+	var envtmp=tmp.split("<>");
+	 envtmp[0]=parseInt(envtmp[0]);
+	 HIGHSCORE=envtmp[0];
+	  if(HIGHSCORE<10000)HIGHSCORE=10000;
+	 envtmp[1]=parseInt(envtmp[1]);
+	 lostWorld=envtmp[1];
+	  if(lostWorld<1)lostWorld=1;
+} //
+
+
+
+
+
+
+
+
+
+
+function gameStart(cont){
+ if(cont)currentStage=currentStage-getAreaNumber+1;
+ else currentStage=0;
+ PL1MODE    = 0;
+ PL1DEFAULT = 0;
+ PL1SCORE   = 0;
+ PL1LIFE    = STARTLIFE;
+ PL1COINS   = 0;
+ REPLAYMODE = false;
+ REPLAYCNT  = 1;
+ REPLAYLOG = new Array();
+ REPLAYLOG[0] = stageReset() + "\t"+GAMECLOCK+"\t"+lostWorld;
+ REPLAYCNTDBG  = 1;
+ GAMESTARTCLOCK=GAMECLOCK;
+// REPLAYLOG[0] = stageReset() + REPLAYLOG[0];
+ REPLAYLOGDBG[0] = REPLAYLOG[0];
+	ff();
+} //
+
+function replayGameStart(){
+ var t=REPLAYLOG[0];
+ var tmp=t.split("\t");
+ currentStage=0;
+ 
+ PL1MODE    = 0;
+ PL1DEFAULT = 0;
+ PL1SCORE   = 0;
+ PL1LIFE    = STARTLIFE;
+ PL1COINS   = 0;
+ REPLAYMODE=true;
+ REPLAYCNT=1;
+ REPLAYCNTDBG=1;
+ GAMECLOCK=parseInt(tmp[1]);
+ GAMESTARTCLOCK=GAMECLOCK;
+ lostWorldRP=parseInt(tmp[2]);
+	stageChange(tmp[0]);
+	ff();
+} //
+
+
+function ff(){
+	try {
+		if(REPLAYMODE)return;
+		if(document.all)cpu.focus();
+		else
+		if(cpu.document.getElementById("focuslink"))
+				cpu.document.getElementById("focuslink").focus();
+	} catch (e) {
+		console.log(e);
+		console.trace();
+	}
+} //
+
+function setEffectVisibility(f){
+	NOEFFECT=!f;
+	cpu.NOEFFECT=!f;
+} //
+
+function gameover(f,mode,file){
+
+	cpu.location.replace("blank.html");
+	screen1.location.replace("blank.html");
+	screen2.location.replace("blank.html");
+	loader.location.replace("blank.html");
+
+	CPUOK=SCR1OK=SCR2OK=LOADEROK=false;
+
+	 retryFlag=false;
+	 warpFlag=false;
+	 warpNum=0;
+
+
+
+	if(lostWorld < getWorldNumber())lostWorld=getWorldNumber();
+
+	setCookie();
+
+
+	if(f==true)
+	setTimeout('screen1.location.replace("yokuyatta.html");',500);
+	else{
+	 if(mode=="replayCode")
+		setTimeout('screen1.location.replace("replayCode.html");',500);
+	 else
+	 if(mode=="file")
+		setTimeout('screen1.location.replace("'+file+'");',500);
+	 else
+		setTimeout('screen1.location.replace("gameover.html");',500);
+	}
+	return -1;
+} //
+
+function stageClear(PL,num){
+
+ retryFlag=false;
+ warpFlag=false;
+ warpNum=0;
+ currentStage++;
+// currentStage=num+1;
+//	alert(currentStage);
+ if(currentStage < stagesrc.length)stageChange(stagesrc[currentStage]);
+ else {
+//	PL.score+=PL.life*8192;
+	URASTAGE=true;
+	currentStage--;
+	gameover(true);
+ }
+
+ return -1;
+} //
+
+function playerDies(obj){
+//	stageReset();
+ GAMETIMER=DEFAULTGAMETIMER;
+ warpFlag=false;
+ warpNum=0;
+ 
+ // 死亡時途中復帰の簡易対応
+ // 縦スクロール面・分岐面は未対応
+  var plx1=loader.PLSTART_X;
+  var plx2=loader.PLSTART_X2;
+ if(plx2>0 && plx1!=plx2){
+  if( ((obj.XX > plx2) && (plx1 < plx2)) ||	// 右スクロール
+      ((obj.XX < plx2) && (plx1 > plx2))		// 左スクロール
+      )retryFlag=true;
+ }
+
+
+ if(obj.life>0)
+	stageChange(stagesrc[currentStage]);
+ else
+	gameover();
+ return -1;
+} //
+
+function stageReset(){
+	if(currentStage > stagesrc.length)
+		currentStage=stagesrc.length-1;
+	stageChange(stagesrc[currentStage]);
+	return stagesrc[currentStage];
+} //
+
+function backToLastStage(f){
+	if(f==1)warpFlag=true;
+	stageChange(lastStage[1]);
+} //
+
+var loadFlag=false;
+function stageChange(src){
+//	if(loadFlag)return;
+//	loadFlag=true;
+	cpu.CPULOCK=true;
+	lastStage.unshift(src);
+	cpu.location.replace("blank.html");
+	screen1.location.replace("blank.html");
+	screen2.location.replace("blank.html");
+
+//	GAMETIMER=DEFAULTGAMETIMER;
+	CPUOK=SCR1OK=SCR2OK=LOADEROK=false;
+
+	loader.location.replace(src);
+ return -1;
+} //
+
+
+function getWorldNumber(){
+	var vc=currentStage-1;
+	if(vc<0)return 0;
+	return parseInt(vc/4)+1;
+} //
+
+function getAreaNumber(){
+	var vc=currentStage-1;
+	if(vc<0)return 0;
+	return ((vc%4)+1);
+} //
+
+function setWorldNumber(n){ //WARP
+	var w=n*4;
+	if(w>stagesrc.length+3)w=getWorldNumber()*4;
+	currentStage=w-3;
+	retryFlag=false;
+	warpFlag=false;
+	stageReset();
+} //
+
+
+
+
+
+
+
+
+
+
+
+
+var lastInput=0,lastClock=0;
+function recordInput(str,tm){
+	var s = Number(str);
+		REPLAYLOG[REPLAYCNT++]=str;
+		lastInput=s;
+		lastClock=tm;
+} //
+
+function replayInput(str,tm){
+  if(!REPLAYLOG[REPLAYCNT]){
+	replayGameStop();
+	return str;
+  }
+  var t=REPLAYLOG[REPLAYCNT++];
+ return (t).toString();
+} //
+
+
+function getReplayCode(){
+	if(REPLAYLOG[0].indexOf("info") < 0)
+			REPLAYLOG[0] += "\tinfo\t" + REPLAYCNT +
+							"\t" + PL1SCORE +
+							"\t" + PL1LIFE +
+							"\t" + PL1COINS +
+							"\t" + currentStage +
+							"";
+    var tmp = new Array() , i = 0 , chk1 = REPLAYLOG[1], chk2 = 0, cnt = 0;
+//	for(i=1;i<REPLAYCNT;i++)tmp[i] = String.fromCharCode(REPLAYLOG[i] + 0x3b);
+	for(;i<REPLAYCNT;i++){
+		chk2 = REPLAYLOG[i+1];
+		if(chk1 != chk2 || cnt >= 255){
+			if(cnt > 1)
+				tmp[i] = String.fromCharCode(chk1 + 0x3b) + cnt;
+			else
+				tmp[i] = String.fromCharCode(chk1 + 0x3b);
+			cnt=1;
+			chk1 = chk2;
+		}else
+			cnt++;
+	}
+	tmp[i] = String.fromCharCode(chk1 + 0x3b) + cnt;
+
+	var tmp2 = tmp.join(""),ret="";
+	for(i=0;i<tmp2.length;i+=80)ret += tmp2.substr(i,80) + "\n";
+	return REPLAYLOG[0].replace(/\t/g,"|")+",\n"+ret;
+} //
+
+
+function setReplayCode(code){
+	REPLAYLOG = new Array();
+	var dat = code.replace(/[\t\r\n ]/g,'').split(',');
+	REPLAYLOG[0] = dat[0].replace(/\|/g,"\t").replace(/\tinfo\t.+/,"");
+	var tmp = decompress(dat[1]);
+	for(var i=0;i<tmp.length;i++)REPLAYLOG[i+1]=tmp.charCodeAt(i) - 0x3b;
+} //
+/*
+var regArray = new Array();
+function compress(txt){
+	for(var i=0x40;i<0x80;i++){
+		if(!regArray[i])regArray[i] = new RegExp("(\\x" + i.toString(16) + "{3,256})","g");
+		txt = txt.replace(regArray[i],function(s,r){return s.charAt(0)+s.length});
+	}
+	return txt;
+} //
+*/
+function decompress(txt){
+	var tmp = new Array(256).join("#"),ch = new Array();
+	for(var i=0x40;i<0x80;i++)ch[i]=tmp.replace(/#/g,String.fromCharCode(i));
+
+	txt = txt.replace(/([\x40-\x80])([0-9]+)/g,
+				function(a,b,c){return ch[b.charCodeAt(0)].substring(0,c)} );
+	return txt;
+} //
+
+
+function replayGameStop(){
+	REPLAYMODE=false;
+	screen2.setButtonFace();
+} //
+
+
+//-->
+</script>
+<style type="text/css">
+iframe {
+	border: 0;
+	margin: 0;
+	padding: 0;
+}
+table.gameframe {
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+tr.head, tr.foot {
+	height: 32px;
+}
+tr.screen {
+}
+</style>
+</head>
+<body style="margin: 0;padding: 0; border: none; overflow: hidden;">
+<iframe style="position:absolute;"
+	width="0" height="0"
+	src="blank.html" name="cpu" border=0 frameborder=0 framespacing=0 scrolling="no">
+</iframe>
+<table class="gameframe" cellspacing=0 cellpadding=0 border=0>
+ <tr class="head">
+ 	<td>
+	 	<iframe
+ 			width="100%" height="32px"
+	 		src="blank.html" name="screen2" border=0 frameborder=0 framespacing=0 scrolling="no">
+ 		</iframe>
+ 	</td>
+ </tr>
+ <tr class="screen">
+	 <td>
+		<iframe
+	 		width="100%" height="100%"
+	 		src="blank.html" name="screen1" border=0 frameborder=0 framespacing=0 scrolling="no">
+ 		</iframe>
+	 </td>
+ </tr>
+ <tr class="foot">
+ 	<td>
+ 		<iframe
+	 		width="100%" height="32px"
+	 		src="blank.html" name="loader" border=0 frameborder=0 framespacing=0 scrolling="no">
+		</iframe>
+ 	</td>
+ </tr>
+</table>
+
+<script type="text/javascript">
+
+ onfocus=ff;
+ onmouseover=ff;
+ onmousdown=ff;
+ onkeydown=ff;
+
+
+onload=init;
+onunload=bye;
+
+</script>
+</body>
+</html>

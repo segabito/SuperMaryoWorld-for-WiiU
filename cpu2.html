@@ -1,0 +1,1469 @@
+<!-- 
+#  Javascript Virtual Machine
+#  Copyright 2004- Kunio Makimoto <kunio@makimo.to>
+#  
+#  http://makimo.to/
+# 
+-->
+<html>
+<head>
+ <title>29ch - メンテナンス中...</title>
+<meta http-equiv="Content-type" content="text/html; charset=Shift_JIS">
+<style type="text/css">
+<!--
+img {margin:0;padding:0;border:none;}
+body {margin:0;padding:0;border:0;}
+table,tr,td{table-layout:fixed;border-collapse:collapce;empty-cells:show;word-break:break-all;margin:0;padding:0;border:none;overflow:hidden;}
+.bgblock{width:100%;height:100%;border:none;}
+-->
+</style>
+<script type="text/JavaScript">
+<!--
+var D=document,DA=false,DB=false,DG=false;
+var CPU = false;
+//<------DISP CONFIG----
+var SPRITES_MAX=1024;
+var SCREEN_X=512;
+var SCREEN_Y=448;
+
+var SCROLL_X_MAX=640*2;
+var SCROLL_X_MIN=0;
+var SCROLL_Y_MAX=480*2;
+var SCROLL_Y_MIN=-32*5;
+var WIN=self.window;
+var WIN2=self.window;
+var LOADER=self.window;
+var RATE_DRAW = 50;
+var RATE_CPU = 50;
+var BGBLOCKSIZE_X = 32;
+var BGBLOCKSIZE_Y = 32;
+var LEFTSCROLL =true;
+var RIGHTSCROLL=true;
+var UPSCROLL   =false;
+var DOWNSCROLL =false;
+var NOEFFECT = false;
+//------DISP CONFIG----->
+
+var GAMEMODE = "PLAY"; // PLAY REPLAY PAUSE AUTOPLAY
+var STAGEMODE = "FIELD"; // FIELD WATER
+
+var SCROLL_TOP=0;
+var SCROLL_LEFT=0;
+
+var PAD0=new gamePad();
+var PAD1=new gamePad();
+
+var PL1MODE    = "normal";
+var PL1DEFAULT = "normal";
+var PL1FIRE    = false;
+var PL1START_X = 32*2;
+var PL1START_Y = 0;
+var PL1START_HFACE = 1;
+var PL1START_ANIME = "";
+var PL1SCORE   = 0;
+var PL1LIFE    = 3;
+var PL1COINS   = 0;
+
+var CPULOCK=false;
+
+var GAMETIMER=0;
+var DEFAULTGAMETIMER=500;
+var GAMECLOCK=0;
+
+var CPUPAUSE=false;
+var PLAYERPAUSE=false;
+
+//var IMAGEBASEURL="http://localhost/html/maryo/img/";
+var IMAGEBASEURL="http://www.janis.or.jp/users/segabito/";
+
+
+var WARPCNT=0;
+var WARPPTR=0;
+var WARPTO="http://www.janis.or.jp/users/segabito/";
+var BOSS=null;
+var AXE=null;
+
+var UNDEF_GIF=IMAGEBASEURL+"undefined.gif";
+var UNDEF_IMG=new Image();
+UNDEF_IMG.src=UNDEF_GIF;
+
+var BLOCK1COLOR="brown";
+
+
+var TOGECNT=0;
+var TOGECNTMAX=4;
+
+var FISHCNT=0; // 魚・イカが画面内に同時に出現する数の制限
+var FISHCNTMAX=4;
+
+var CANNONBALLCNT=0;
+var CANNONBALLCNTMAX=4;
+
+var FIREBARSPEED=2.5;
+var LIFTWIDTH=3;
+
+var GOALFLAG;
+var GOALFLAG2;
+
+
+var STAGENUM=0;
+// Mozillaでテーブル高さがboarder分増えてしまうための補正
+var MozillaTableBoarderFix=0;
+
+var DEBUGMODE=false;
+if( (location+"").indexOf("http")< 0 )DEBUGMODE=true;
+
+if(D.all){
+	DA=D.all;
+	DGI = new Function("return WIN.document.all[arguments[0]]");
+	DGT = new Function("return WIN.document.all.tags(arguments[0])");
+
+	pxTop  = 'posTop';
+	pxLeft = 'posLeft';
+
+	oton = 'parentElement';
+
+	if(D.getElementById)
+		DG = D.getElementById;
+	if((navigator.userAgent+'').match(/opera/i))DA=false;
+
+}else
+if(D.getElementById){
+	DG = D.getElementById;
+	DGI = new Function("return WIN.document.getElementById(arguments[0])");
+	DGT = new Function("return WIN.document.getElementsByTagName(arguments[0])");
+	pxTop  = 'top';
+	pxLeft = 'left';
+	
+	oton = 'parentNode';
+} //
+
+
+
+// u:\www\index.html
+
+
+var stage = Array(
+"                                           4",
+"    31                                     4",
+"                      23                   4",
+"                                           4",
+"                                           4",
+"                                           4",
+"                         6 6 6 6           4",
+"                                      f288 4",
+"                              82       a b 4",
+"              f288     121 1 1 1 1     8 9 4",
+"               a b                     8 9 4",
+"             4 8 9                     8 9 4",
+"    c8     4 4 8 9                8 8  8 9 4",
+" 2 2 2 2 2 2 2 8 9 2 2 2 2 2 2 2 2 2 2 8 9 2",
+"");
+var charTable=Array('',
+'<img src="%BASE%img/block1.gif" class="bgblock">',
+'<img src="%BASE%img/block2.gif" class="bgblock">',
+'<img src="%BASE%img/block3.gif" class="bgblock">',
+'<img src="%BASE%img/block4.gif" class="bgblock">',
+'<img src="%BASE%img/block5.gif" class="bgblock">',
+'<img src="%BASE%img/coin.gif" class="bgblock">',
+'',
+'<img src="%BASE%img/dokanVL.gif" class="bgblock">',
+'<img src="%BASE%img/dokanVR.gif" class="bgblock">',
+'<img src="%BASE%img/dokanVHL.gif" class="bgblock">',
+'<img src="%BASE%img/dokanVHR.gif" class="bgblock">',
+'','','','',
+'<img src="%BASE%img/hatena.gif" class="bgblock">',
+'<img src="%BASE%img/hatena.gif" class="bgblock">',
+'<img src="%BASE%img/hatena.gif" class="bgblock">',
+'<img src="%BASE%img/hatena.gif" class="bgblock">',
+'','','','','','','','','','','',
+'<img src="%BASE%img/block1.gif" class="bgblock">',
+'<img src="%BASE%img/block1.gif" class="bgblock">',
+'<img src="%BASE%img/block1.gif" class="bgblock">',
+'<img src="%BASE%img/block1.gif" class="bgblock">','',
+'','','','','','','','','','','','','',''
+);
+
+ for(var i=0;i<stage.length;i++)stage[i]=stage[i].replace(/[ ]/gi,"0").replace(/[^0-9^a-f]/gi,"");
+ for(var i=0;i<charTable.length;i++)charTable[i]=charTable[i].replace("%BASE%",IMAGEBASEURL);
+
+if(window.name == "cpu"){
+	stage	   = parent.stage;
+	charTable  = parent.charTable;
+	PL1START_X = parent.PL1START_X;
+	PL1START_Y = parent.PL1START_Y;
+}
+//--------------------------------------
+
+
+function gamePad(){
+	this.x=0;
+	this.y=0;
+	this.buttons=Array(0,0);
+	this.getPadString=getPadString;
+	this.setPadString=setPadString;
+} //
+function getPadString(format){
+	var t="";
+	var tx=this.x+2;
+	var ty=this.y+2;
+	t=tx+""+ty;
+	for(var i=0;i<this.buttons.length;i++)
+		t+=(this.buttons[i]+2).toString();
+  return t;
+} //
+function setPadString(s,format){
+ var str=s.toString();
+
+	for(var i=2;i<str.length;i++)
+		this.buttons[i-2]=parseInt(str.charAt(i))-2;
+	this.x=parseInt(str.charAt(0))-2;
+	this.y=parseInt(str.charAt(1))-2;
+
+ return this.getPadString(format);
+} //
+
+
+
+
+function scrollBG(x,y){
+	if(WIN != window)return WIN.scrollBG(x,y);
+
+	if(x < 0)x=0;
+	else
+	if(x > SCROLL_X_MAX - SCREEN_X)
+			x=SCROLL_X_MAX-SCREEN_X;
+	if(y < 0 )y=0;
+	else
+	if(y > SCROLL_Y_MAX - SCREEN_Y)
+			y=SCROLL_Y_MAX-SCREEN_Y;
+
+	SCROLL_LEFT = x;
+	SCROLL_TOP  = y;
+} //
+
+function scrollBGApply(){
+	if(WIN != window)return WIN.scrollBGApply();
+	 var xx=SCROLL_LEFT * (dbWidth  / SCREEN_X);
+	 var yy=SCROLL_TOP  * (dbHeight / SCREEN_Y);
+	 document.body.scrollLeft=xx;
+	 document.body.scrollTop =yy;
+} //
+
+var SPR;
+function createSpriteBody(){
+	var spriteHTML='<div style="position:absolute;visibility:hidden;filter:flipV(enabled=false) flipH(enabled=false) progid:DXImageTransform.Microsoft.Matrix(enabled=false,sizingmethod=\'auto expand\',filtertype=\'nearest\') Alpha(enabled=false)" name="spriteHTML" id="spriteHTML" alive="-1"></div>';
+	var tmp='';
+	for(var i=0;i<SPRITES_MAX;i++){
+		tmp+=spriteHTML;
+	}
+	WIN.document.write(tmp);
+	SPR=document.getElementsByName("spriteHTML");
+} // 
+
+var spriteCnt=0;
+var spriteFlags=Array();
+function getSpriteBody(){
+	if(WIN != window)return WIN.getSpriteBody();
+	
+	for(var i=0;i<SPRITES_MAX;i++){
+	  spriteCnt=(spriteCnt + 1) % SPRITES_MAX;
+	  if(spriteFlags[spriteCnt]!=1){
+			return document.getElementsByName("spriteHTML")[spriteCnt];
+		}
+	}
+	alert("Sprite error ");
+} //
+
+
+function createStage(dat,dat2,wx,wy){
+ var tbl='';
+ var dbw=dbWidth;
+ var dbh=dbHeight;
+ var tw=dbw / SCREEN_X * wx;
+ var th=dbh / SCREEN_Y * wy;
+ var twi=parseInt(tw);
+ var twf=tw-twi;
+ var thi=parseInt(th);
+ var thf=th-thi;
+ var colcnt=0;
+ var colcntMax=0;
+ var colMax=0;
+ var colPix=0;
+ var rowmax=0;
+
+  if(!document.all){
+	// Mozilla だと縦方向のborderが加算?される
+	thi+=MozillaTableBoarderFix;
+  }
+
+	 var thftmp=0;
+  for(var i=0;i<dat.length;i++){
+	var line=dat[i];
+	if(line==""){i--;break;}
+	line=line.replace(/[ ]/gi,"0").replace(/[^0-9^a-f]/gi,"");
+
+	 thitmp=thi;
+	 thftmp+=thf;
+	  if(thftmp>=1){ // 小数点以下誤差補正
+		thitmp+=1;
+		thftmp-=1;
+	  }
+	rowmax+=thitmp;
+	tbl+='<tr>';
+	colcnt=0;
+	
+	 var twftmp=0;
+	 colPix=0;
+	while(line!=""){colcnt++;
+	 var twitmp=twi;
+	 twftmp+=twf;
+	  if(twftmp>=1){ // 小数点以下誤差補正
+		twitmp+=1;
+		twftmp-=1;
+	  }
+	  colPix+=twitmp;
+	 var block=parseInt("0x"+line.substring(0,2));
+	 if(block<128){
+		tbl+='<td style="width:'+twitmp+';height:'+thitmp+'">'+
+			dat2[block]+
+		'</td>';
+	 }else{
+		tbl+='<td style="width:'+twitmp+';height:'+thitmp+'">'+
+			dat2[0]+
+		'</td>';
+	 }
+		line=line.substring(2);
+	}
+	tbl+='</tr>';
+	if(colMax<colPix){colMax=colPix;colcntMax=colcnt;}
+  }
+  // ちょっとだけ背景を上にずらすと、キャラが地面に立っているように見える
+  var m= dbh / dbHeight * 2 * -1;
+  tbl=
+  '<table style="position:absolute;table-layout:fixed;width:'+colMax+';hei ght:'+rowmax+';top:'+ m +'px;left:0px;z-index:100;margin:0;padding:0;" cellspacing=0 cellpadding=0 id="BGTABLE1" onclick="if(document.all)ff()" colcnt="'+ colcntMax +'">'
+  +tbl+
+  '</table>';
+  document.write(tbl);
+  SCROLL_X_MAX=colcntMax*wx;
+  SCROLL_Y_MAX=i*wy+wy;
+} //
+
+
+
+function createStageEnemies(dat,dat2,wx,wy){
+ 	var colcnt=0;
+ 	var en=Array();
+  for(var i=0;i<dat.length;i++){
+	var line=dat[i];
+	 colcnt=0;
+	while(line!=""){
+	 var block=parseInt("0x"+line.substring(0,2));
+	 if(block==0x6d){
+		GOALFLAG=new goalFlag(colcnt*wx,i*wy);
+	 }else
+	 if(block>=0xc0){
+		setXYpointObject(colcnt*wx,i*wy,0,-1);
+		en.push((colcnt+10000000)+"\t"+(i+10000000)+"\t"+block);
+	  }
+	 else
+	 if(block>=0x80){
+		setXYpointObject(colcnt*wx,i*wy,0);
+		en.push((colcnt+10000000)+"\t"+(i+10000000)+"\t"+block);
+	 }
+
+	 colcnt++;
+	 line=line.substring(2);
+	}
+  }
+  // キャラ作成をY座標順ではなくX座標順にする
+ en=en.sort();
+ for(var i=0;i<en.length;i++){
+	var tmp=en[i].split("\t");
+	var col=tmp[0]-10000000;
+	var row=tmp[1]-10000000;
+	var block=parseInt(tmp[2]);
+	if(block>=0xc0){
+	 var e=createEnemy(OTHERS ,col*wx,row*wy,block,"");
+	}else{
+		
+	 var e=createEnemy(ENEMIES,col*wx,row*wy,block,"");
+	 if(e.charBodyHeight % BGBLOCKSIZE_Y !=0)
+		 e.YY=e.YY+(BGBLOCKSIZE_Y - (e.charBodyHeight % BGBLOCKSIZE_Y));
+	}
+ }
+} //
+
+
+var IMGCACHE=	[];
+function createCacheImage(id,img){ // 相対URLの場合はcpu.htmlが基準となるので注意
+ var cc=document.getElementById('cacheImageArea');
+
+ var imgs=arguments;
+ if(IMGCACHE[id]!="1")return;
+ IMGCACHE[id]="1";
+ for(var i=1;i<imgs.length;i++){
+	var idi=id+i.toString();
+	IMGCACHE[idi] = new Image();
+	IMGCACHE[idi].src=IMAGEBASEURL+imgs[i];
+ }
+} //
+
+
+function getXYpointObject(x,y){//dat,wx,wy){
+ if(y<0 || x<0)return 0;
+ 
+ var wx=BGBLOCKSIZE_X;
+ var wy=BGBLOCKSIZE_Y;
+ var dat=WIN.stage;
+ 
+ var xx=parseInt(x/wx);
+ var yy=parseInt(y/wy);
+
+ if(!dat[yy])return -1; 
+
+ var line=dat[yy];
+
+ if(line.length<xx*2+2)return 0;
+
+ return parseInt("0x"+line.substring( (xx*2),(xx*2)+2));
+	
+} //
+
+function setXYpointObject(x,y,num,option){
+ var wx=BGBLOCKSIZE_X;
+ var wy=BGBLOCKSIZE_Y;
+ var dat=WIN.stage;
+ if(num < 128){
+  if(y<0 || x<0)return 0;
+  var xx=parseInt(x/wx);
+  var yy=parseInt(y/wy);
+
+  var hx=(0x100 + num).toString(16).substring(1);
+  var tb   = DGI('BGTABLE1');
+  var colcnt = parseInt(tb.colcnt);
+
+ 
+ if(option!=-1){ // -1の場合はグラフィックの変更はしない
+  if(DA){
+	var td=TD[colcnt*yy+xx];
+    if(num==0){
+	if(td.firstChild)td.firstChild.style.visibility="hidden";
+	}
+    else
+    td.innerHTML=WIN.charTable[num];
+  }else{
+   var tbtr = tb.getElementsByTagName('TR')[yy];
+    if(!tbtr)return -1;
+   var tbtrtd= tbtr.getElementsByTagName('TD')[xx];
+    if(!tbtrtd)return -1;
+    tbtrtd.innerHTML=WIN.charTable[num];
+  }
+ }
+  dat[yy]=dat[yy].substring(0,xx*2)+hx+ dat[yy].substring(xx*2+2);
+//  alert(dat[yy]);
+ }else
+	createEnemy(ENEMIES,x,y,num,option);
+
+}
+
+function checkWallBlock(n){
+ if((n<=0) ||
+    (n>=0x50 && n<=0x5f) ||
+    (n>=0x30 && n<=0x3f) ||
+    (n>=0x80))	return -1;
+  switch(n){
+	case 5:case 0x60:case 0x61:case 0x62:
+	 return -1;
+	case 6:case 0x6d:case 0x6e:case 0x6f:case 0x7f:
+	 return -2;
+	case 0x6c:
+	 return -3;
+  }
+ return 1;
+} //
+
+function checkWaterStream(n){
+  if(n>=0x60 && n<=0x62)return (n-0x5f);
+ return -1;
+} //
+
+function checkFloorBlock(n){
+ if((n<=0) ||
+    (n>=0x50 && n<=0x5f) ||
+    (n>=0x30 && n<=0x3f) ||
+    (n>=0x7a && n<=0x7f) ||
+    (n>=0x80))	return -1;
+   if(n>=0x7a && n<=0x7f)return -2;
+  switch(n){
+	case 6:case 0x60:case 0x61:case 0x62:
+	 return -1;
+	case 0x6d:case 0x6e:case 0x6f:
+	 return -2;
+	case 0x6c:
+	 return -1;
+  }
+ return 1;
+} //
+function checkUpperBlock(n){
+	
+ if((n<=0) ||
+    (n>=0x50 && n<=0x5f) ||
+    (n>=0x80))	return -1;
+
+  switch(n){
+	case 5:	case 6:
+	case 0x6d:case 0x6e:case 0x6f:
+	case 0x60:case 0x61:case 0x62:
+	 return -1;
+	case 0x6c:
+	 return -1;
+  }
+ return 1;
+} //
+
+function checkCoin(n){
+  switch(n){
+	case 6:
+	return 1;
+  }
+ return -1;
+}//
+
+function checkEventBlock(n){
+	if(n>=0x7a &&n<=0x7e)return 1;
+	if(n>=0x6e &&n<=0x6f)return 1;
+	if(n==0x7f)return 99;
+	return -1;
+} //
+function checkWarpBlock(n){
+	
+} //
+
+function upperBlock(block,x,y,player){
+var dd;
+ var xx=parseInt(x/BGBLOCKSIZE_X)*BGBLOCKSIZE_X;
+ var yy=parseInt(y/BGBLOCKSIZE_Y)*BGBLOCKSIZE_Y;
+
+ switch(block%10){
+	case 1:case 2:
+	case 0x10:	case 0x20:	case 0x30:
+	case 0x11:	case 0x21:	case 0x31:
+	case 0x12:	case 0x22:	case 0x32:
+	case 0x13:	case 0x23:	case 0x33:
+	case 0x14:	case 0x24:	case 0x34:
+	case 0x15:	case 0x25:	case 0x35:
+	 if( checkCoin( getXYpointObject(x,y-BGBLOCKSIZE_Y) ) > 0 ){
+		createEffect(x,y-BGBLOCKSIZE_Y,"COIN",player);
+		player.getItem("COIN");
+		setXYpointObject(x,y-BGBLOCKSIZE_Y,0);
+	 }
+ }
+ switch(block){
+	case 1:
+	case 2:
+		 dd=createItem(OTHERS,x,y,"BOUNCE",block,player);
+		 if(player.mode !="normal"){
+			dd.replaceItem=0;
+			player.getScore(50);
+			createEffect(x,y,"BROKEN",block,player);
+		 }
+	return 1;
+
+	case 0x10:	case 0x20:	case 0x30:
+	 dd=createItem(OTHERS,x,y,"BOUNCE",3,player);
+	 dd.replaceItem=3;
+	 createEffect(x,y,"COIN",player);
+	 player.getItem("COIN");
+	return 1;
+
+	case 0x11:	case 0x21:	case 0x31:
+	 dd=createItem(OTHERS,x,y,"BOUNCE",3,player);
+	 dd.replaceItem=3;
+	 if(player.mode=="normal")
+		createItem(OTHERS,x,y,"KINOKO",3,player);
+	 else	createItem(OTHERS,x,y,"FLOWER",3,player);
+	return 1;
+
+	case 0x12:	case 0x22:	case 0x32:
+	 dd=createItem(OTHERS,x,y,"BOUNCE",block,3,player);
+	 dd.replaceItem=3;
+	 createItem(OTHERS,x,y,"STAR",3,player);
+	return 1;
+
+	case 0x13:	case 0x23:	case 0x33:
+	 dd=createItem(OTHERS,x,y,"BOUNCE",3,block,player);
+	 dd.replaceItem=3;
+	 createItem(OTHERS,x,y,"1UP",3,player);
+	return 1;
+
+	case 0x14:	case 0x24:	case 0x34:
+	 dd=createItem(OTHERS,x,y,"BOUNCE",3,block,player);
+	 dd.replaceItem=3;
+	 createItem(OTHERS,x,y,"TSUTA",3,player);
+	return 1;
+
+	case 0x15:	case 0x25:	case 0x35:
+	 createItem(OTHERS,x,y,"10COIN",0x35,block,player)
+	 createEffect(x,y,"COIN",player);
+	 dd=createItem(OTHERS,x,y,"BOUNCE",block,player);
+	 setXYpointObject(x,y,5,-1);
+	 player.getItem("COIN");
+	return 1;
+
+ }
+} //
+
+function basicCollision(x,y,w,h,xx,yy,ww,hh){
+ if(x+w < xx)return -1;
+ if(y+h < yy)return -1;
+ if(x   > xx+ww  ) return -1;
+ if(y   > yy+hh ) return -1;
+	return 1;
+} //
+
+function basicCollisionB(A,B){
+ if(A.XX+A.charBodyWidth  < B.XX ) return -1;
+ if(A.YY+A.charBodyHeight < B.YY ) return -1;
+ if(A.XX > B.XX+B.charBodyWidth  ) return -1;
+ if(A.YY > B.YY+B.charBodyHeight ) return -1;
+	return 1;
+
+} //
+
+function basicCollisionC(x,y,w,h,B){
+ if(x+w  < B.XX ) return -1;
+ if(y+h  < B.YY ) return -1;
+ if(x    > B.XX+B.charBodyWidth  ) return -1;
+ if(y    > B.YY+B.charBodyHeight ) return -1;
+	return 1;
+
+} //
+
+function isScreen(x,y,w,h){
+ return basicCollision(
+		WIN.SCROLL_LEFT - SCREEN_X *.125,
+		WIN.SCROLL_TOP  - SCREEN_Y *.125,
+		SCREEN_X*1.25 , SCREEN_Y*1.25 ,
+		x,y,w,h
+	);
+} //
+
+function updateScoreBoard(PL){
+ if(WIN2 != window && parent.SCR2OK==true)WIN2.updateScoreBoard(PL);
+} //
+
+
+function getPlayerObject(n){
+	return P1;
+} //
+function getEffectGroup(n){
+	return EFFECTS;
+} //
+function getOthersGroup(n){
+	return OTHERS;
+} //
+function getEnemyGroup(n){
+	return ENEMIES;
+} //
+
+function getWorldNumber(){
+ if(WIN == window)return 1;
+ return parent.getWorldNumber();
+} //
+
+function getAreaNumber(){
+ if(WIN == window)return 1;
+ return parent.getAreaNumber();
+} //
+
+function callEffect(etype,x,y,option,obj){
+ return EFFECTS.call(etype,x,y,option,obj);
+} //
+
+
+//------------------------------------------------
+//----------------SPRITE--------------------------
+//------------------------------------------------
+
+function setSpriteVisibility(v,flag){
+ if(flag && this.child)
+	this.child.setVisibility(v,flag);
+ if(this.visible!=v){
+		this.Body.style.visibility=(v)?"visible":"hidden";
+		this.visible=v;
+ }
+} //
+
+
+function moveSpriteTo(xx,yy,flag){//return;
+	 var oldx=this.x;
+	 var oldy=this.y;
+	 if(this.x!=xx){
+	  this.x=xx;
+	  this.Body.style[pxLeft] = dbWidth  / SCREEN_X * xx;
+	 }
+	 if(this.y!=yy){
+	  this.y=yy;
+	  this.Body.style[pxTop]  = dbHeight / SCREEN_Y * yy;
+	 }
+
+	if(flag && this.child)
+		this.child.moveBy(this.x-oldx , this.y-oldy , flag);
+} // 
+
+function moveSpriteBy(xx,yy,flag){
+	this.moveTo(xx+this.x , yy+this.y , flag);
+} //
+
+function setSpriteZPosition(zz , flag){
+	if(this.z!=zz)this.Body.style.zIndex=zz;
+	this.z=zz;
+	if(flag && this.child)
+		this.child.setZPosition(zz,flag);
+} //
+
+function setSpriteBitmap(src,ww,hh,f){
+	if(f==true){this.bitmap="";}
+	if(this.bitmap==src )return;
+
+	if(this.objType=="IMAGE"){
+	  this.imgTag.src=IMAGEBASEURL+src;
+	}
+	else{
+	  this.Body.innerHTML='<IMG src="'+IMAGEBASEURL+src+'" style="WIDTH:100%;HEIGHT:100%;BORDER:NONE" onerror="this.src=UNDEF_IMG.src">';	
+	  this.objType="IMAGE";
+	  this.imgTag=this.Body.firstChild;
+	  this.html=this.Body.innerHTML;
+	}
+
+	this.bitmap=src;
+	
+	if(ww>0 && hh>0)
+		this.setSize(ww,hh);
+} //
+
+function setSpriteHTML(html,ww,hh){
+	if(this.html==html)return;
+
+
+	this.Body.innerHTML=html;
+	this.bitmap=null;
+	this.imgTag=null;
+	this.html=html;
+	this.objType="HTML";
+
+	if(ww>0 && hh>0)
+		this.setSize(ww,hh);
+} //
+
+
+function setSpriteSize(ww,hh){
+	var obj=this.Body;
+	if(this.width !=ww)obj.style.width  = (dbWidth  / SCREEN_X * ww);
+	if(this.height!=hh)obj.style.height = (dbHeight / SCREEN_Y * hh);
+	this.width=ww;
+	this.height=hh;
+} //
+
+function setSpriteFlipV(f){//f=(f)?"true":"false";
+ with(this){
+	if(DA){
+		if(flipV!=f){
+			flipV=f;
+			Body.filters["flipv"].enabled=f;
+		}
+	}
+ }
+} //
+
+function setSpriteFlipH(f){//f=(f)?"true":"false";
+ with(this){
+	if(DA){
+		if(flipH!=f){
+			flipH=f;
+			Body.filters["fliph"].enabled=f;
+		}
+	}
+ }
+} //
+
+function setSpriteOpacity(o){
+	if(o<0 || o>100)return;
+ with(this){if(opacity==o)return;
+	if(DA){
+		if(o >= 100){
+			Body.filters["alpha"].enabled=false;
+			opacity=100;
+			return;
+		}else
+		 if(opacity!=o){
+			if(Body.filters["alpha"].enabled!=true)
+				Body.filters["alpha"].enabled=true;
+			Body.filters["alpha"].opacity=o;
+		 }
+
+	}else{
+		o=o/100;
+			Body.style.MozOpacity=o;
+			Body.style.opacity=o;
+	}
+	opacity=o;
+ }
+} //
+
+function rotateSpriteTo(rt){
+ with(this){
+  if(!DA)return;
+  if(rt==rotate)return;
+  if(rt%360==0){
+   Body.filters["DXImageTransform.Microsoft.Matrix"].enabled=false;
+   return;
+  }
+  if(DA){
+    var matrix=Body.filters.item('DXImageTransform.Microsoft.Matrix');
+	if(!matrix.enabled)matrix.enabled=true;
+   var r = Math.PI * 2/360 * rt;
+   var cs=Math.cos(r);
+   var sn=Math.sin(r);
+    rotate=rt;
+    matrix.M11= cs;	matrix.M12=-sn;
+    matrix.M21= sn;	matrix.M22= cs;
+  }else{
+  }
+ }
+} //
+
+function rotateSpriteBy(rt){
+  this.rotateTo(this.rotate+rt);
+} //
+
+function updateSprite(){
+ with(this){
+	
+	setZPosition(z);
+	moveTo(x,y);
+
+	setFlipV(flipV);
+	setFlipV(flipH);
+	setOpacity(opacity);
+
+	setVisibility(this.visible,false);
+ }
+} // 
+
+function resetSprite(){
+ with(this){
+	setZPosition(1);
+	setFlipV(false);
+	setFlipV(false);
+	setOpacity(100);
+	setVisibility(false,false);
+	this.html="";
+	Body.innerHTML="";
+	bitmap="";
+	imgTag=null;
+	objType="";
+	return 0;
+ }
+} // 
+
+function releaseSprite(flag){
+ with(this){
+	setVisibility(false,flag);
+	setFlipV(false,flag);
+	setFlipH(false,flag);
+	setOpacity(100,flag);
+	imgTag=null;
+	objType="";
+	this.html="";
+
+	Body.alive=-1;
+	alive=-1;
+	return -1;
+ }
+} //
+
+function sprite(name){
+	this.x=0;
+	this.y=0;
+	this.z=0;
+	this.rotate=0;
+	this.flipV=false;
+	this.flipH=false;
+	this.opacity=100; // 0 ～ 100
+	this.visible=false;
+	this.alive=1;
+	this.width=0;
+	this.height=0;
+
+
+	 this.moveSpriteTo	 = moveSpriteTo;
+		 this.moveTo	 = moveSpriteTo;
+	 this.moveSpriteBy	 = moveSpriteBy;
+		 this.moveBy	 = moveSpriteBy;
+
+	 this.setSpriteVisibility = setSpriteVisibility;
+		this.setVisibility= setSpriteVisibility;
+	 this.setSpriteZPosition  = setSpriteZPosition;
+		this.setZPosition = setSpriteZPosition;
+	 this.setSpriteBitmap	 = setSpriteBitmap;
+		this.setBitmap	 = setSpriteBitmap;
+	 this.setSpriteHTML	 = setSpriteHTML;
+		this.setHTML	 = setSpriteHTML;
+	 this.setSpriteSize	 = setSpriteSize;
+		this.setSize	 = setSpriteSize;
+	 this.setSpriteFlipV	 = setSpriteFlipV;
+		this.setFlipV	 = setSpriteFlipV;
+	 this.setSpriteFlipH	 = setSpriteFlipH;
+		this.setFlipH	 = setSpriteFlipH;
+	 this.setSpriteOpacity	 = setSpriteOpacity;
+		this.setOpacity	 = setSpriteOpacity;
+	 this.rotateSpriteTo	 = rotateSpriteTo;
+		this.rotateTo	 = rotateSpriteTo;
+	 this.rotateSpriteBy	 = rotateSpriteBy;
+		this.rotateBy	 = rotateSpriteBy;
+
+	 this.update		 = updateSprite;
+	 this.kill		 = releaseSprite;
+	 this.reset		 = resetSprite;
+
+	this.Body=getSpriteBody();
+	this.Body.alive="1";
+	this.bitmap=UNDEF_GIF;
+	this.imgTag=this.Body.firstChild;
+
+	this.name=(name)?name : "sprite"+parseInt(Math.random()*10000);
+	this.objType="";//IMAGE"; // TEXT HTML vector polygon circle
+	this.html=this.Body.innerHTML;
+	
+	this.parent=null;
+	this.child=null;
+
+
+} //
+
+
+
+//-------------------------
+
+// EVENTS--------------------
+lastkey=0;
+ function kDown(e){
+  var k;
+  var srcElement;
+  var tagName;
+  var shiftKey=false;
+  var altKey=false;
+  var ctrlKey=false;
+ if(DA){
+	k=event.keyCode;
+	srcElement=event.srcElement;
+	tagName=event.srcElement.tagName;
+	shiftKey= event.shiftKey;
+	altKey  = event.altKey;
+	ctrlKey = event.ctrlKey;
+ }else{
+	k=e.keyCode;
+	srcElement=e.target;
+	tagName=srcElement.nodeName;
+	shiftKey= e.shiftKey;
+	altKey  = e.altKey;
+	ctrlKey = e.ctrlKey;
+
+ }
+
+
+ if(tagName=="INPUT")return;
+ if(tagName=="TEXTAREA")return;
+
+ if(lastkey==k)return false;
+ lastkey=k;
+  switch (k){
+	case 17: // CTRL
+	case 90: // Z
+		PAD1.buttons[0]=1;
+	break;
+	case 16: // SHIFT
+	case 32: // SPACE
+	case 88: // X
+		PAD1.buttons[1]=1;
+	break;
+	case 37: //←
+		PAD1.x=-1;
+		return false;
+	break;
+	case 38: //↑
+		PAD1.y=-1;
+		return false;
+	break;
+	case 39: //→
+		PAD1.x= 1;
+		return false;
+	break;
+	case 40: //↓
+		PAD1.y= 1;
+		return false;
+	break;
+  }
+ } // end kDown
+
+ function kUp(e){
+  var k;
+  var srcElement;
+  var tagName;
+  var shiftKey=false;
+  var altKey=false;
+  var ctrlKey=false;
+ if(DA){
+	k=event.keyCode;
+	srcElement=event.srcElement;
+	tagName=event.srcElement.tagName;
+	shiftKey= event.shiftKey;
+	altKey  = event.altKey;
+	ctrlKey = event.ctrlKey;
+ }else{
+	k=e.keyCode;
+	srcElement=e.target;
+	tagName=srcElement.nodeName;
+	shiftKey= e.shiftKey;
+	altKey  = e.altKey;
+	ctrlKey = e.ctrlKey;
+
+ }
+
+ if(tagName=="INPUT")return;
+ if(tagName=="TEXTAREA")return;
+ 
+	if(lastkey==k)lastkey=0;
+  switch (k){
+	case 17: // CTRL
+	case 90: // Z
+		PAD1.buttons[0]=0;
+	break;
+	case 16: // SHIFT
+	case 32: // SPACE
+	case 88: // X
+		PAD1.buttons[1]=0;
+	break;
+	case 37: //←
+		PAD1.x=0;
+	break;
+	case 38: //↑
+		PAD1.y=0;
+	break;
+	case 39: //→
+		PAD1.x=0;
+	break;
+	case 40: //↓
+		PAD1.y=0;
+	break;
+  }
+ } // end kUp
+
+// EVENTS-------------------->
+  var cpuTM;
+  var XX=64;
+  var YY=0;
+  var XX2=0;
+  var YY2=0;
+ function cpuTimer(){
+	if(CPUPAUSE || CPULOCK)return;
+	setTimeout('cpuTimer2();',0);
+ }
+ function cpuTimer2(){
+
+	if(CPUPAUSE || CPULOCK)return;
+	CPULOCK=true;
+
+
+	if(P1.animateFlag){
+		P1.specialAction();
+		EFFECTS.action();
+		CPULOCK=false;
+		return;
+	}
+
+	GAMECLOCK++;
+
+	var padstr=PAD1.getPadString("DIGIT");
+	if(WIN != window){
+		LOADER.onCPUTimer(window,P1,GAMETIMER);
+	 if(parent.REPLAYMODE == true){
+		padstr = parent.replayInput(padstr,GAMECLOCK);
+	 }else{
+		parent.recordInput(padstr,GAMECLOCK);
+	 }
+	}
+	PAD1.setPadString(padstr);
+	PAD0.setPadString(padstr);
+
+	if(GAMETIMER != 0){
+	 if(GAMECLOCK % 30 == 0){
+		GAMETIMER--;
+		updateScoreBoard(P1);
+		if( GAMETIMER == 0 )P1.setMode("DIE",true);
+
+	 }
+	}
+	
+
+	 groupCollision(P1,ENEMIES);
+	P1.action();
+	OTHERS.action();
+	ENEMIES.action();
+	EFFECTS.action();
+	 groupCollision(P1,OTHERS);
+
+	
+	 var scrX=WIN.SCROLL_LEFT;
+	 var scrY=WIN.SCROLL_TOP;
+	var pxx =P1.XX-scrX;
+	var pyy =P1.YY-scrY;
+	var xmove=P1.xScroll;
+	var ymove=P1.yScroll;
+
+
+	 if((pxx > WIN.SCREEN_X *.4 &&  xmove > 0 && RIGHTSCROLL) ||
+	    (pxx < WIN.SCREEN_X *.6 &&  xmove < 0 && LEFTSCROLL))
+		scrX+=xmove;
+	 if((pyy > WIN.SCREEN_Y *.4 &&  ymove > 0 && DOWNSCROLL) ||
+	    (pyy < WIN.SCREEN_Y *.5 &&  ymove < 0 && UPSCROLL  ))
+		scrY+=ymove;
+
+	scrollBG(scrX,scrY);
+
+	CPULOCK=false;
+ } //
+ 
+  var drawTM;
+  var drawCnt=0;
+ function drawTimer(){//return;
+	if(!CPULOCK && !CPUPAUSE){
+
+	drawCnt++;
+	P1.show();
+	OTHERS.show();
+	ENEMIES.show();
+	EFFECTS.show(); // 軽くするために描画回数を減らす
+
+ if(DEBUGMODE){
+	XX2=parseInt((P1.XX + WIN.BGBLOCKSIZE_X/2) / WIN.BGBLOCKSIZE_X) * WIN.BGBLOCKSIZE_X;
+	YY2=parseInt((P1.YY + WIN.BGBLOCKSIZE_Y/2) / WIN.BGBLOCKSIZE_Y) * WIN.BGBLOCKSIZE_Y;
+	OBJ2.moveTo(XX2,YY2,true);
+ }
+
+	scrollBGApply();
+
+
+   }
+
+	if(WIN == window)drawTM = setTimeout('drawTimer()',RATE_DRAW);
+ } //
+
+function stageClear(){var r=0;CPULOCK=true;clearInterval(cpuTM);
+	if(WIN != window)r = parent.stageClear(getPlayerObject(),STAGENUM);
+	if(r<0)return;
+} //
+function playerDies(){var r=0;CPULOCK=true;clearInterval(cpuTM);
+	if(WIN != window)r = parent.playerDies(P1);
+	if(r<0)return;
+	location.reload();
+} //
+function gameover(){var r=0;
+CPULOCK=true;
+	if(WIN != window)r = parent.gameover(P1);
+	if(r<0)return;
+	location.reload();
+} //
+function stageChange(src){var r=0;clearInterval(cpuTM);
+CPULOCK=true;
+	if(WIN != window)r = parent.stageChange(src);
+	if(r<0)return;
+//	location.reload();
+} //
+
+// イベント属性ブロックに触れた時にコールされる
+function eventPointBlock(obj,block){var r=0;
+	if(block>=0x6e && block<=0x6f){
+		obj.setAnimate("FLAG");
+		return;
+	}
+	if(WIN != window)r = LOADER.eventPointBlock(obj,window,block);
+	if(r<0)return;
+} //
+
+// ブロックを叩いた時にコールされる
+function eventUpperBlock(obj,block){var r=0;
+	if(WIN != window)r = LOADER.eventUpperBlock(obj,window,block);
+	if(r<0)return;
+} //
+
+// ゴールポイントに触れた時にコールされる
+function eventGoalBlock(obj,block){var r=0;
+CPULOCK=true;
+	if(WIN != window)r = LOADER.eventGoalBlock(obj,window,block);
+	if(r<0)return;
+	if(warpid==0)	top.location.replace(WARPTO);
+	else		top.location.replace("http://www.yahoo.co.jp/");
+} //
+
+// ワープポイントに触れた時にコールされる
+function eventWarpBlock(obj,atype){var r=0;
+CPULOCK=true;
+	if(WIN != window)r = LOADER.eventWarpBlock(obj,window,atype,WARPPTR);
+	if(r<0)return;
+	if(WARPPTR==0)	top.location.replace(WARPTO);
+	else		top.location.replace("http://www.makimo.to/");
+} //
+
+// プレイヤーが落下した時に呼ばれる
+function eventPlayerDrop(obj){var r=0;
+CPULOCK=true;
+	if(WIN != window)r = LOADER.eventPlayerDrop(obj,window);
+	if(r<0)return;
+	r = obj.setMode("DIE",false);
+} //
+
+
+var rnd=parseInt(Math.random()*10000);
+var rndA=8*5+5;
+var rndC=1213;
+var rndM=0x10000;
+function RANDOMIZE(r){
+	rnd=r;
+} //
+function RND(x){
+	rnd=(rndA * rnd + rndC) % rndM;
+	return (rnd % x);
+} //
+
+function DBG(x,y,str){
+	createEffect(WIN.SCROLL_LEFT+x,WIN.SCROLL_TOP+y,"SCORE",'<span style="background:#333333;color:white;">'+str+"</span>");
+} //
+var cpuTM;
+ function startCPU(){
+	CPULOCK=false;
+	if(DA)
+		cpuTM = setInterval('cpuTimer2()',RATE_CPU);
+	else
+		cpuTM = setInterval('cpuTimer()',RATE_CPU);
+//	alert(2);
+ } //
+ function stopCPU(){
+	CPULOCK=true;
+//	clearInterval(cpuTM);
+ } //
+
+var TD=Array();
+ function init(){
+	
+	var td=DGI('BGTABLE1').getElementsByTagName('TD');
+	for(var i=0;i<td.length;i++)TD[i]=td[i];
+	
+	
+
+	document.onkeydown=kDown;
+	document.onkeyup  =kUp;
+
+
+	P1 = new player(PAD0,PL1START_X,PL1START_Y,PL1MODE);
+	scrollBG( P1.XX - WIN.SCREEN_X/2 , P1.YY - WIN.SCREEN_Y/2 );
+	P1.coins = PL1COINS;
+	P1.life  = PL1LIFE;
+	P1.score = PL1SCORE;
+	P1.hFace = PL1START_HFACE;
+	P1.ghost = false;
+	if(STAGEMODE =="WATER"){
+		P1.actionMode="swim";
+	}
+	if(PL1START_ANIME!=""){
+		P1.setAnimate(PL1START_ANIME);
+		P1.specialAction();
+	}
+	P1.o.setVisibility(true,false);
+	EFFECTS = new effectObjectGroup(P1,10);
+	updateScoreBoard(P1);
+
+	GOALFLAG  = DUMMYOBJ;
+	GOALFLAG2 = DUMMYOBJ;
+
+
+	createStageEnemies(WIN.stage,WIN.charTable,WIN.BGBLOCKSIZE_X,WIN.BGBLOCKSIZE_Y);
+
+
+
+	OBJ2=new sprite();
+	OBJ2.setBitmap("img/kage.gif",32,32);
+	OBJ2.moveTo(PL1START_X,PL1START_Y,false);
+	if(DEBUGMODE==true)OBJ2.setVisibility(true,false);
+	OBJ2.setZPosition(5);
+
+
+CPU=true;
+
+	if(WIN != window){
+	 // Mozillaで「戻る」で戻ったときに値がおかしい対策
+	 if(isNaN(PL1COINS))top.location.replace(top.location);
+
+	 parent.CPUOK=true;
+	 parent.loadFlag=false;
+	 onfocus = new Function("CPUPAUSE=false;// parent.RATE_DRAW=parent.RATE_DRAW_FAST;");
+	 onblur  = new Function("CPUPAUSE=true ;// parent.RATE_DRAW=parent.RATE_DRAW_SLOW;");
+	 parent.loader.cpuInit();
+	 parent.ff();
+	}
+
+CPULOCK=false;
+
+	if(WIN != window){
+	}
+	else{
+		drawTM = setTimeout('drawTimer()',RATE_CPU + 50);
+		startCPU();
+	}
+	
+ } // end init
+
+ function bye(){
+	CPU=false;
+//	onerror = new Function("return true;");
+	if(WIN != window){
+	 if(parent.loader.cpuBeforeUnload)parent.loader.cpuBeforeUnload();
+	 clearInterval(cpuTM);
+	 parent.PL1MODE = P1.mode;
+	 parent.PL1FIRE = P1.fire;
+	 parent.PL1SCORE = P1.score;
+	  if(parent.HIGHSCORE < P1.score)parent.HIGHSCORE=P1.score;
+	 parent.PL1LIFE =  P1.life;
+	 parent.PL1COINS = P1.coins;
+
+	 parent.GAMETIMER = GAMETIMER;
+	 parent.GAMECLOCK = GAMECLOCK;
+	}
+ } // end bye
+ 
+ onload = init;
+ onunload = bye;
+ onscroll= document.onselectstart=new Function("return false;");
+ 
+ function ff(){}
+//-->
+</script>
+</head>
+<body style="overflow:hidden;overflow-y:hidden;background:#99bbff;width:110%;height:110%;" scroll="no">
+<div style="background:#888888;color:white;font-size:150%;font-family:impact">
+makimo.to
+</div>
+
+<script type="text/javascript">
+<!--
+//	if(top != self ){
+	if(window.name == "cpu"){
+		parent.DBGCODE="";
+		WIN  = parent.screen1;
+		WIN2 = parent.screen2;
+		LOADER= parent.loader;
+		dbWidth  = WIN.dbWidth;
+		dbHeight = WIN.dbHeight;
+
+		SPRITES_MAX=WIN.SPRITES_MAX;
+		SCREEN_X  = WIN.SCREEN_X;
+		SCREEN_Y  = WIN.SCREEN_Y;
+		RATE_DRAW = WIN.RATE_DRAW;
+		RATE_CPU  = WIN.RATE_CPU;
+
+		SCROLL_X_MAX = WIN.SCROLL_X_MAX;
+		SCROLL_X_MIN = WIN.SCROLL_X_MIN;
+		SCROLL_Y_MAX = WIN.SCROLL_Y_MAX;
+		SCROLL_Y_MIN = WIN.SCROLL_Y_MIN;
+
+		BGBLOCKSIZE_X = WIN.BGBLOCKSIZE_X;
+		BGBLOCKSIZE_Y = WIN.BGBLOCKSIZE_Y;
+
+		STAGEMODE = WIN.STAGEMODE;
+
+		PL1MODE    = WIN.PL1MODE;
+		PL1DEFAULT = WIN.PL1DEFAULT;
+		PL1FIRE    = WIN.PL1FIRE;
+		PL1SCORE   = WIN.PL1SCORE;
+		PL1LIFE    = WIN.PL1LIFE;
+		PL1COINS   = WIN.PL1COINS;
+		
+		GAMETIMER  = WIN.GAMETIMER;
+		GAMECLOCK  = WIN.GAMECLOCK;
+		RANDOMIZE(GAMECLOCK);
+		
+		IMAGEBASEURL = WIN.IMAGEBASEURL;
+
+		LEFTSCROLL  = WIN.LEFTSCROLL;
+		RIGHTSCROLL = WIN.RIGHTSCROLL;
+		UPSCROLL    = WIN.UPSCROLL;
+		DOWNSCROLL  = WIN.DOWNSCROLL;
+
+		STAGEMODE   = LOADER.STAGEMODE;
+		GAMEMODE    = LOADER.GAMEMODE;
+
+		PL1START_X = WIN.PL1START_X;
+		PL1START_Y = WIN.PL1START_Y;
+		PL1START_HFACE=WIN.PL1START_HFACE;
+		PL1START_ANIME=WIN.PL1START_ANIME;
+
+
+		 MozillaTableBoarderFix=WIN.MozillaTableBoarderFix;
+
+
+		STAGENUM=parent.currentStage;
+		NOEFFECT = parent.NOEFFECT;
+
+		if(parent.loader.cpuBeforeInit)parent.loader.cpuBeforeInit();
+
+	}else{
+		DB=D.body;
+		dbWidth  =DB.clientWidth;
+		dbHeight =DB.clientHeight;
+		createSpriteBody();
+		createStage(stage,charTable,BGBLOCKSIZE_X,BGBLOCKSIZE_Y);
+	}
+
+
+//-->
+</script>
+<script src="http://www.janis.or.jp/users/segabito/player.js"></script>
+<script src="http://www.janis.or.jp/users/segabito/enemy.js"></script>
+<script src="http://www.janis.or.jp/users/segabito/others.js"></script>
+
+<script type="text/javascript">
+<!--
+window.offscreenBuffering = true;
+ if(WIN!=window)
+	if(!parent.loader.LOADER)location.replace('blank.html');
+	ENEMIES = new enemyGroup();
+	OTHERS  = new enemyGroup();
+//-->
+</script>
+
+<div id="BG1"></div>
+<div style="position:fixed;top:0;left:0;">
+<span id="dbg1" style="position:absolute;z-index:100;top:0;left:0;back ground:green;"></span>
+</div>
+<div>
+<a href="#" id="focuslink"></a>
+</div>
+
+<div style="position:absolute;width:80%;left:10%;top:30%;background:white;color:black;font-size:200%;">
+ただいまメンテナンス中です
+</div>
+
+<div style="display:none;">
+<div id="cacheImageArea" style="display:none;">
+</div>
+</div>
+
+<div style="display:none;">
+<img src="http://www.janis.or.jp/users/segabito/img/PLstandL.gif"><img src="http://www.janis.or.jp/users/segabito/img/PLstandR.gif"><img src="http://www.janis.or.jp/users/segabito/img/PLwalkL.gif"><img src="http://www.janis.or.jp/users/segabito/img/PLwalkR.gif"><img src="http://www.janis.or.jp/users/segabito/img/PLrunL.gif"><img src="http://www.janis.or.jp/users/segabito/img/PLrunR.gif">
+<img src="http://www.janis.or.jp/users/segabito/img/PLjumpL.gif"><img src="http://www.janis.or.jp/users/segabito/img/PLjumpR.gif"><img src="http://www.janis.or.jp/users/segabito/img/PLbrakeL.gif"><img src="http://www.janis.or.jp/users/segabito/img/PLbrakeR.gif"><img src="http://www.janis.or.jp/users/segabito/img/PLdieL.gif"><img src="http://www.janis.or.jp/users/segabito/img/PLdieR.gif"><img src="http://www.janis.or.jp/users/segabito/img/PLfireL.gif"><img src="http://www.janis.or.jp/users/segabito/img/PLfireR.gif"><img src="http://www.janis.or.jp/users/segabito/img/PLsitL.gif"><img src="http://www.janis.or.jp/users/segabito/img/PLsitR.gif"><img src="http://www.janis.or.jp/users/segabito/img/PLwall.gif"><img src="http://www.janis.or.jp/users/segabito/img/PLwallC.gif"><img src="http://www.janis.or.jp/users/segabito/img/PLswimL.gif"><img src="http://www.janis.or.jp/users/segabito/img/PLswimR.gif"><img src="http://www.janis.or.jp/users/segabito/img/PLswimBL.gif"><img src="http://www.janis.or.jp/users/segabito/img/PLswimBR.gif"><img src="http://www.janis.or.jp/users/segabito/img/PLbarL.gif"><img src="http://www.janis.or.jp/users/segabito/img/PLbarR.gif"><img src="http://www.janis.or.jp/users/segabito/img/fireball.gif">
+</div>
+
+</body>
+</html>

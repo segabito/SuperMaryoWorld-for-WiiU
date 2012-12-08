@@ -1,0 +1,536 @@
+<!-- 
+#  Javascript Virtual Machine
+#  Copyright 2004- Kunio Makimoto <kunio@makimo.to>
+#  
+#  http://makimo.to/
+# 
+-->
+<html>
+<head><title>Javascript Virtual Machine  Stageloader </title>
+<meta http-equiv="Content-type" content="text/html; charset=Shift_JIS">
+<style type="text/css">
+<!--
+ .bld{font-weight:bolder;background:#333333;color:yellow;}
+ .bld2{font-weight:bolder;background:#000000;color:white;}
+-->
+</style>
+<script>
+<!--
+var LOADER=false;
+var CPU,SCR1,SCR2;
+ var SCREEN_X=512;
+ var SCREEN_Y=448;
+
+	//スタート地点
+ var PLSTART_X  = 32*0;
+ var PLSTART_Y  = 32*0;
+	// 開始時の顔の向き (-1= 左 1=右)
+ var PLSTART_HFACE= 1; 
+	// 開始時のモーション "DOKAN_UP_OUT" "DOKAN_DOWN_OUT" "DOKAN_LEFT_OUT" "DOKAN_RIGHT_OUT"
+ var PLSTART_ANIME=""; 
+ var PLSTART_ANIME=""; 
+
+	//途中から復活の場合の開始地点
+ var PLSTART_X2 = -1;
+ var PLSTART_Y2 = -1;
+ var PLSTART_HFACE2= 1; // 顔の向き (-1= 左 1=右)
+ var PLSTART_ANIME2=""; 
+
+	// メイン画面の背景色
+ var SCREENBGCOLOR  = "skyblue";//"#333333";
+	// 上下枠の背景色
+ var SCREENBGCOLOR2 = "#000000";
+
+	//ボーナスゾーンなどでタイムを引き継ぐ場合は-1とする
+ var GAMETIMER=0;
+
+
+	// それぞれの方向へのスクロールを許可するかどうか
+ var LEFTSCROLL =true;
+ var RIGHTSCROLL=true;
+ var UPSCROLL   =false;
+ var DOWNSCROLL =false;
+
+	// 開始までのプレイヤー残数表示時間。
+	// ボーナスゾーンなど、すぐに開始したい場合はゼロにする
+ var firstWaitTime=1000;
+// firstWaitTime=0;
+	// 開始時の画面切替えエフェクト(IEのみ)
+ var stageInitTrans="progid:DXImageTransform.Microsoft.pixelate(duration=1,maxsquare=50)";
+
+ var STAGEMODE= "FIELD"; // FIELD WATER
+ var GAMEMODE = "PLAY"; // PLAY AUTOPLAY REPLAY
+
+ // border:Xpxと指定したブロックがあると、その太さだけ
+ // 縦方向に加算されてしまうので、引いておく。
+ // charTable内でborderを使用しないなら 0
+ var MozillaTableBoarderFix=0;
+
+ var infotable1='';
+ var infotable2='';
+
+if(parent){
+	CPU  = parent.cpu.window;
+	SCR1 = parent.screen1.window;
+	SCR2 = parent.screen2.window;
+	SCREEN_X_OLD=parent.SCREEN_X;
+	SCREEN_Y_OLD=parent.SCREEN_Y;
+
+stage = Array(
+"                                                            ",
+"  33                                                        ",
+"                                                            ",
+"                                                            ",
+"                                                        f2  ",
+"                                                    f2   a b",
+"                              36                f2   a b 8 9",
+"                                            f2   a b 8 9 8 9",
+"                                        f2   a b 8 9 8 9 8 9",
+" 1           111 110 1              f2   a b 8 9 8 9 8 9 8 9",
+" 1                              f2   a b 8 9 8 9 8 9 8 9 8 9",
+" 1                          f2   a b 8 9 8 9 8 9 8 9 8 9 8 9",
+" 1c8                         a b 8 9 8 9 8 9 8 9 8 9 8 9 8 9",
+" 2 2 2 2 2 2 2 2 2 2 2 2 2 2 8 9 8 9 8 9 8 9 8 9 8 9 8 9 8 9",
+"");
+charTable=Array(
+//00
+'',
+//01
+'img/block1.gif',
+//02
+'img/block2.gif',
+//03
+'img/block3.gif',
+//04
+'img/block3.gif',
+//05
+'img/block4.gif',
+//06
+'img/coinA.gif',
+//07
+'',
+//8
+'img/dokanVL.gif',
+//9
+'img/dokanVR.gif',
+//a
+'img/dokanVHL.gif',
+//b
+'img/dokanVHR.gif',
+//c
+'',
+//d
+'',
+//e
+'',
+//f
+'',
+
+//10
+'img/hatenaA.gif',
+//11
+'img/hatenaA.gif',
+//12
+'img/hatenaA.gif',
+//13
+'img/hatenaA.gif',
+//14
+'img/hatenaA.gif',
+//15
+'img/hatenaA.gif',
+//16
+'img/hatenaA.gif',
+//17 18 19 1a 1b 1c 1d 1e 1f
+  '','','','','','','','','',
+//20
+'img/block1.gif',
+//21
+'img/block1.gif',
+//22
+'img/block1.gif',
+//23
+'img/block1.gif',
+
+//24 25 26 27 28 29 2a 2b 2c 2d 2e 2f
+  '','','','','','','','','','','','',
+//30
+'',
+//31
+'',
+//32
+'',
+//33
+'',
+//34
+'',
+//35
+'img/block1.gif',
+
+'img/block.gif',
+//'<div style="border:1px solid aqua;width:100%;height:100%;text-align:center;vertical-align:middle;"></div>',
+'',
+'',
+'',
+'',
+'');
+
+charTable[0x60]='<div style="border:1px solid blue;background:aqua;color:blue;font-size:16px">流←</div>';
+charTable[0x61]='<div style="border:1px solid blue;background:aqua;color:blue;font-size:16px">流→</div>';
+charTable[0x62]='<div style="border:1px solid blue;background:aqua;color:blue;font-size:16px">流↓</div>';
+charTable[0x6c]='img/tsuta.gif';
+charTable[0x6d]='img/flag.gif';
+charTable[0x6e]='img/bar.gif';
+charTable[0x7f]='<div style="width:100%;height:100%;background:black;filter:alpha(opacity=50);z-index:1200;opacity:0.5;mozOpacity:0.5"></div>';
+
+
+ for(var i=0;i<stage.length;i++)stage[i]=stage[i].replace(/[ ]/gi,"0").replace(/[^0-9^a-f]/gi,"");
+  parent.stage=stage;
+  parent.charTable=charTable;
+}
+ for(var i=1;i<256;i++)if(!charTable[i])charTable[i]="";
+
+
+// オブジェクト作成例外
+// 未定義番号に好きなオブジェクトを割り当てできる
+function createObject(win,group,x,y,num,option,obj){
+ with(win){
+	var tmp;
+  switch(num){
+	case 0xc5:
+
+		tmp = new firebar(obj,"LONG",x,y,1);
+		 tmp.rotate=0;
+		 tmp.entry(group);
+		tmp = new firebar(obj,"LONG",x,y,1);
+		 tmp.rotate=90;
+		 tmp.entry(group);
+		tmp = new firebar(obj,"LONG",x,y,1);
+		 tmp.rotate=180;
+		 tmp.entry(group);
+		tmp = new firebar(obj,"LONG",x,y,1);
+		 tmp.rotate=270;
+		 tmp.entry(group);
+	break;
+	case 0xd1:
+	 var img="img/PL2standR.gif";
+	 var w=32,h=32;
+	 backgroundObject(img,x,y,w,h,50);
+	 setXYpointObject(x,y,0);
+	break;
+	case 0xd0:
+		var z=5;
+//		tmp= new kuri(obj,"TOGE",x,y,option);
+		tmp= new kame(obj,"KAME",x,y,option);
+		tmp.charBodyWidth*=z;
+		tmp.charBodyHeight*=z;
+		tmp.charSpriteWidth*=z;
+		tmp.charSpriteHeight*=z;
+		tmp.stepScore*=z;
+		tmp.score*=z;
+		tmp.o.setSize(tmp.charSpriteWidth,tmp.charSpriteHeight);
+		tmp.cSprX*=z;
+		tmp.cSprY*=z;
+		return tmp.entry(group);
+	break;
+  }
+ }
+} //
+
+
+
+// イベント属性ブロックに触れた時にコールされる
+function eventPointBlock(obj,win,block){
+ with(win){
+  switch(block){
+  }
+	return -1;
+ }
+} //
+
+//ブロックを叩いた時にコールされる
+function eventUpperBlock(obj,win,block){
+ with(win){
+  switch(block){
+	case 0x36:
+		win.createEffect(15*32,6*32-BGBLOCKSIZE_Y,win.EffectCode.COIN,win.player);
+		SCR1.manual.location.href='http://janis.or.jp/users/segabito/champ/Stage_00.html#fcres=on';
+		win.setXYpointObject(15*32,6*32,3);
+		return 1;
+  }
+	return -1;
+ }
+} //
+
+// ゴールポイントに触れた時にコールされる
+function eventGoalBlock(obj,win,block){
+ with(win){
+  switch(block){
+  }
+  stageClear();
+	return -1;
+ }
+} //
+
+// ワープポイントに触れた時にコールされる
+function eventWarpBlock(obj,win,block,warpid){
+ with(win){
+  if(warpid>=8){
+		parent.stageChange("bonus2.html");
+  }else
+  if(warpid==0)
+	stageClear();
+//		parent.stageChange("bonus2.html");
+
+  else{
+//	alert(warpid);
+	parent.setWorldNumber(warpid+1);
+  }
+	return -1;
+ }
+} //
+
+// プレイヤーが落下した時にコールされる
+function eventPlayerDrop(obj,win){
+ with(win){
+	return 1;
+ }
+} //
+
+
+function screen1BeforeInit(){ // screen1 のロード直後に呼ばれる
+ SCR1.document.write(
+	'<table style="position:absolute;z-index:1001;top:10%;left:15%;width:70%;height:50%;color:white;border:3px outset;overflow:scroll;" id="titleTable">'+
+	'<tr><td>'+
+	'<iframe src="manual.html" style="width:100%;height:100%;border:none;margin:none;padding:none;" allowTransparency="false" name="manual" id="manual">'+
+	'</iframe>'+
+	'</td></tr>'+
+	'</table>'+
+	'');
+
+ SCR1.document.write(
+	'<table style="position:absolute;z-index:50;top:65%;left:87.5%;width:12.4%;background:white;color:black;">'+
+	'<tr><td nowrap align="center">'+
+	'ここから<br>START！<br>'+
+	'&#8595;&#8595;&#8595;&#8595;'+
+	'</td></tr>'+
+	'</table>'+
+	'');
+
+
+ SCR1.document.write(
+	'<div style="position:absolute;table-layout:fixed;z-index:1300;top:65%;height:25%;left:25%;width:50%;background:white;padding-left:5%;overflow:scroll;filter:alpha(opacity=70);opacity:0.7;-Moz-Opacity:0.7;">'+
+//	'Javascript Virtual Machine <br>'+
+	' 2004 <a href="mailto:segabito@gmail.com" style="color:red;">Kunio Makimoto</a><br>'+
+
+//	'ソースのダウンロードは [ <a href="download.html" target="manual" style="color:red;font-weight:bolder;">こちら</a> ]<br><br>'+
+	'■更新履歴<br>'+
+	'　　■2012<br>'+
+	'　　・12/08　WiiUに対応させてみる<br>'+
+	
+	'　　■2004<br>'+
+	'　　・08/17　８－３追加<br>'+
+	'　　・08/15　ステージ８－２追加<br>'+
+	'　　・07/24　ダウンロードページに説明文追加<br>'+
+	'　　・07/21　細部微調整<br>'+
+	'　　・07/16-2　その他不具合の微調整<br>'+
+	'　　・07/16　ファイアーボールと砲弾の微調整<br>'+
+	'　　・07/15　ソース公開<br>'+
+	'　　・07/14　移動パラメータ調整<br>'+
+	'　　・07/12　ステージ８－１追加<br>'+
+	'　　・07/08　コインとツタの判定を大きくした<br>'+
+	'　　・07/07　無敵状態の残り時間を表示<br>'+
+	'</div>'+
+	'');
+ SCR1.document.write(
+	'<button style="cursor:hand;background:#c0c0c0;position:absolute;z-index:1300;top:30%;left:0%;width:15%;color:blue;background:white;font-weight:bolder;"  onclick="parent.gameover(false,\'file\',\'autodemo.html\');">'+
+	'☆DEMO PLAY☆<br>(2-1まで)'+
+	'</button>'+
+	'');
+
+ SCR1.document.write(
+	'<button style="cursor:hand;background:#c0c0c0;position:absolute;z-index:1300;top:40%;left:0%;width:15%;color:green;background:white;font-weight:bolder;font-size:140%;"  onclick="parent.gameover(false,\'file\',\'fastestdemo.html\');">'+
+	'最短クリアDEMO'+
+	'</button>'+
+	'');
+//*
+ SCR1.document.write(
+	'<button style="cursor:hand;background:#c0c0c0;position:absolute;z-index:1300;top:50%;left:0%;width:15%;color:red;background:white;font-weight:bolder;font-size:140%;"  onclick="parent.gameover(false,\'file\',\'alldemo.html\');">'+
+	'全クリアDEMO'+
+	'</button>'+
+	'');
+//*/
+
+
+/*
+ SCR1.document.write(
+	'<div align="center" style="position:absolute;top:3%;left:0;z-index:1200;width:100%;">'+
+		'<a href="http://jt.mozilla.gr.jp/" target="_blank"><img src="http://www.mozilla.org/images/hack.gif" alt="Mozilla.org" width="88" height="31" border="0" /></a>　　<a href="http://www.microsoft.com/japan/ie/" target="_blank"><img src="http://www.microsoft.com/mscorp/images/IE_6_v06.gif" alt="Internet Explorer Home" width="88" height="31" border="0" /></a><br>'+
+//		'<span style="color:red;background:white;">↑Mozillaのほうがキビキビ動きます</span>'+
+	'</div>'+
+	"");
+//*/
+ SCR1.document.write(
+	'<table style="position:absolute;z-index:50;top:45%;left:100%;width:12.4%;background:orange;color:black;">'+
+	'<tr><td nowrap align="center">'+
+	'CONTINUE<br>'+
+	'→'+
+	'</td></tr>'+
+	'</table>'+
+	'');
+
+
+ SCR1.SCREEN_X=SCREEN_X;
+ SCR1.SCREEN_Y=SCREEN_Y;
+	if(document.all && firstWaitTime > 300){
+		var sdb=SCR1.document.body;
+		if(stageInitTrans !=""){
+		 sdb.style.filter=stageInitTrans;
+		 sdb.filters[0].Apply();
+		}
+	}
+} //
+function screen1Init(){ // screen1 のロード終了後に呼ばれる
+
+ var sdb=SCR1.document.body;
+	sdb.style.background=SCREENBGCOLOR;
+	document.body.style.background=
+					SCREENBGCOLOR2;
+
+ if(parent.retryFlag){
+	SCR1.PL1START_X = PLSTART_X2;
+	SCR1.PL1START_Y = PLSTART_Y2;
+	SCR1.PL1START_HFACE=PLSTART_HFACE2;
+	SCR1.PL1START_ANIME=PLSTART_ANIME2;
+ }
+ if(parent.warpFlag){
+ }
+
+	SCR1.firstWaitTime=firstWaitTime;
+	if(document.all){
+		if(stageInitTrans !="" && firstWaitTime>300){
+		 sdb.filters[0].duration=Math.abs((firstWaitTime*.7-parent.RATE_DRAW_FAST)/1000);
+//		 SCR1.document.getElementById('INFOTABLE1').style.display="none";
+//		 sdb.filters[0].Play();
+			//setTimeout('parent.screen1.document.body.style.filter=""',firstWaitTime+parent.RATE_DRAW_FAST);
+		}
+	}
+
+
+} // 
+
+function screen1BeforeUnload(){ // screen1 のアンロード時に呼ばれる
+
+} // 
+
+
+function screen2BeforeInit(){ // screen2 のロード直後に呼ばれる
+	SCR2.document.body.style.background=SCREENBGCOLOR2;
+} //
+function screen2Init(){ // screen2 のロード終了後に呼ばれる
+} // 
+function screen2BeforeUnload(){ // screen2 のロード終了後に呼ばれる
+} // 
+
+
+
+function cpuBeforeInit(){ // CPU のロード直後に呼ばれる
+	parent.cpu.LIFTWIDTH=3;
+
+} // 
+function cpuInit(){ // CPU のロード終了後に呼ばれる
+	var lw=parent.lostWorld-1;
+	if(parent.REPLAYMODE==true)lw=parent.lostWorldRP-1;
+
+	// コンティニュー土管を見せる
+	CPU.SCROLL_X_MAX  =
+	SCR1.SCROLL_X_MAX = 
+		SCREEN_X + parent.BGBLOCKSIZE_X * 2 * lw;
+
+	SCR1.onCpuInit();
+} // 
+
+
+function cpuBeforeUnload(){ // CPU のアンロード時に呼ばれる
+
+} // 
+
+var CNT=0;
+function onCPUTimer(win,P1,tm){ // CPUのタイマーイベントごとに呼ばれる
+  if(CNT==0)win.P1.o.setZPosition(1200);
+CNT++;
+} //
+
+
+
+function init(){
+	parent.LOADEROK=true;
+	LOADER=true;
+	infotable1=document.getElementById('infotable1').innerHTML;
+	infotable2=document.getElementById('infotable2').innerHTML;
+	SCR1.location.replace("screen1.html");
+	SCR2.location.replace("screen2.html");
+	parent.ff();
+} //
+
+function bye(){
+
+/*
+	CPU.location.replace("blank.html");
+	SCR1.location.replace("blank.html");
+	SCR2.location.replace("blank.html");
+*/
+} //
+
+onload=init;
+onunload=bye;
+
+-->
+</script>
+<style type="text/css">
+
+.pccontrol, .wiiUcontrol {
+	display: none;
+}
+body.pc .pccontrol{
+	display: block;
+}
+body.wiiU .wiiUcontrol{
+	display: block;
+}
+</style>
+</head>
+<body bgcolor="black" text="white" onfocus="parent.cpu.focus();">
+<div align="center">
+<span style="background:black;" class="pccontrol">
+   <span class="bld">[←][→]</span> or <span class="bld">[S][F]</span> - 左右移動　　　
+	<span class="bld">[CTRL]</span> or <span class="bld">[Z]</span>or <span class="bld">[J]</span> - <span class="bld2">走る ＆ ファイア</span>
+    　　　 
+	<span class="bld">[SHIFT]</span> or <span class="bld">[SPACE]</span> or <span class="bld">[X]</span> or <span class="bld">[K]</span> - <span class="bld2">ジャンプ</span>
+</span>
+<span style="background:black;" class="wiiUcontrol">
+   <span class="bld">[←][→]</span> - 左右移動　　　
+	<span class="bld">[-]</span><span class="bld2">走る ＆ ファイア</span>
+    　　　 
+	<span class="bld">[+]</span><span class="bld2">ジャンプ</span>
+</span>
+<script type="text/javascript">
+if (window.wiiu) {
+	document.body.className = 'wiiU';
+} else {
+	document.body.className = 'pc';
+}
+</script>
+</div>
+
+<span id="infotable1" style="display:none;">
+</span>
+<span id="infotable2" style="display:none;">
+<span style="font-size:50%;color:black;font-weight:bolder;">NOW LOADING...<br /></span>
+<span style="font-size:30%;color:black">
+<br />
+<br />
+JavaScript・ActiveXを有効化する必要があります。
+</span>
+</span>
+</body>
+</html>

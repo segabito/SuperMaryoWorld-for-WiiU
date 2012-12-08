@@ -1,0 +1,174 @@
+<!-- 
+#  Javascript Virtual Machine
+#  Copyright 2004- Kunio Makimoto <kunio@makimo.to>
+#  
+#  http://makimo.to/
+# 
+-->
+<html>
+<head>
+ <title>JavaScript Virtual Machine Screen2</title>
+<meta http-equiv="Content-type" content="text/html; charset=Shift_JIS">
+<meta http-equiv="imagetoolbar" content="no">
+<style type="text/css">
+<!--
+ input {border:none;text-align:right;ime-mode:disabled;background:black;color:white;font-size:10px;font-weight:bolder;}
+ td,tr,th{text-align:center;font-weight:bolder;padding:0;border:0;margin:0;}
+-->
+</style>
+<script type="text/javascript">
+<!--
+
+
+function tm(){
+ if(parent.CPUOK!=true)return;
+ if(parent.cpu.CPU!=true)return;
+
+ updateScoreBoard(parent.cpu.getPlayerObject());
+
+} //
+
+var plFire=false;
+function updateScoreBoard(P1){
+ if(!P1)return;
+ with(document){
+  var life	= getElementById("life");
+  var world = getElementById("world");
+  var coins	= getElementById("coins");
+  var gametime	= getElementById("gametime");
+  var score	= getElementById("score");
+  var hiscore	= getElementById("hiscore");
+ }
+ life.value=P1.life;
+ coins.value=(100+P1.coins).toString().substring(1);
+  var gt=parent.cpu.GAMETIMER;
+  if(gt<0)gt="999";
+ gametime.value=(1000+gt).toString().substring(1);
+ score.value=P1.score;
+ hiscore.value=(P1.score > parent.HIGHSCORE) ? P1.score : parent.HIGHSCORE;
+ if(plFire != P1.fire){
+	plFire = P1.fire;
+	document.body.style.color=plFire ? "yellow" : "white";
+	 var di=document.getElementsByTagName("INPUT");
+	 for(var i=0;i<di.length;i++)
+		 di[i].style.color=document.body.style.color;
+ }
+} //
+
+
+function setBgColor(){
+ var di=document.getElementsByTagName("INPUT");
+ for(var i=0;i<di.length;i++){
+	if(document.all){
+	 di[i].style.background=document.body.style.background;
+	 di[i].style.color=document.body.style.color;
+	 di[i].style.fontSize=document.body.clientHeight*.4;
+	}
+ }
+ var sc=document.getElementById("scoreTable");
+ sc.style.fontSize=document.body.clientHeight*.4;
+ sc.style.visibility="visible";
+} //
+
+function setEffectMode(obj){
+	parent.NOEFFECT = (!parent.NOEFFECT);
+	parent.cpu.NOEFFECT=parent.NOEFFECT;
+	obj.innerHTML=(parent.NOEFFECT)? 'エフェクト<br>出す' : 'エフェクト<br>消す';
+	parent.ff();
+} //
+
+var cpuTM;
+function init(){
+	parent.loader.screen2Init();
+	setTimeout('setBgColor();tm();',1000);
+	parent.SCR2OK=true;
+
+	var world  = document.getElementById("world");
+	world.value= parent.getWorldNumber() + " - " + parent.getAreaNumber();
+} //
+
+function bye(){
+	parent.loader.screen2BeforeUnload();
+} //
+onload=init;
+onunload=bye;
+
+function setReplayMode(){
+	if(parent.REPLAYMODE==true){
+		parent.replayGameStop();
+		parent.ff();
+		setButtonFace();
+	}else{
+//		if(confirm('一度ゲームが終了しますがよろしいですか？')){
+		if(true){
+			parent.gameover(false,'replayCode');
+		}
+		else
+			parent.ff();
+	}
+}
+function setButtonFace(){
+	var btn=document.getElementById("replayModeButton");
+	btn.innerHTML = (parent.REPLAYMODE==true)? "リプレイ<br>停止":"リプレイ<br>保存/復元";
+	btn.style.color = (parent.REPLAYMODE==true)? "red":"blue";
+}
+//-->
+</script>
+</head>
+<body bgcolor="black;overflow:hidden;margin:0;padding:0;border:1px solid black;" scroll="no">
+<table style="width:100%;height:100%;position:absolute;top:0;left:0;" cellspacing="0" cellpadding="0"><tr><td>
+<button id="replayModeButton" style="background:white;height:100%;left:0;top:0;position:absolute;z-index:100;font-weight:bolder;"
+	onclick="setReplayMode()">リプレイコード<br>保存/復元</button>
+<script type="text/javascript">
+ if(parent.loader.LOADER)parent.loader.screen2BeforeInit();
+ setButtonFace();
+</script>
+
+
+<table align="center" style="width:80%;height:100%;font-size:10px;top:0;color:white;visibility:hidden" id="scoreTable" cellspacing="0" cellpadding="0">
+ <tr>
+  <td nowrap="nowrap" align="right">
+	<input type="text" value="MARYO" size="8" disabled=true /><br>
+	<input type="text" value="WORLD" size="8" disabled=true />
+  </td>
+  <td nowrap="nowrap" align="left">
+	<input type="text" id="life"  value="" size="5" disabled=true /><br>
+	<input type="text" id="world" value="  -  " size="5" disabled=true />
+  </td>
+  <td nowrap="nowrap" align="right">
+	<input type="text" value="TIME" size="4" disabled=true /><br>
+	<input type="text" value="COIN" size="4" disabled=true />
+  </td>
+  <td nowrap="nowrap" align="left">
+	<input type="text" id="gametime" size="3" value="" disabled=true /><br>
+	<input type="text" id="coins"    size="3" value="" disabled=true />
+  </td>
+  <td nowrap="nowrap" align="right">
+	<input type="text" value="HI SCORE" size="9" disabled=true /><br>
+	<input type="text" value="   SCORE" size="9" disabled=true />
+  </td>
+  <td nowrap="nowrap" align="left">
+	<input type="text" id="hiscore" size="8" value="" disabled=true /><br>
+	<input type="text" id="score"   size="8" value="" disabled=true />
+  </td>
+  <td nowrap="nowrap">
+<script>
+{
+var TXT=(parent.NOEFFECT)? 'エフェクト<br>出す' : 'エフェクト<br>消す';
+document.write(
+	'<button onclick="setEffectMode(this)" style="width:100%;height:100%;font-weight:bolder;display:none;" title="消すと若干軽くなります。">'+
+	TXT+
+	'</button>'+
+	'');
+}
+</script>
+	
+  </td>
+ </tr>
+
+</table>
+</td></tr>
+</table>
+
+</body>
+</html>

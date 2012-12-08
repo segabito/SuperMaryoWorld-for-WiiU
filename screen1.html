@@ -1,0 +1,636 @@
+<!-- 
+#  Javascript Virtual Machine
+#  Copyright 2004- Kunio Makimoto <kunio@makimo.to>
+#  
+#  http://makimo.to/
+# 
+-->
+<html>
+<head>
+ <title>Javascript Virtual Machine Screen</title>
+<meta http-equiv="Content-type" content="text/html; charset=Shift_JIS" />
+<meta http-equiv="imagetoolbar" content="no" />
+<meta http-equiv="MSThemeCompatible" content="no" />
+<style type="text/css">
+<!--
+body {margin:0;padding:0;border:0;overflow:hidden;}
+table,tr,td{table-layout:fixed;border-collapse:collapce;empty-cells:show;word-break:break-all;margin:0;padding:0;border:none;overflow:hidden;text-align:center;}
+-->
+</style>
+<script type="text/JavaScript">
+<!--
+var D=document,DA=false,DB=false,DG=false;
+D.onkeypress=function(){return false;}
+var WIN=window;
+var LOADER=parent.loader;
+//<------DISP CONFIG----
+var SPRITES_MAX=1024;
+var SCREEN_X=640;
+var SCREEN_Y=480;
+
+var SCROLL_X_MAX=640*2;
+var SCROLL_X_MIN=0;
+var SCROLL_Y_MAX=480*2;
+var SCROLL_Y_MIN=-32*5;
+
+var RATE_DRAW = 50;
+var RATE_CPU = 33;
+
+var BGBLOCKSIZE_X = 32;
+var BGBLOCKSIZE_Y = 32;
+var LEFTSCROLL  = true;
+var RIGHTSCROLL = true;
+var UPSCROLL    = true;
+var DOWNSCROLL  = true;
+//------DISP CONFIG----->
+
+var GAMEMODE = "PLAY";
+var STAGEMODE = "FIELD"; // FIELD WATER
+
+var SCROLL_TOP=0;
+var SCROLL_LEFT=0;
+
+
+
+
+var PL1MODE    = 0;
+var PL1DEFAULT = 0;
+var PL1FIRE    = false;
+var PL1START_X = 64;
+var PL1START_Y = 0;
+var PL1START_HFACE = 1;
+var PL1START_ANIME = "";
+var PL1SCORE   = 0;
+var PL1LIFE    = 3;
+var PL1COINS   = 0;
+
+var firstWaitTime=1000;
+
+var GAMETIMER=500;
+var DEFAULTGAMETIMER=500;
+var GAMECLOCK=0;
+
+var CPUPAUSE=false;
+var PLAYERPAUSE=false;
+
+
+
+var UNDEF_GIF="undefined.gif";
+var UNDEF_IMG=new Image();
+UNDEF_IMG.src=UNDEF_GIF;
+
+var BLOCK1COLOR="brown";
+
+
+
+ // http://hogehoge/fuga/ など
+ // 画像だけ別のサーバーに置きたい時に設定したり、、
+ // / ステージごとにキャラクターグラフィックをチェンジしたりできる
+var IMAGEBASEURL="";
+
+// Mozillaでテーブル高さがboarder分増えてしまうための補正
+var MozillaTableBoarderFix=-2;
+
+var stageIntArray = new Array(); // ステージデータ(テキスト)を分割してInt配列にした物。
+
+
+if(D.all){
+	DA=D.all;
+	DGI = new Function("return document.all[arguments[0]]");
+	DGT = new Function("return document.all.tags(arguments[0])");
+
+	pxTop  = 'posTop';
+	pxLeft = 'posLeft';
+	pxWidth = 'posWidth';
+	pxHeight = 'posHeight';
+
+	oton = 'parentElement';
+
+	if(D.getElementById)
+		DG = D.getElementById;
+
+}else
+if(D.getElementById){
+	DG = D.getElementById;
+	DGI = new Function("return document.getElementById(arguments[0])");
+	DGT = new Function("return document.getElementsByTagName(arguments[0])");
+	pxTop  = 'top';
+	pxLeft = 'left';
+	pxWidth = 'width';
+	pxHeight = 'height';
+	
+	oton = 'parentNode';
+}
+var stage = Array(
+"");
+var charTable=Array(
+'',
+'');
+
+if(parent){
+	if(parent.stage)
+		stage=parent.stage;
+	if(parent.charTable)
+		charTable=parent.charTable;
+	
+}
+//--------------------------------------
+
+
+
+//------------------------
+
+
+function scrollBG(x,y){
+
+	if(x < 0)x=0;
+	else
+	if(x > WIN.SCROLL_X_MAX - WIN.SCREEN_X)
+			x=WIN.SCROLL_X_MAX-WIN.SCREEN_X;
+	if(y < 0 )y=0;
+	else
+	if(y > WIN.SCROLL_Y_MAX - WIN.SCREEN_Y)
+			y=WIN.SCROLL_Y_MAX-WIN.SCREEN_Y;
+
+	WIN.SCROLL_LEFT = x;
+	WIN.SCROLL_TOP  = y;
+
+} //
+
+function scrollBGApply(){
+	if(WIN != self)return WIN.scrollBGApply();
+	 var xx=WIN.SCROLL_LEFT * (dbWidth  / SCREEN_X);
+	 var yy=WIN.SCROLL_TOP  * (dbHeight / SCREEN_Y);
+	 WIN.document.body.scrollLeft=xx;
+	 WIN.document.body.scrollTop =yy;
+} //
+
+
+var SPR= [];
+function createSpriteBody(){
+	var spriteHTML='<div style="position:absolute;visibility:hidden;width:1px;height:1px;filter:flipV(enabled=false) flipH(enabled=false) Alpha(enabled=false)" name="spriteHTML" id="spriteHTML" alive="-1">'+'<IMG src="'+UNDEF_GIF+'" style="WIDTH:100%;HEIGHT:100%;BORDER:0" onerror="this.src=UNDEF_IMG.src" unselectable="true" />'+'</div>';
+
+	//var spriteHTML='<div style="position:absolute;visibility:hidden;filter:flipV(enabled=false) flipH(enabled=false) progid:DXImageTransform.Microsoft.Matrix(enabled=false,sizingmethod=\'auto expand\',filtertype=\'nearest\') Alpha(enabled=false)" name="spriteHTML" id="spriteHTML" alive="-1"><img src="'+UNDEF_GIF+'" style="width:100%;height:100%;border:none;" onerror="this.src=UNDEF_IMG.src"></div>';
+		//	var spriteHTML='<div style="position:absolute;top:0;left:0;z-index:5;display:none;filter:flipV(enabled=false) flipH(enabled=false) progid:DXImageTransform.Microsoft.Matrix(enabled=false,sizingmethod=\'auto expand\',filtertype=\'nearest\') Alpha(enabled=false)" name="spriteHTML" id="spriteHTML" alive="-1"><img src="./undefined.gif" style="width:100%;height:100%;border:none;" onerror="this.src=UNDEF_IMG.src"></div>';
+	var tmp='';
+	for(var i=0;i<SPRITES_MAX;i++)tmp+=spriteHTML;
+	WIN.document.write(tmp);
+
+	var s=document.getElementsByName("spriteHTML");
+	for(var i=0;i<s.length;i++){
+		SPR[i]=s[i];
+		SPR[i].alive="-1";
+	}
+
+
+} // 
+
+var spriteCnt=0;
+var spriteFlags=Array();
+function getSpriteBody(){
+//	if(WIN != window)return WIN.getSpriteBody();
+	
+	for(var i=0;i<SPRITES_MAX;i++){
+	  spriteCnt=(spriteCnt + 1) % SPRITES_MAX;
+	  if(SPR[spriteCnt].alive == "-1" )
+			return SPR[spriteCnt];
+	}
+	alert("SPRITE OVER\n\n\n");
+} //
+
+
+
+function createStage_img(dat,charTable,wx,wy){
+ var tbl='';
+ var dbw=dbWidth;
+ var dbh=dbHeight;
+ var tw=dbw / SCREEN_X * wx;
+ var th=dbh / SCREEN_Y * wy;
+ var twi=parseInt(tw);
+ var twf=tw-twi;
+ var thi=parseInt(th);
+ var thf=th-thi;
+ var colcnt=0;
+ var colcntMax=0;
+ var colMax=0;
+ var colPix=0;
+ var rowmax=0;
+  if(!DA)thi+=MozillaTableBoarderFix;// Mozilla だと縦方向のborderが加算?される
+  var nameId = (DA) ? 'id="DIVTD"' : 'name="DIVTD"';
+	 var thftmp=0;
+  for(var i=0;i<dat.length;i++){
+	var line=dat[i];
+	if(!stageIntArray[i])stageIntArray[i] = new Array();
+	if(line==""){i--;break;}
+	line=line.replace(/[ ]/gi,"0").replace(/[^0-9^a-f]/gi,"");
+
+	 thitmp=thi;
+	 thftmp+=thf;
+	  if(thftmp>=1){ // 小数点以下誤差補正
+		thitmp+=1;
+		thftmp-=1;
+	  }
+	colcnt=0;
+	
+	 var twftmp=0;
+	 colPix=0;
+	while(line!=""){
+	 var block=parseInt(line.substring(0,2),16);
+	 stageIntArray[i][colcnt] = block;
+	 colcnt++;
+	 var twitmp=twi;
+	 twftmp+=twf;
+	  if(twftmp>=1){ // 小数点以下誤差補正
+		twitmp+=1;
+		twftmp-=1;
+	  }
+	  if(!charTable[block])charTable[block]="";
+	  var vs = (charTable[block]=="") ? "hidden" : "visible";
+	 if(block<128 ){
+		tbl+='<img '+nameId+' style="border:0;position:absolute;width:'+twitmp+';height:'+thitmp+';top:'+rowmax+';left:' + colPix + ';visibility:'+vs+';" src="'+ 
+			charTable[block]+
+		'" />';
+	 }else{
+		tbl+='<img '+nameId+' style="border:0;position:absolute;width:'+twitmp+';height:'+thitmp+';top:'+rowmax+';left:' + colPix + ';visibility:'+vs+';" src="'+ 
+			charTable[0]+
+		'" />';
+	 }
+	  colPix+=twitmp;
+		line=line.substring(2);
+	}
+	rowmax+=thitmp;
+	if(colMax<colPix){colMax=colPix;colcntMax=colcnt;}
+  }
+  // ちょっとだけ背景を上にずらすと、キャラが地面に立っているように見える
+  var m= dbh / dbHeight * 2 * -1;
+  document.write(tbl);
+  SCROLL_X_MAX=colcntMax*wx;
+  SCROLL_Y_MAX=i*wy+wy;
+} //
+//*/
+
+function createStage(dat,charTable,wx,wy){
+ var tbl='';
+ var dbw=dbWidth;
+ var dbh=dbHeight;
+ var tw=dbw / SCREEN_X * wx;
+ var th=dbh / SCREEN_Y * wy;
+ var twi=parseInt(tw);
+ var twf=tw-twi;
+ var thi=parseInt(th);
+ var thf=th-thi;
+ var colcnt=0;
+ var colcntMax=0;
+ var colMax=0;
+ var colPix=0;
+ var rowmax=0;
+  if(!document.all)thi+=MozillaTableBoarderFix;// Mozilla だと縦方向のborderが加算?される
+
+	 var thftmp=0;
+  for(var i=0;i<dat.length;i++){
+	var line=dat[i];
+	if(!stageIntArray[i])stageIntArray[i] = new Array();
+	if(line==""){i--;break;}
+	line=line.replace(/[ ]/gi,"0").replace(/[^0-9^a-f]/gi,"");
+
+	 thitmp=thi;
+	 thftmp+=thf;
+	  if(thftmp>=1){ // 小数点以下誤差補正
+		thitmp+=1;
+		thftmp-=1;
+	  }
+	rowmax+=thitmp;
+	tbl+='<tr>';
+	colcnt=0;
+	
+	 var twftmp=0;
+	 colPix=0;
+	while(line!=""){
+	 var block=parseInt(line.substring(0,2),16);
+	 stageIntArray[i][colcnt] = block;
+	 colcnt++;
+	 var twitmp=twi;
+	 twftmp+=twf;
+	  if(twftmp>=1){ // 小数点以下誤差補正
+		twitmp+=1;
+		twftmp-=1;
+	  }
+	  colPix+=twitmp;
+	  if(!charTable[block])charTable[block]="";
+	 if(block<128 && charTable[block] != ""){
+		tbl+='<td style="width:'+twitmp+';height:'+thitmp+'">'+
+			'<img src="'+charTable[block]+'" style="width:'+twitmp+';height:'+thitmp+'" />'+
+		'</td>';
+	 }else{
+		tbl+='<td style="width:'+twitmp+';height:'+thitmp+'">'+
+//			'<img style="visibility:hidden;width:'+twitmp+';height:'+thitmp+'" />'+
+		'</td>';
+	 }
+		line=line.substring(2);
+	}
+	tbl+='</tr>';
+	if(colMax<colPix){colMax=colPix;colcntMax=colcnt;}
+  }
+  // ちょっとだけ背景を上にずらすと、キャラが地面に立っているように見える
+  var m= dbh / dbHeight * 2 * -1;
+  tbl=
+  '<table style="position:absolute;table-layout:fixed;width:'+colMax+';hei ght:'+rowmax+';top:'+ m +'px;left:0px;z-index:100;margin:0;padding:0;" cellspacing=0 cellpadding=0 id="BGTABLE1" onclick="if(document.all)ff()" colcnt="'+ colcntMax +'" unselectable="true">'
+  +tbl+
+  '</table>';
+  document.write(tbl);
+  SCROLL_X_MAX=colcntMax*wx;
+  SCROLL_Y_MAX=i*wy+wy;
+} //
+
+
+
+
+/*
+
+function createStage_bk(dat,dat2,wx,wy){
+ var tbl='';
+ var dbw=dbWidth;
+ var dbh=dbHeight;
+ var tw=dbw / SCREEN_X * wx;
+ var th=dbh / SCREEN_Y * wy;
+ var twi=parseInt(tw);
+ var twf=tw-twi;
+ var thi=parseInt(th);
+ var thf=th-thi;
+ var colcnt=0;
+ var colcntMax=0;
+ var colMax=0;
+ var colPix=0;
+ var rowmax=0;
+  if(!document.all)thi+=MozillaTableBoarderFix;// Mozilla だと縦方向のborderが加算?される
+
+	 var thftmp=0;
+  for(var i=0;i<dat.length;i++){
+	var line=dat[i];
+	if(!stageIntArray[i])stageIntArray[i] = new Array();
+	if(line==""){i--;break;}
+	line=line.replace(/[ ]/gi,"0").replace(/[^0-9^a-f]/gi,"");
+
+	 thitmp=thi;
+	 thftmp+=thf;
+	  if(thftmp>=1){ // 小数点以下誤差補正
+		thitmp+=1;
+		thftmp-=1;
+	  }
+	rowmax+=thitmp;
+	tbl+='<tr>';
+	colcnt=0;
+	
+	 var twftmp=0;
+	 colPix=0;
+	while(line!=""){
+	 var block=parseInt(line.substring(0,2),16);
+	 stageIntArray[i][colcnt] = block;
+	 colcnt++;
+	 var twitmp=twi;
+	 twftmp+=twf;
+	  if(twftmp>=1){ // 小数点以下誤差補正
+		twitmp+=1;
+		twftmp-=1;
+	  }
+	  colPix+=twitmp;
+	 if(block<128){
+//		tbl+='<td style="'+pxWidth+':'+twitmp+';'+pxHeight+':'+thitmp+';" title="'+twitmp+'">'+
+		tbl+='<td style="width:'+twitmp+';height:'+thitmp+'">'+
+			dat2[block]+
+		'</td>';
+	 }else{
+//		tbl+='<td style="'+pxWidth+':'+twitmp+';'+pxHeight+':'+thitmp+'">'+
+		tbl+='<td style="width:'+twitmp+';height:'+thitmp+'">'+
+			dat2[0]+
+		'</td>';
+	 }
+		line=line.substring(2);
+	}
+	tbl+='</tr>';
+	if(colMax<colPix){colMax=colPix;colcntMax=colcnt;}
+  }
+  // ちょっとだけ背景を上にずらすと、キャラが地面に立っているように見える
+  var m= dbh / dbHeight * 2 * -1;
+  tbl=
+  '<table style="position:absolute;table-layout:fixed;width:'+colMax+';hei ght:'+rowmax+';top:'+ m +'px;left:0px;z-index:100;margin:0;padding:0;" cellspacing=0 cellpadding=0 id="BGTABLE1" onclick="if(document.all)ff()" colcnt="'+ colcntMax +'">'
+  +tbl+
+  '</table>';
+  document.write(tbl);
+  SCROLL_X_MAX=colcntMax*wx;
+  SCROLL_Y_MAX=i*wy+wy;
+/
+//  var dbg="";
+//  for(var i=0;i<stageIntArray.length;i++){
+//	var ln=stageIntArray[i];
+//	for(var j=0;j<ln.length;j++){
+//		dbg+=(ln[j]+0x100).toString(16).substring(1);
+//	}
+//	dbg+="\n";
+//  }
+//  alert(dbg);
+//
+} //
+*/
+
+ function drawInfoScreen(){
+	var inf1="",inf2="";
+	var world=parent.getWorldNumber();
+	var area=parent.getAreaNumber();
+
+	 if(parent.loader.infotable1)
+	 	inf1=parent.loader.infotable1;
+	 if(parent.loader.infotable2)
+	 	inf2=parent.loader.infotable2;
+
+  if(world > 0){
+	var life=(PL1LIFE > 15) ? "もうずっと人大杉" : PL1LIFE;
+	document.write(
+	'<table id="INFOTABLE1" style="position:absolute;z-index:3000;top:0;left:0;background:black;color:white;width:100%;height:100%;font-size:20px;font-weight:bolder:font-family:\'ＭＳ ゴシック\" border=10>'+
+	'<tr><td align="center">'+
+	'<div id="infoarea1" style="margin-bottom:5%;">'+inf1+'</div>'+
+	'<br />'+
+	'STAGE '+world+' － '+area+'<br /><br />'+
+	''+
+	'<img src="img/PLjumpR.gif" style="width:32;height:32;">　×　'+
+	life +
+	'<br />'+
+	'<div id="infoarea2" style="margin-top:5%;">'+inf2+'</div>'+
+	''+
+	'</td></tr>'+
+	'</table>'+
+	
+	'');
+  }else{
+	document.write(
+	'<table id="INFOTABLE1" style="position:absolute;z-index:3000;top:0;left:0;background:white;color:blue;width:100%;height:100%;font-size:250%;font-weight:bolder:font-family:impact;letter-spacint:3;">'+
+	'<tr><td align="center">'+
+	'<div id="infoarea1">'+inf1+'</div>'+
+	'スーパーマリョーワールド(仮)<br>'+
+	'Super Maryo World'+
+	'<div id="infoarea2">'+inf2+'</div>'+
+	''+
+	'</td></tr>'+
+	'</table>'+
+	
+	'');
+  }
+ } //
+
+
+
+  var drawTM;
+  var drawF=false;
+ function drawTimer(){
+
+	 drawF=true;
+//	 var dt=new Date();
+//	 var st=dt.getTime();
+
+	 if(parent.CPUOK)parent.cpu.drawTimer();
+
+
+	drawTM = setTimeout('drawTimer()',parent.RATE_DRAW);
+	return;
+
+	 var dt2=new Date();
+	 var st2=dt2.getTime();
+
+	 var tm=st2-st;
+	 var nextDraw = parent.RATE_DRAW - (tm % parent.RATE_DRAW) ;//+  parseInt( tm / RATE_DRAW )*RATE_DRAW;
+	 if(parent.cpu.CPU)drawTM = setTimeout('drawTimer()',nextDraw);
+	 drawF=false;
+
+ } //
+
+ // cpu.htmlのロード終了後に呼ばれる
+ function onCpuInit(){
+//	alert("screen1.html onCpuinit();");
+	document.getElementById('INFOTABLE1').style.display="none";
+	if(LOADER.stageInitTrans !="" && document.all && firstWaitTime>300 && DB.filters){
+		 if(DB.filters[0])DB.filters[0].Play();
+		}
+	parent.cpu.startCPU();
+	drawTimer();
+//	setInterval("drawTimer();",parent.RATE_DRAW);
+ } //
+
+ function init(){
+	parent.SCR1OK=true;
+	try{	parent.loader.screen1Init();}catch(e){}
+	setTimeout('parent.cpu.location.replace("cpu.html");',firstWaitTime);
+ } // end init
+
+ function bye(){
+	if(parent.loader.screen1BeforeUnload)parent.loader.screen1BeforeUnload();
+ } // end bye
+
+ function ff(){
+//	parent.REPLAYMODE=false;
+	parent.ff();
+//	if(document.all)parent.cpu.focus();
+//	else	parent.cpu.document.getElementById("focuslink").focus();
+ } //
+ function ffd(){
+	parent.REPLAYMODE = false;
+ } //
+ onload = init;
+ onunload = bye;
+
+ onfocus=ff;
+ DB.onmouseover=ff;
+ DB.onmousemove=ff;
+ DB.onclick=ff;
+ onmousdown=ff;
+ onkeydown=ff;
+
+ ondblclick= ffd;
+
+ document.onselectstart=new Function("return false;");
+
+//-->
+</script>
+</head>
+<body style="overflow-x:hidden;overflow-y:hidden;background:#ffffff;width:101%;height:101%;" scroll="no"><script type="text/javascript">
+<!--
+ if(!parent.loader.LOADER)location.replace('blank.html');
+		DB=D.body;
+		dbWidth  =DB.clientWidth;
+		dbHeight =DB.clientHeight;
+
+		SPRITES_MAX=parent.SPRITES_MAX;
+		SCREEN_X  = LOADER.SCREEN_X;
+		SCREEN_Y  = LOADER.SCREEN_Y;
+		RATE_DRAW = parent.RATE_DRAW;
+		RATE_CPU  = parent.RATE_CPU;
+
+		SCROLL_X_MAX = LOADER.SCROLL_X_MAX;
+		SCROLL_X_MIN = LOADER.SCROLL_X_MIN;
+		SCROLL_Y_MAX = LOADER.SCROLL_Y_MAX;
+		SCROLL_Y_MIN = LOADER.SCROLL_Y_MIN;
+
+		BGBLOCKSIZE_X = parent.BGBLOCKSIZE_X;
+		BGBLOCKSIZE_Y = parent.BGBLOCKSIZE_Y;
+
+		STAGEMODE  = LOADER.STAGEMODE;
+
+		PL1MODE    = parent.PL1MODE;
+		PL1DEFAULT = parent.PL1DEFAULT;
+		PL1FIRE    = parent.PL1FIRE;
+		PL1SCORE   = parent.PL1SCORE;
+		PL1LIFE    = parent.PL1LIFE;
+		PL1COINS   = parent.PL1COINS;
+		
+		GAMETIMER  = (LOADER.GAMETIMER < 0 ) ? parent.GAMETIMER : LOADER.GAMETIMER;
+		if(parent.warpFlag == true)GAMETIMER=parent.GAMETIMER;
+
+		GAMECLOCK  = parent.GAMECLOCK;
+
+		IMAGEBASEURL = parent.IMAGEBASEURL;
+
+		LEFTSCROLL  = LOADER.LEFTSCROLL;
+		RIGHTSCROLL = LOADER.RIGHTSCROLL;
+		UPSCROLL    = LOADER.UPSCROLL;
+		DOWNSCROLL  = LOADER.DOWNSCROLL;
+
+		STAGEMODE   = LOADER.STAGEMODE;
+		GAMEMODE    = LOADER.GAMEMODE;
+
+		PL1START_X = LOADER.PLSTART_X;
+		PL1START_Y = LOADER.PLSTART_Y;
+		PL1START_HFACE=LOADER.PLSTART_HFACE;
+		PL1START_ANIME=LOADER.PLSTART_ANIME;
+
+		 MozillaTableBoarderFix=LOADER.MozillaTableBoarderFix;
+		 
+//		 screen.updateInterval=0;
+	
+		drawInfoScreen();
+
+	try{
+	if(LOADER.screen1BeforeInit)
+		LOADER.screen1BeforeInit();
+	}catch(c){}
+
+
+//-->
+</script>
+
+<script type="text/javascript">
+<!--
+window.offscreenBuffering = true;
+//if(document.all)document.write('<div style="position:absolute;top:0;left:0;z-index:1000;" >');
+	createSpriteBody();
+	createStage(stage,charTable,BGBLOCKSIZE_X,BGBLOCKSIZE_Y);
+//if(document.all)document.write('</div>');
+//-->
+</script>
+<div id="BG1"></div>
+<comment>
+<div id="dmy" style="position:absolute;top:100000px;left:3000px;font-size:1%;">Firefoxのちらつきを低減するおまじない</div>
+<div style="position:fixed;top:0;left:0;">
+<span id="dbg1" style="position:absolute;z-index:100;top:0;left:0;back ground:green;"></span>
+</div>
+</comment>
+</body>
+</html>

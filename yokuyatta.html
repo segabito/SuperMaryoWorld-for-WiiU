@@ -1,0 +1,55 @@
+<!-- 
+#  Javascript Virtual Machine
+#  Copyright 2004- Kunio Makimoto <kunio@makimo.to>
+#  
+#  http://makimo.to/
+# 
+-->
+<html>
+<head>
+<title>GAME OVER</title>
+<meta http-equiv="Content-type" content="text/html; charset=Shift_JIS">
+<script type="text/javascript">
+function gameContinue(){
+	parent.currentStage=parent.continueStage;
+} //
+</script>
+</head>
+<body bgcolor="darkorange" text="white" scroll="no">
+<table style="position:absolute;top:0;left:0;width:100%;height:100%;">
+ <tr>
+  <td style="text-align:center;font-size:70pt;">
+	GAME OVER
+  </td>
+ </tr>
+ <tr>
+  <td style="text-align:center;font-size:20pt;">
+   <img src="img/PL2standR.gif" style="width:64px;height:64px;" />
+   <img src="img/PLstandR.gif" style="width:64px;height:64px;" />
+   <img src="img/pinch.gif" style="width:64px;height:96px;zoom:1.3;" />
+   <img src="img/kamezoL.gif" style="width:88px;height:96px;" />
+	<table align="center">
+	<script type="text/javascript">
+	 document.write("<tr><td>スコア</td><td>"+parent.PL1SCORE + "</td></tr>");
+	 document.write("<tr><td>ステージ</td><td>"+parent.getWorldNumber() + "-" + parent.getAreaNumber() + "</td></tr>");
+	 document.write("<tr><td>総フレーム数</td><td>"+parent.REPLAYCNT + "</td></tr>");
+
+	</script>
+	</table>
+
+	<br>
+	<button onclick="location.replace('replayCode.html');" style="padding:15px;width:40%;">
+		リプレイコードの表示
+	</button>
+	<br /><br />
+	<button onclick="parent.gameStart()" style="padding:15;">
+		スタート
+	</button>
+	<button onclick="parent.replayGameStart()" style="padding:15;">
+		リプレイ(テスト中)
+	</button>
+  </td>
+ </tr>
+</table>
+</body>
+</html>

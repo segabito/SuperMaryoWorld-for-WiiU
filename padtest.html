@@ -1,0 +1,48 @@
+<html>
+<head>
+<script type="text/JavaScript">
+function gamePad(){
+	this.x=0;
+	this.y=0;
+	this.buttons=Array(0,0);
+	this.getPadString=getPadString;
+	this.setPadString=setPadString;
+} //
+function getPadString(format){
+	var t="";
+//  if(!format || (format == "DIGIT")){
+	var tx=this.x+2;
+	var ty=this.y+2;
+	t=tx+""+ty;
+	for(var i=0;i<this.buttons.length;i++)
+		t+=(this.buttons[i]+2).toString();
+//  }
+  return t;
+} //
+function setPadString(s,format){
+ var str=s.toString();
+//  if(!format || (format == "DIGIT")){
+
+	for(var i=2;i<str.length;i++)
+		this.buttons[i-2]=parseInt(str.charAt(i))-2;
+	this.x=parseInt(str.charAt(0))-2;
+	this.y=parseInt(str.charAt(1))-2;
+
+//  }
+
+  alert(str+"\nchar="+(str.charAt(0))+"\nx="+this.x+"\ny="+this.y+"\nB="+this.buttons[0]+"\nA="+this.buttons[1]+"\n\n"+this.getPadString(format));
+ return this.getPadString(format);
+} //
+
+
+pad=new gamePad();
+</script>
+</head>
+<body>
+<script type="text/JavaScript">
+
+pad.setPadString("2123","DIGIT");
+
+</script>
+</body>
+</html>

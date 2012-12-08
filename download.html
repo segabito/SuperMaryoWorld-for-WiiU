@@ -1,0 +1,257 @@
+<html>
+<head>
+ <title>download</title>
+<meta http-equiv="Content-type" content="text/html; charset=Shift_JIS">
+</head>
+<body>
+<h2>ソースのダウンロード</h2>
+<hr />
+<div>
+解凍した物をまるごとアップロードすれば、そのまま動くと思います。<br>
+<br>
+このプログラムおよび画像データの著作権を放棄します。<br>
+転載するためにこちらへの許可や連絡を取る必要はありません。<br>
+<br>
+キャラを差し替えるなりステージ改造するなり、自由に使ってやってください。<br>
+<br>
+<br>
+<br>
+</div>
+<div>
+
+■2005-11-16版 [<a href="download/maryo051116.zip">download</a>]<br>
+■2005-10-03版 [<a href="download/maryo051003.zip">download</a>]<br>
+■2005-09-18版 [<a href="download/maryo050918.zip">download</a>]<br>
+↓↑2005-09-11以前のバージョンとは、リプレイデータの互換性がありません(運が良ければ動くかも)
+<hr>
+■2005-09-11版 [<a href="download/maryo050911.zip">download</a>]<br>
+■2005-09-09版 [<a href="download/maryo050909.zip">download</a>]<br>
+↓↑2005-09-04以前のバージョンとは、マップデータの互換性がありません
+<hr>
+■2005-09-04版 [<a href="download/maryo050904.zip">download</a>]<br>
+<!--
+■2005-08-29版 [<a href="download/maryo050829.zip">download</a>]<br>
+■2004-07-21版 [<a href="download/maryo040721.zip">download</a>]<br>
+■2004-07-16-2版 [<a href="download/maryo040716.zip">download</a>]<br>
+■2004-07-15版 [<a href="download/maryo040715.zip">download</a>]<br>
+-->
+
+
+<br>
+<br>
+<br>
+■各ファイルの説明
+<table border="1" style="margin-left:2%;">
+<tr>
+ <th><a href="JavaScriptMaryo.html">JavaScriptMaryo.html</a></th>
+ <td>
+	フレームの親。<br>
+	普通のプログラムで言えば実行ファイルに相当します。<br>
+	ハイスコアやリプレイデータを記録、ステージ切り替え処理を担当しています。
+ </td>
+</tr>
+<tr>
+ <th><a href="cpu.html" target="_blank">cpu.html</a></th>
+ <td>
+	基本システム・ゲームの処理担当。
+	フレームが無くても、これ単体で動くように作られています。
+ </td>
+</tr>
+<tr>
+ <th>screen1.html</th>
+ <td>
+	描画担当。真ん中のフレームです。<br>
+	スプライトや背景を表示しています。
+</td>
+</tr>
+<tr>
+ <th>screen2.html</th>
+ <td>
+	スコアボード。上のフレームです。
+ </td>
+</tr>
+<tr>
+ <th>stage0.html</th>
+ <td>
+	タイトル画面ステージのデータです。<br>
+	実験用にいろいろ改造してみるのもいいと思います。
+ </td>
+</tr>
+<tr>
+ <th><a href="manual.html">manual.html</a></th>
+ <td>
+	キャラクター紹介＆マニュアル<br>
+	タイトル画面のスクリーンに表示されています。
+ </td>
+</tr>
+<tr>
+ <th>download.html</th>
+ <td>
+	このファイルです。
+ </td>
+</tr>
+<tr>
+ <th>stageX-X.html</th>
+ <td>
+	ステージX-Xのデータ＆ローダーです。<br>
+	ステージによっては２つに分かれている物もあります。<br>
+	<br>
+	<br>
+	このファイルの&lt;body&gt;～&lt;/body&gt;部分は下部フレームに表示されるので、
+	ステージごとのメッセージや広告バナーを入れたりすることも出来ます。<br>
+	<br>
+	水中は2-2、地下は1-2、空は2-3、城は1-4あたりをテンプレートにすると良いと思います。
+ </td>
+</tr>
+<tr>
+ <th>gameover.html<br>yokuyatta.html</th>
+ <td>
+	ゲームオーバー時の画面。<br>
+	これといって特別なことはしていません。
+ </td>
+</tr>
+<tr>
+ <th>dokanout.html</th>
+ <td>
+	土管から出る→ゴールのみのステージです。<br>
+	地下や海ステージの最後の土管のワープ先をdokanout.htmlに指定します。
+ </td>
+</tr>
+
+<tr>
+ <th>blank.html</th>
+ <td>
+	空白のHTMLです。<br>
+	ステージ切り替え時に一時的に読み込んだりします。<br>
+ </td>
+</tr>
+
+<tr>
+ <th>player.js</th>
+ <td>
+	プレイヤーのアクションの処理を担当する外部jsファイルです。<br>
+	cpu.htmlから読み込まれています。
+ </td>
+</tr>
+<tr>
+ <th>enemy.js</th>
+ <td>
+	主に敵キャラクターの処理を担当する外部jsファイルです。<br>
+	cpu.htmlから読み込まれています。
+ </td>
+</tr>
+<tr>
+ <th>others.js</th>
+ <td>
+	コインなどのエフェクトやアイテムなどの処理を担当する外部jsファイルです。<br>
+	cpu.htmlから読み込まれています。
+ </td>
+</tr>
+<tr>
+ <th>alldemo.html autodemo.html</th>
+ <td>
+	デモリプレイ再生用。
+ </td>
+</tr>
+<tr>
+ <th>replayCode.html</th>
+ <td>
+	リプレイコード保存/再生用
+ </td>
+</tr>
+
+<tr>
+ <th><a href="colors.html">colors.html</a></th>
+ <td>
+	HTMLのカラーサンプル表。<br>
+	作成時の参考用。ゲーム中は使われません。
+ </td>
+</tr>
+<tr>
+ <th><a href="compressTest.html">compressTest.html</a></th>
+ <td>
+	リプレイコードの圧縮/伸長テスト用<br>
+	ゲーム中は使われません。<br>
+	もっと効率がよくて速い方法があれば乗り換えたいと思います。<br>
+ </td>
+</tr>
+<tr>
+ <th><a href="table.html">table.html</a></th>
+ <td>
+	キャラクターテーブル<br>
+	ステージ作成時に、キャラクターコードを参照するためのもの。ゲーム中は使われません。<br>
+	<br>
+	未定義コードには、ステージローダー側でキャラクターを定義することが可能です。(stage8-1b.html等)<br>
+	
+ </td>
+</tr>
+<!--
+<tr>
+ <th>./Map/～</th>
+ <td>
+	<a href="http://www.valley.ne.jp/~valencia/" target="_blank">Platinum</a>で作成したマップデータです。<br>
+	csvで出力後にconv.plを実行してコンバートしています。<br>
+	<br>
+	
+ </td>
+</tr>
+-->
+<tr>
+ <th>./img/～</th>
+ <td>
+	キャラクターなどの画像ファイルです。<br>
+	<br>
+	index.html中のIMAGEBASEURL値を設定/変更することで、
+	画像だけ別のサーバーに置いたり、ステージごとにキャラクタセットを
+	切り替えたりすることも可能です。
+ </td>
+</tr>
+
+
+<tr>
+ <th></th>
+ <td>
+	
+ </td>
+</tr>
+
+</table>
+
+<br>
+<br>
+<br>
+<br>
+</div>
+
+<div>
+■今後の課題・目標
+<li>ファイアーボールの判定がまだちょっとおかしい</li>
+<li>ステージを最後8-4まで作る</li>
+<li>リプレイ投稿BBS&タイムアタックモード</li>
+<li>マップエディタ&投稿BBS</li>
+<li>グラフィックの品質向上</li>
+<li>サウンド・BGM関係の研究</li>
+<li>パフォーマンスの向上・軽量化</li>
+</div>
+
+<div>
+<br><br>
+■リンク<br>
+　<a href="http://www.tkb-soft.hmcbest.com/" target="_blank">TAKABO SOFT NETWORK</a><br>
+　　高機能ドット絵エディタ「EDGE」を公開しています。<br>
+　　キャラクター画像作成に使用しました。<br>
+<br>
+　<a href="http://www.valley.ne.jp/~valencia/" target="_blank">Hyper Device Software</a><br>
+　汎用マップエディタ「Platinum」を公開しています。<br>
+　Platinumでマップ作成→CSV形式で出力→Perlでステージデータへコンバートという方法でステージ作成しました。<br>
+<!--　./MAP/csvdir/にあるファイルがコンバート前のステージデータです。-->
+</div>
+
+<div>
+<br>
+<br>
+■作者<br>
+　　<a href="mailto:segabito@gmail.com">Kunio Makimoto</a>　　　　　(メールでの質問は受け付けていません。<a href="http://segabito.biford.com/">掲示板へ</a>)<br>
+</div>
+</body>
+</html>

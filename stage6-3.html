@@ -1,0 +1,464 @@
+<!-- 
+#  Javascript Virtual Machine
+#  Copyright 2004- Kunio Makimoto <kunio@makimo.to>
+#  
+#  http://makimo.to/
+# 
+-->
+<html>
+<head><title>Javascript Virtual Machine  Stageloader </title>
+<meta http-equiv="Content-type" content="text/html; charset=Shift_JIS">
+<script>
+<!--
+var LOADER=false;
+var CPU,SCR1,SCR2;
+ var SCREEN_X=512;
+ var SCREEN_Y=448;
+
+	//スタート地点
+ var PLSTART_X  = 32*2+8;
+ var PLSTART_Y  = 32*12-24;	// 開始時の顔の向き (1= 左 2=右)
+ var PLSTART_HFACE= 1; // 開始時のモーション "DOKAN_UP_OUT" "DOKAN_DOWN_OUT" "DOKAN_LEFT_OUT" "DOKAN_RIGHT_OUT"
+ var PLSTART_ANIME=""; // var PLSTART_ANIME="DOKAN_UP_OUT"; 
+	//途中から復活の場合の開始地点
+ var PLSTART_X2 = 32*2+8;
+ var PLSTART_Y2 = 32*12-24;
+ var PLSTART_HFACE2= 1; 
+ var PLSTART_ANIME2=""; 
+
+
+ var WARPSTART_X=Array();
+ var WARPSTART_Y=Array();
+ var WARPSTART_HFACE=Array();
+ var WARPSTART_ANIME=Array();
+
+	// 土管などのワープからの開始点(配列)
+ WARPSTART_X[0]=32*17;
+ WARPSTART_Y[0]=32*9-24;
+ WARPSTART_HFACE[0]=1;
+ WARPSTART_ANIME[0]="DOKAN_RIGHT_OUT";
+
+ WARPSTART_X[1]=32*34;
+ WARPSTART_Y[1]=32*9-24;
+ WARPSTART_HFACE[1]=1;
+ WARPSTART_ANIME[1]="DOKAN_RIGHT_OUT";
+
+ WARPSTART_X[2]=32*136-12;
+ WARPSTART_Y[2]=32*13-24;
+ WARPSTART_HFACE[2]=1;
+ WARPSTART_ANIME[2]="DOKAN_UP_OUT";
+
+
+	// メイン画面の背景色
+ var SCREENBGCOLOR  = "black";//"#333333";
+	// 上下枠の背景色
+ var SCREENBGCOLOR2 = "black";
+
+	//ボーナスゾーンなどでタイムを引き継ぐ場合は-1とする
+ var GAMETIMER=200;
+
+
+	// それぞれの方向へのスクロールを許可するかどうか
+ var LEFTSCROLL =false;
+ var RIGHTSCROLL=false;
+ var UPSCROLL   =false;
+ var DOWNSCROLL =false;
+
+	// 開始までのプレイヤー残数表示時間。
+	// ボーナスゾーンなど、すぐに開始したい場合はゼロにする
+ var firstWaitTime=1000;
+// firstWaitTime=0;
+	// 開始時の画面切替えエフェクト(IEのみ)
+ var stageInitTrans="progid:DXImageTransform.Microsoft.pixelate(duration=1,maxsquare=50)";
+
+ var STAGEMODE= "FIELD"; // FIELD WATER
+ var GAMEMODE = "PLAY"; // PLAY AUTOPLAY REPLAY
+
+ // border:Xpxと指定したブロックがあると、その太さだけ
+ // 縦方向に加算されてしまうので、引いておく。
+ // charTable内でborderを使用しないなら 0
+ var MozillaTableBoarderFix=0;
+
+ var infotable1='';
+ var infotable2='';
+
+if(parent){
+	CPU  = parent.cpu.window;
+	SCR1 = parent.screen1.window;
+	SCR2 = parent.screen2.window;
+	SCREEN_X_OLD=parent.SCREEN_X;
+	SCREEN_Y_OLD=parent.SCREEN_Y;
+
+stage = Array(
+"00000000000000000000000000000000000000000000000000000000000000000000000000000000060600000006060000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000e900000000000000000000000000000000000000000000000000000007000000000000000000000000000000000000000000",
+"000000000000000000000000000000000000000000000000000000000000870000000000000000060000060006000006060000000606060600000000000000000000000000000000000000000000000000000000000000000000000000000033000000000606000000000000000000000000000000858500000000000000000000000000000000000000000000000000000007000000000000000000000000000000000000000000",
+"000000000000000000000000000000000000004041414141414141414141420000000000000052520052525200000052520000855252525252525252525252000000000000000000000000000000000000000000000000000000000000000000000000060004000000000000808000000000000000000000000000000000000000000000000000000000000000000000006d07000000000000000000000000000000000000000000",
+"000000000000000000000000000000000000000051515151515151515151000000000040414205050005050500000005050000000505050505050505050505404142000000000000000000900000000000000000000000000000000000000000000006000040414141414141414142000000000000000000000000000000850000000000000000000000000000000000006e00000000000000000000000000000000000000000000",
+"000000000000000000000000001010101000000051515151515151515151000000000000510000000000000000000000000006060000000000000000000000005100050505050505050505050505050500000000000006060000000000060600000600000000515151515151515100000000000000000000000000000000000000000000000000040400000000000000006e00000000000000000000000000000000000000000000",
+"000000000000000000000000000000000000000051515151515151515151830000000000510000000000000000000000000600008500000000000000000000005100000000000000000000000000000000000000000600000000000006000000000000000000515151515151515100000000000000000000000000000000000000000000000004040400000000000000006e00000000000000000000000000000000000000000000",
+"000000000000000000000000000000000000004041414141414141414141420000000000510052525252520000000052525252525200525252525200000000005100000000000000000000000000000000000000060000000000000600000000000000000000515151515151515100000000000000000000000000000000000000000000000404040400000000000000006e00000000000000000000000000000000000000000000",
+"000000000000000000000000000000000000000051515151515151515151000000000040414205050505050000110005050505050500050505050540414142005100000000009000000000000000000000000006000000000000060000000000060000000000515151515151515100000000000000000000000000000000000000000000040404040400000000000000006e00000000000000000000000000000000000000000000",
+"000000000000000000000000404141414142000051515151515151515151000000000000510000000000000000000000000000000000000000000000515100005105050505050505050505050505050500000006000000000000060000000000060000000000515151515151515100000000000000000000000000000000000000000004040404040400000000000000006e00000000000000000000000000000000000000000000",
+"000000000000000000000000005151515100000051515151515151515151800000000000510000000000000000000000008500000000000000000000515100005107070707070707070707070707070700000006000000000000060000000000060000000000515151515151515100000000000000000000000000000000000000000404040404040400000000000000006e00000000000000000000000000000000000000000000",
+"000000000000000000000000005151515100004041414141414141414141420000000000510000525252525252525252525252525252520000000000515100005100000000000000000000000000000000000006000000000000060000000000060000000000515151515151515100000000000000000000000000000000000000040404040404040400000000000000006e00000000000000000000000000000000000000000000",
+"000000ca00000000000000000051515151000000515151515151515151510000000040414141420505050505050505050505050505050540414141425151000051000000000000000000000000000000000000000000000000000000000000000000000000005151515151515151000000000000000000000000000000000000040404040404040404000000000000000004000000000000cb000000000000000000000000000000",
+"0c0c0c0c0c0c0c0c0e00000000515151510000005151515151515151515100000000005151510000000000000000000000000000000000005151510051510000510000000000000000000000000000000000e5000000000000e50000000000e5000000000000515151515151515100000000000000000000000000000000000202020202020202020202020202020202020202020202020202020202020202020202020202020202",
+"0d0d0d0d0d0d0d0d0f000000005151515100000051515151515151515151000000000051515100000000000000000000000000000000000051515100515100005100000000000000000000000000000000000000000000000000000000000000000000000000515151515151515100000000000000000000000000000000000202020202020202020202020202020202020202020202020202020202020202020202020202020202",
+
+"");
+charTable=Array(
+//00
+'',
+//01
+'img/block1.gif',
+//02
+'img/block2.gif',
+//03
+'img/block3.gif',
+//04
+'img/block4.gif',
+//05
+'img/bridge1.gif',
+//06
+'img/coinA.gif',
+//07
+'',
+//8
+'img/dokanVL-C.gif',
+//9
+'img/dokanVR-C.gif',
+//a
+'img/dokanVHL-C.gif',
+//b
+'img/dokanVHR-C.gif',
+//c
+'img/dokanHU-C.gif',
+//d
+'img/dokanHD-C.gif',
+//e
+'img/dokanHHU-C.gif',
+//f
+'img/dokanHHD-C.gif',
+
+//10
+'img/hatenaA.gif',
+//'<div style="border:1px outset silver;width:100%;height:100%;text-align:center;vertical-align:middle;margin:0;padding:0;background:gray;">＄</div>',
+//11
+'img/hatenaA.gif',
+//12
+'img/hatenaA.gif',
+//13
+'img/hatenaA.gif',
+//14
+'img/hatenaA.gif',
+//15
+'img/hatenaA.gif',
+
+//16 17 18 19 1a 1b 1c 1d 1e 1f
+  '','','','','','','','','','',
+
+//20
+'img/block1.gif',
+//21
+'img/block1.gif',
+//22
+'img/block1.gif',
+//23
+'img/block1.gif',
+//24
+'img/block1.gif',
+//25
+'img/block1.gif',
+//26
+'img/block1.gif',
+//27 28 29 2a 2b 2c 2d 2e 2f
+  '','','','','','','','','',
+
+//30
+'',
+//31
+'',
+//32
+'',
+//33
+'',
+//34
+'',
+//35
+'',
+//36
+'',
+//37
+'',
+//38
+'',
+//39
+'',
+//3a
+'',
+//3b
+'',
+//3c
+'',
+//3d
+'',
+//3e
+'',
+//3f
+'',
+//40 背景用(当たり判定あり)
+'img/grayfloorL.gif',
+//41 背景用(当たり判定あり)
+'img/grayfloor.gif',
+//42 背景用(当たり判定あり)
+'img/grayfloorR.gif',
+//43
+'',
+//44
+'',
+//45
+'',
+//46
+'',
+//47
+'',
+//48
+'',
+//49
+'',
+//4a
+'',
+//4b
+'',
+//4c
+'img/dokanDR-C.gif',
+//4d
+'img/dokanLD-C.gif',
+//4e
+'img/dokanUR-C.gif',
+//4f
+'img/dokanLU-C.gif',
+
+
+
+//50
+'img/aokage.gif',
+//51 背景用(当たり判定なし)
+'img/grtreebg.gif',
+//52 背景用(当たり判定なし)
+'img/bridge1U.gif',
+//53
+'',
+//54
+'img/block1.gif',
+//55
+'',
+//56
+'',
+//57
+'',
+//58
+'',
+//59
+'',
+//5a
+'',
+//5b
+'',
+//5c
+'',
+//5d
+'',
+//5e
+'',
+//5f
+'',
+
+'');
+
+charTable[0x6c]='img/tsuta.gif';
+charTable[0x6d]='img/ball.gif';
+charTable[0x6e]='img/bar.gif';
+charTable[0x7f]='<div style="width:100%;height:100%;background:black;filter:alpha(opacity=50);z-index:1200;opacity:0.5;mozOpacity:0.5"></div>';
+
+
+ for(var i=0;i<stage.length;i++)stage[i]=stage[i].replace(/[ ]/gi,"0").replace(/[^0-9^a-f]/gi,"");
+  parent.stage=stage;
+  parent.charTable=charTable;
+}
+ for(var i=1;i<256;i++)if(!charTable[i])charTable[i]="";
+
+
+// イベント属性ブロックに触れた時にコールされる
+function eventPointBlock(obj,win,block){
+ with(win){
+  switch(block){
+  }
+	return -1;
+ }
+} //
+
+//ブロックを叩いた時にコールされる
+function eventUpperBlock(obj,win,block){
+ with(win){
+  switch(block){
+  }
+	return -1;
+ }
+} //
+
+// ゴールポイントに触れた時にコールされる
+function eventGoalBlock(obj,win,block){
+ with(win){
+  switch(block){
+  }
+  stageClear();
+	return -1;
+ }
+} //
+
+// ワープポイントに触れた時にコールされる
+function eventWarpBlock(obj,win,block,WARPPTR){
+ with(win){
+	parent.warpNum=WARPPTR;
+	switch(WARPPTR){
+	 case 0:
+		parent.stageChange("bonus6-2.html");
+	 break;
+	 case 1:
+		parent.stageChange("bonus6-2b.html");
+	 break;
+	 case 2:
+		parent.stageChange("bonus6-2c.html");
+	 break;
+	}
+	return -1;
+ }
+} //
+
+// プレイヤーが落下した時にコールされる
+function eventPlayerDrop(obj,win){
+ with(win){
+	return 1;
+ }
+} //
+
+
+function screen1BeforeInit(){ // screen1 のロード直後に呼ばれる
+ SCR1.SCREEN_X=SCREEN_X;
+ SCR1.SCREEN_Y=SCREEN_Y;
+	if(document.all && firstWaitTime > 300){
+		var sdb=SCR1.document.body;
+		if(stageInitTrans !=""){
+		 sdb.style.filter=stageInitTrans;
+		 sdb.filters[0].Apply();
+		}
+	}
+} //
+function screen1Init(){ // screen1 のロード終了後に呼ばれる
+
+ var sdb=SCR1.document.body;
+	sdb.style.background=SCREENBGCOLOR;
+	document.body.style.background=
+	SCREENBGCOLOR2;
+
+ if(parent.warpFlag){
+	var wp=parent.warpNum;
+	SCR1.PL1START_X = WARPSTART_X[wp];
+	SCR1.PL1START_Y = WARPSTART_Y[wp];
+	SCR1.PL1START_HFACE=WARPSTART_HFACE[wp];
+	SCR1.PL1START_ANIME=WARPSTART_ANIME[wp];
+ }else
+ if(parent.retryFlag){
+	SCR1.PL1START_X = PLSTART_X2;
+	SCR1.PL1START_Y = PLSTART_Y2;
+	SCR1.PL1START_HFACE=PLSTART_HFACE2;
+	SCR1.PL1START_ANIME=PLSTART_ANIME2;
+ }
+
+	SCR1.firstWaitTime=firstWaitTime;
+	if(document.all){
+		if(stageInitTrans !="" && firstWaitTime>300){
+		 sdb.filters[0].duration=Math.abs((firstWaitTime*.7-parent.RATE_DRAW_FAST)/1000);
+		}
+	}
+
+
+} // 
+
+function screen1BeforeUnload(){ // screen1 のアンロード時に呼ばれる
+
+} // 
+
+function screen2BeforeInit(){ // screen2 のロード直後に呼ばれる
+	SCR2.document.body.style.background=SCREENBGCOLOR2;
+} //
+function screen2Init(){ // screen2 のロード終了後に呼ばれる
+} // 
+function screen2BeforeUnload(){ // screen2 のロード終了後に呼ばれる
+} // 
+
+
+
+function cpuBeforeInit(){ // CPU のロード直後に呼ばれる
+
+} // 
+function cpuInit(){ // CPU のロード終了後に呼ばれる
+	SCR1.onCpuInit();
+} // 
+
+
+function cpuBeforeUnload(){ // CPU のアンロード時に呼ばれる
+
+} // 
+
+function onCPUTimer(win,P1,tm){ // CPUのタイマーイベントごとに呼ばれる
+ with(win){
+	var L=WIN.SCROLL_LEFT;
+	var S=WIN.SCREEN_X;
+	var SX=WIN.SCROLL_X_MAX;
+  //if(L < SX-S*2.5)
+  if((L < SX-S*1.8) )WIN.SCROLL_LEFT+=4; //強制スクロールなど
+  if(	(L > S*.5) && (L < SX-S*3) && FISHCNT < 2){
+	if(RND(100)<=3)callEnemy(-1,-1,EnemyCode.FLYFISH);
+  }
+ }
+} //
+
+
+
+function init(){
+	LOADER=true;
+	parent.LOADEROK=true;
+	infotable1=document.getElementById('infotable1').innerHTML;
+	infotable2=document.getElementById('infotable2').innerHTML;
+	SCR1.location.replace("screen1.html");
+	SCR2.location.replace("screen2.html");
+	parent.ff();
+} //
+
+function bye(){
+
+/*
+	CPU.location.replace("blank.html");
+	SCR1.location.replace("blank.html");
+	SCR2.location.replace("blank.html");
+*/
+} //
+
+onload=init;
+onunload=bye;
+
+-->
+</script>
+</head>
+<body bgcolor="black" onfocus="parent.cpu.focus();">
+<span style="background:#888888;color:black">ダッシュ-[CTRL] ジャンプ-[SHIFT]</span>
+
+<span id="infotable1" style="display:none;">
+</span>
+<span id="infotable2" style="display:none;">
+</span>
+
+</body>
+</html>

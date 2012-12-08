@@ -1,0 +1,188 @@
+<!-- 
+#  Javascript Virtual Machine
+#  Copyright 2004- Kunio Makimoto <kunio@makimo.to>
+#  
+#  http://makimo.to/
+# 
+-->
+<html>
+<head><title>STAGE1</title>
+<script>
+<!--
+var CPU,SCR1,SCR2;
+ var SCREEN_X_OLD=640;
+ var SCREEN_Y_OLD=480;
+
+ var SCREENBGCOLOR  = "#333333";
+ var SCREENBGCOLOR2 = "#333366";
+
+
+
+if(parent){
+	CPU  = parent.cpu.window;
+	SCR1 = parent.screen1.window;
+	SCR2 = parent.screen2.window;
+	SCREEN_X_OLD=parent.SCREEN_X;
+	SCREEN_Y_OLD=parent.SCREEN_Y;
+stage = Array(
+"                                                           3 1 1",
+"                                                      11     1 1",
+"                                               4 4           1 1",
+"                               4   4   4   4   4 4           1 1",
+"                      31 1 1 1   2   2   2   2               1 1",
+"                                                             1 1",
+"                                       1 1 1 1         1 1 1 1 1",
+"31 1                                 4 4 4           1 1 1 1 1 1",
+"                      22 1 1 133     4 4 4         1 1 1 1 1 1 1",
+"                     1 1 1 1         4 4 4       1 1 1 1 1 1 1 1",
+"                                               1 1 1 1 1 1 1 1 1",
+"                        8      1 1  8        1 1 1 1 1 1 1 1 1 1",
+" 1 1 1 1 1 1 1 1 1 1 1 1 1     1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1",
+" 1 1 1 1 1 1 1 1 1 1 1 1 1     1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1",
+//*/
+"");
+charTable=Array(
+//00
+'',
+//01
+'<div style="border:1px outset red;width:100%;height:100%;text-align:center;vertical-align:bottom;middle;margin:0;padding:0;bac kground:brown;"></div>',
+//02
+'<div style="border:1px dashed red;width:100%;height:100%;text-align:center;vertical-align:middle;margin:0;padding:0;background:orange;"></div>',
+//03
+'<div style="border:1px outset silver;width:100%;height:100%;text-align:center;vertical-align:middle;margin:0;padding:0;background:gray;"></div>',
+//04
+'img/coinA.gif',
+//05
+'<div style="border:1px outset orange;width:100%;height:100%;text-align:center;vertical-align:middle;margin:0;padding:0;background:yellow;"></div>',
+//06 07 08 09 0a 0b 0c 0d 0e 0f
+  '','','','','','','','','','',
+
+//10
+'<div style="border:1px outset silver;width:100%;height:100%;text-align:center;vertical-align:middle;margin:0;padding:0;background:gray;">＄</div>',
+//11
+'<div style="border:1px outset silver;width:100%;height:100%;text-align:center;vertical-align:middle;margin:0;padding:0;background:orange;">茸</div>',
+//12
+'<div style="border:1px outset silver;width:100%;height:100%;text-align:center;vertical-align:middle;margin:0;padding:0;background:orange;">★</div>',
+//13
+'<div style="border:1px outset silver;width:100%;height:100%;text-align:center;vertical-align:middle;margin:0;padding:0;background:orange;">1UP</div>',
+
+//14 15 16 17 18 19 1a 1b 1c 1d 1e 1f
+  '','','','','','','','','','','','',
+//20
+'<div style="border:1px outset red;width:100%;height:100%;text-align:center;vertical-align:bottom;middle;margin:0;padding:0;background:brown;">＄</div>',
+//21
+'<div style="border:1px outset red;width:100%;height:100%;text-align:center;vertical-align:bottom;middle;margin:0;padding:0;background:brown;">茸</div>',
+//22
+'<div style="border:1px outset red;width:100%;height:100%;text-align:center;vertical-align:bottom;middle;margin:0;padding:0;background:brown;">★</div>',
+//23
+'<div style="border:1px outset red;width:100%;height:100%;text-align:center;vertical-align:bottom;middle;margin:0;padding:0;background:brown;">1UP</div>',
+
+//24 25 26 27 28 29 2a 2b 2c 2d 2e 2f
+  '','','','','','','','','','','','',
+//30
+'',
+//31
+'',
+//32
+'',
+//33
+'',
+
+
+'block.gif',
+//'<div style="border:1px solid aqua;width:100%;height:100%;text-align:center;vertical-align:middle;"></div>',
+'',
+'',
+'',
+'',
+'');
+
+ for(var i=0;i<stage.length;i++)stage[i]=stage[i].replace(/[ ]/gi,"0").replace(/[^0-9^a-f]/gi,"");
+  parent.stage=stage;
+  parent.charTable=charTable;
+}
+
+
+function screen1BeforeInit(){ // screen1 のロード直後に呼ばれる
+ parent.SCREEN_X=SCR1.SCREEN_X=512;
+ parent.SCREEN_Y=SCR1.SCREEN_Y=448;
+	if(document.all){
+		var sdb=SCR1.document.body;
+		sdb.style.filter="progid:DXImageTransform.Microsoft.pixelate(duration=1,maxsquare=50)";
+		sdb.filters[0].Apply();
+	}
+} //
+function screen1Init(){ // screen1 のロード終了後に呼ばれる
+
+ var sdb=SCR1.document.body;
+	sdb.style.background=SCREENBGCOLOR;
+	document.body.style.background=
+	SCR2.document.body.style.background=SCREENBGCOLOR2;
+
+	if(document.all){
+		SCR1.firstWAIT=parent.RATE_DRAW_FAST*21;
+		sdb.filters[0].duration=parent.RATE_DRAW_FAST*20/1000;
+		sdb.filters[0].Play();
+		setTimeout('parent.screen1.document.body.style.filter=""',parent.RATE_DRAW_FAST*21);
+	}
+
+} // 
+
+function screen1BeforeUnload(){ // screen1 のアンロード時に呼ばれる
+
+} // 
+
+
+
+function cpuBeforeInit(){ // CPU のロード直後に呼ばれる
+	parent.cpu.PL1START_X = 64;
+	parent.cpu.PL1START_Y = 32*12-24;
+
+} // 
+function cpuInit(){ // CPU のロード終了後に呼ばれる
+
+} // 
+
+function cpuBeforeUnload(){ // CPU のアンロード時に呼ばれる
+
+} // 
+
+
+
+
+
+function init(){
+	SCR1.location.replace("screen1.html");
+	SCR2.location.replace("screen2.html");
+	CPU.focus();
+}
+
+function bye(){
+ parent.SCREEN_X=SCR1.SCREEN_X=SCREEN_X_OLD;
+ parent.SCREEN_Y=SCR1.SCREEN_Y=SCREEN_Y_OLD;
+/*
+	CPU.onunload=null;
+	SCR1.onunload=null;
+	SCR2.onunload=null;
+	CPU.location="blank.html";
+	SCR1.location="blank.html";
+	SCR2.location="blank.html";
+*/
+} //
+
+onload=init;
+onunload=bye;
+
+-->
+</script>
+</head>
+<body bgcolor="black" onfocus="parent.cpu.focus();">
+<a href="stage1.html">stage1</a>
+<a href="stage2.html">stage2</a>
+<a href="stage3.html">stage3</a>
+<a href="stage4.html">stage4</a>
+<a href="stage5.html">stage5</a>
+<a href="stage6.html">stage6</a>
+<a href="stage7.html">stage7</a>
+</body>
+</html>

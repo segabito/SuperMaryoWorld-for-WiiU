@@ -1,0 +1,407 @@
+<!-- 
+#  Javascript Virtual Machine
+#  Copyright 2004- Kunio Makimoto <kunio@makimo.to>
+#  
+#  http://makimo.to/
+# 
+-->
+<html>
+<head><title>Javascript Virtual Machine  Stageloader </title>
+<meta http-equiv="Content-type" content="text/html; charset=Shift_JIS">
+<script>
+<!--
+var LOADER=false;
+var CPU,SCR1,SCR2;
+ var SCREEN_X=512;
+ var SCREEN_Y=448;
+
+	//スタート地点
+ var PLSTART_X  = 32*0;
+ var PLSTART_Y  = 32*7-24;
+	// 開始時の顔の向き (1= 左 2=右)
+ var PLSTART_HFACE= 1; // 開始時のモーション "DOKAN_UP_OUT" "DOKAN_DOWN_OUT" "DOKAN_LEFT_OUT" "DOKAN_RIGHT_OUT"
+ var PLSTART_ANIME=""; // var PLSTART_ANIME="DOKAN_UP_OUT"; 
+	//途中から復活の場合の開始地点
+ var PLSTART_X2 = -1;
+ var PLSTART_Y2 = -1;
+ var PLSTART_HFACE2= 1; 
+ var PLSTART_ANIME2=""; 
+
+
+ var WARPSTART_X=Array();
+ var WARPSTART_Y=Array();
+ var WARPSTART_HFACE=Array();
+ var WARPSTART_ANIME=Array();
+
+	// 土管などのワープからの開始点(配列)
+ WARPSTART_X[0]=32*92-12;
+ WARPSTART_Y[0]=32*10;
+ WARPSTART_HFACE[0]=1;
+ WARPSTART_ANIME[0]="DOKAN_UP_OUT";
+
+
+	// メイン画面の背景色
+ var SCREENBGCOLOR  = "black";//"#333333";
+	// 上下枠の背景色
+ var SCREENBGCOLOR2 = "#333366";
+
+	//ボーナスゾーンなどでタイムを引き継ぐ場合は-1とする
+ var GAMETIMER=200;
+
+
+	// それぞれの方向へのスクロールを許可するかどうか
+ var LEFTSCROLL =false;
+ var RIGHTSCROLL=true;
+ var UPSCROLL   =false;
+ var DOWNSCROLL =false;
+
+	// 開始までのプレイヤー残数表示時間。
+	// ボーナスゾーンなど、すぐに開始したい場合はゼロにする
+ var firstWaitTime=1000;
+// firstWaitTime=0;
+	// 開始時の画面切替えエフェクト(IEのみ)
+// var stageInitTrans="progid:DXImageTransform.Microsoft.pixelate(duration=1,maxsquare=50)";
+ var stageInitTrans="progid:DXImageTransform.Microsoft.slide(duration=1,style=swap)";
+
+ var STAGEMODE= "FIELD"; // FIELD WATER
+ var GAMEMODE = "PLAY"; // PLAY AUTOPLAY REPLAY
+
+ // border:Xpxと指定したブロックがあると、その太さだけ
+ // 縦方向に加算されてしまうので、引いておく。
+ // charTable内でborderを使用しないなら 0
+ var MozillaTableBoarderFix=0;
+
+ var infotable1='';
+ var infotable2='';
+
+if(parent){
+	CPU  = parent.cpu.window;
+	SCR1 = parent.screen1.window;
+	SCR2 = parent.screen2.window;
+	SCREEN_X_OLD=parent.SCREEN_X;
+	SCREEN_Y_OLD=parent.SCREEN_Y;
+
+stage = Array(
+"0404040404040404040404040404040404040404040000000000000000040404000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000006c0000000000000000000404040404040404040404040404040404040404040404040404040404040404040404040404040404040404040404",
+"0404040404040404040404040404040000000000000400000000000000040404000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000006c0000000000000000000400000000000000000000000000010104040400000000000000000000000000000000000000000000000000000004",
+"0404040404040404040404040404000000000000000404000000000404040400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000006c0404040404040000000400000000000000000000000000010104040400000000000000000000000000000000000000000000000000000004",
+"0404040404040404040404040400000000000000000404000000000404040000000000000000008f8f000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000858585000000000000000000000000006c0404040404040000000401010101010000000000000000010100040400000000000000000000000000000000000000000000000000000004",
+"0000000004040404040404000000000011000000000404000000000404040000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000006c0404040404040000000400000000000000000000000000000000040400000000000000000000000000000000000000000000000000000004",
+"000000000000000000000000000000000000000000040404000004040400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000006060600000000000000000000008f006c04040404040400000000000000008f0000000000000000e70000000000000000000000000000000000000000000000000000000000000004",
+"000000000000000000000000000000000000000000000404000004040000000000000000000000000000000000008e000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000006c04040404040400000000000000008f00000000000000b0000000000000000000000000000000000000000000000000000000000000000004",
+"040404000000000000000000000000c300000000000004040000040400000000000004040404040000040404040400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000006c0404c304040400000000000000000000000000000000000000f0000000000000000000000000000000000000000000000000000000000004",
+"040404040000000000008f000004040400000000000000040404040000000000000404040404040000040404040400000000000000000000000000000000000000000000000000000000040000000000000000303000000000000000000000000000000006060600006c0404040000000000c00000000000000000000000000000000004040000000000000000000000000000000000000000000000000000000004",
+"040404040400000000008f000404040400000000000000000404000000000000040404040404040000040404040400000404040004000000c300000000040400000004040000c2000000040000000000303030000000000000000000000000000000000000000000006c0404040000000000040404050505050505050505050505050504040400000000000000000000000000000000000000000000000000000004",
+"040404040404040400008f0004040404000000000000000000000000000083040404040404040400000404040404000000000000000000000000008d00000000008d0000000000008d00043030303030000000000000000000000000000000000000000000000000006c0404040031000000040404000000000000000000000000000004040440414141414200000000000000000000000000000000000000000004",
+"0404040404040404040400040404040400000000000000000000000000000404040404040404045151040404040451515151515151515151515151515151515151515151515151515151040000000000000000000000000000000000000000000000000000000000006c04040400000000000404040000000000000000008d0000000004040400000000000000000000000000000000000000000000000000000004",
+"0404040404040404040400040404040400000000000000000000008e00040404040404040404045050040404040450505050505050505050505050505050505050505050505050505050040000000000000000000000008d00000000000000000000000000008d00006c04040400000000000404045151515151515151515151515151040404000000000000000000007f00cc0000cb000000000000000000000004",
+"040404040404040404045104040404040404040404040404040404040404040404040404040404505004040404045050505050505050505050505050505050505050505050505050505004040404040404040404045151515151515151515151040404515151515151040404040404045151040404505050505050505050505050505004040400000000000004040404040404040404040404040404040404040404",
+
+"");
+charTable=Array(
+//00
+'',
+//01
+'img/block1G.gif',
+//02
+'img/block2G.gif',
+//03
+'img/block3.gif',
+//04
+'img/block5G.gif',
+//05
+'img/block6.gif',
+//06
+'img/coinA.gif',
+//07
+'',
+//8
+'img/dokanVL.gif',
+//9
+'img/dokanVR-B.gif',
+//a
+'img/dokanVHL-B.gif',
+//b
+'img/dokanVHR-B.gif',
+//c
+'img/dokanHU-B.gif',
+//d
+'img/dokanHD-B.gif',
+//e
+'img/dokanHHU-B.gif',
+//f
+'img/dokanHHD-B.gif',
+
+//10
+'img/hatenaA.gif',
+//'<div style="border:1px outset silver;width:100%;height:100%;text-align:center;vertical-align:middle;margin:0;padding:0;background:gray;">＄</div>',
+//11
+'img/hatenaA.gif',
+//12
+'img/hatenaA.gif',
+//13
+'img/hatenaA.gif',
+
+//14
+'',
+//15
+'img/block1G.gif',
+//16 17 18 19 1a 1b 1c 1d 1e 1f
+  '','','','','','','','','','',
+//20
+'img/block1G.gif',
+//21
+'img/block1G.gif',
+//22
+'img/block1G.gif',
+//23
+'img/block1G.gif',
+//24
+'img/block1G.gif',
+//25
+'img/block1G.gif',
+
+//26 27 28 29 2a 2b 2c 2d 2e 2f
+  '','','','','','','','','','',
+//30
+'',
+//31
+'',
+//32
+'',
+//33
+'',
+//34
+'',
+//35
+'',
+//36 37 38 39 3a 3b 3c 3d 3e 3f
+  '','','','','','','','','','',
+//40 背景用(当たり判定あり)
+'img/grnfloorL.gif',
+//41 背景用(当たり判定あり)
+'img/grnfloor.gif',
+//42 背景用(当たり判定あり)
+'img/grnfloorR.gif',
+//43
+'img/grnfloorR.gif',
+//44
+'',
+//45
+'',
+//46 47 48 49 4a 4b 4c 4d 4e 4f
+'',
+//47
+'',
+//48
+'',
+//49
+'',
+//4a
+'',
+//4b
+'',
+//4c
+'img/dokanDR-B.gif',
+//4d
+'img/dokanLD-B.gif',
+//4e
+'img/dokanUR-B.gif',
+//4f
+'img/dokanLU-B.gif',
+
+//50 背景用(当たり判定なし)
+'img/akakage.gif',
+//51 背景用(当たり判定なし)
+'img/magma.gif',
+
+'',
+'',
+'',
+'',
+'');
+
+charTable[0x6c]='img/tsuta.gif';
+charTable[0x6d]='img/ball.gif';
+charTable[0x6e]='img/bar.gif';
+
+
+ for(var i=0;i<stage.length;i++)stage[i]=stage[i].replace(/[ ]/gi,"0").replace(/[^0-9^a-f]/gi,"");
+  parent.stage=stage;
+  parent.charTable=charTable;
+}
+ for(var i=1;i<256;i++)if(!charTable[i])charTable[i]="";
+
+
+// イベント属性ブロックに触れた時にコールされる
+function eventPointBlock(obj,win,block){
+ with(win){
+  switch(block){
+  }
+	return -1;
+ }
+} //
+
+//ブロックを叩いた時にコールされる
+function eventUpperBlock(obj,win,block){
+ with(win){
+  switch(block){
+  }
+	return -1;
+ }
+} //
+
+// ゴールポイントに触れた時にコールされる
+function eventGoalBlock(obj,win,block){
+ with(win){
+  switch(block){
+  }
+  stageClear();
+	return -1;
+ }
+} //
+
+// ワープポイントに触れた時にコールされる
+function eventWarpBlock(obj,win,block,WARPPTR){
+ with(win){
+//	alert(WARPPTR);
+	switch(WARPPTR){
+	 case 0:
+		parent.stageChange("bonus1.html");
+	 break;
+	 case 1:
+	 case 2:
+	 case 3:
+	 case 4:
+		parent.stageChange("dokanout.html");
+	 break;
+
+	}
+	return -1;
+ }
+} //
+
+// プレイヤーが落下した時にコールされる
+function eventPlayerDrop(obj,win){
+ with(win){
+	return 1;
+ }
+} //
+
+
+function screen1BeforeInit(){ // screen1 のロード直後に呼ばれる
+ SCR1.SCREEN_X=SCREEN_X;
+ SCR1.SCREEN_Y=SCREEN_Y;
+	if(document.all && firstWaitTime > 300){
+		var sdb=SCR1.document.body;
+		if(stageInitTrans !=""){
+		 sdb.style.filter=stageInitTrans;
+		 sdb.filters[0].Apply();
+		}
+	}
+} //
+function screen1Init(){ // screen1 のロード終了後に呼ばれる
+
+ var sdb=SCR1.document.body;
+	sdb.style.background=SCREENBGCOLOR;
+	document.body.style.background=
+	SCREENBGCOLOR2;
+
+
+ if(parent.warpFlag){
+	var wp=parent.warpNum;
+	SCR1.PL1START_X = WARPSTART_X[wp];
+	SCR1.PL1START_Y = WARPSTART_Y[wp];
+	SCR1.PL1START_HFACE=WARPSTART_HFACE[wp];
+	SCR1.PL1START_ANIME=WARPSTART_ANIME[wp];
+ }else
+ if(parent.retryFlag){
+	SCR1.PL1START_X = PLSTART_X2;
+	SCR1.PL1START_Y = PLSTART_Y2;
+	SCR1.PL1START_HFACE=PLSTART_HFACE2;
+	SCR1.PL1START_ANIME=PLSTART_ANIME2;
+ }
+
+	SCR1.firstWaitTime=firstWaitTime;
+	if(document.all){
+		if(stageInitTrans !="" && firstWaitTime>300){
+		 sdb.filters[0].duration=Math.abs((firstWaitTime*.7-parent.RATE_DRAW_FAST)/1000);
+		}
+	}
+
+
+} // 
+
+function screen1BeforeUnload(){ // screen1 のアンロード時に呼ばれる
+
+} // 
+
+function screen2BeforeInit(){ // screen2 のロード直後に呼ばれる
+	SCR2.document.body.style.background=SCREENBGCOLOR2;
+} //
+function screen2Init(){ // screen2 のロード終了後に呼ばれる
+} // 
+function screen2BeforeUnload(){ // screen2 のロード終了後に呼ばれる
+} // 
+
+
+
+function cpuBeforeInit(){ // CPU のロード直後に呼ばれる
+
+} // 
+function cpuInit(){ // CPU のロード終了後に呼ばれる
+	SCR1.onCpuInit();
+ var msg=SCR1.document.getElementById("MSGAREA");
+ msg.innerHTML='<span style="color:white;"><nobr>ふっ　　　すべてのチューボーたちは<br><br><br>わたしのまえにひざまずくのよ。</nobr></span>';
+} // 
+
+
+function cpuBeforeUnload(){ // CPU のアンロード時に呼ばれる
+
+} // 
+
+function onCPUTimer(win,P1,tm){ // CPUのタイマーイベントごとに呼ばれる
+ with(win){
+//	WIN.SCROLL_LEFT+=1; //強制スクロールなど
+ }
+} //
+
+
+
+function init(){
+	LOADER=true;
+	parent.LOADEROK=true;
+	infotable1=document.getElementById('infotable1').innerHTML;
+	infotable2=document.getElementById('infotable2').innerHTML;
+	SCR1.location.replace("screen1.html");
+	SCR2.location.replace("screen2.html");
+	parent.ff();
+} //
+
+function bye(){
+
+/*
+	CPU.location.replace("blank.html");
+	SCR1.location.replace("blank.html");
+	SCR2.location.replace("blank.html");
+*/
+} //
+
+onload=init;
+onunload=bye;
+
+-->
+</script>
+</head>
+<body bgcolor="black" onfocus="parent.cpu.focus();">
+<span style="background:#888888;color:black">ダッシュ-[CTRL] ジャンプ-[SHIFT]</span>
+
+<span id="infotable1" style="display:none;">
+最初はしゃがみジャンプ
+</span>
+<span id="infotable2" style="display:none;">
+ツタはジャンプ登り
+</span>
+
+</body>
+</html>

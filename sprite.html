@@ -1,0 +1,699 @@
+<html>
+<head>
+ <title></title>
+<style type="text/css">
+<!--
+img {margin:0;padding:0;border:none;}
+body {margin:0;padding:0;border:0;}
+table,tr,td{table-layout:fixed;border-collapse:collapce;empty-cells:show;word-break:break-all;margin:0;padding:0;border:none;overflow:hidden;}
+-->
+</style>
+<script type="text/JavaScript">
+<!--
+var D=document,DA=false,DB=false,DG=false;
+//<------DISP CONFIG----
+var maxSprites=1024;
+var spriteCnt=0;
+var SCREEN_X=640;
+var SCREEN_Y=480;
+
+var SCROLL_X_MAX=640*2;
+var SCROLL_X_MIN=0;
+var SCROLL_Y_MAX=480*2;
+var SCROLL_Y_MIN=-32*5;
+//------DISP CONFIG----->
+
+var PAD1=new gamePad();
+
+
+if(D.all){
+	DA=D.all;
+	DGI = new Function("return document.all[arguments[0]]");
+	DGT = new Function("return document.all.tags(arguments[0])");
+
+	pxTop  = 'posTop';
+	pxLeft = 'posLeft';
+	pxWidth = 'posWidth';
+	pxHeight = 'posHeight';
+
+	oton = 'parentElement';
+
+	if(D.getElementById)
+		DG = D.getElementById;
+
+} if(D.getElementById){
+	DG = D.getElementById;
+	DGI = new Function("return document.getElementById(arguments[0])");
+	DGT = new Function("return document.getElementsByTagName(arguments[0])");
+	pxTop  = 'top';
+	pxLeft = 'left';
+	pxWidth = 'posWidth';
+	pxHeight = 'posHeight';
+	
+	oton = 'parentNode';
+}
+var stage = Array(
+"                                                                                ",
+"             1 1 1 1 1 1 1                   1 1 1 1 1 1 1 1 1 1 1 1 1 1 1     1",
+" 1         1 1 1 1 1 1 1 1             1                                     1 1",
+"                                     1 1                                     1 1",
+"   1 1 1 1 1                         1 1 1                                   1 1",
+" 1           1                                                               1 1",
+" 1                                                                           1 1",
+" 1             2 2 2                                   2 2 2                 1 1",
+" 1                                                                           1 1",
+" 1         1 1 1 1   1   1   1                     1 1 1 1   1   1   1       1 1",
+" 1                                   1 1 1 1 1                               1 1",
+" 1 1                                                                            ",
+" 1     1   1   1 1 1 1 1           1 1 1 1     1   1   1 1 1 1 1           1 1 1",
+" 1                             1 1 1 1 1 1                             1 1 1 1 1",
+" 1 1                 1 1 1 1 1 1 1 1 1 1 1 1                 1 1 1 1 1 1 1 1 1 1",
+" 1 1 1 1 1 1 1 1       1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1     1 1 1 1 1 1 1 1 1",
+
+"                               1 1                                     1 1      ",
+"                                     1 1                                     1 1",
+"                                     1 1                                     1 1",
+" 1                       1           1 1 1                                   1 1",
+" 1                     1             1 1 1                                   1 1",
+" 1                   1               1 1 1                                   1 1",
+" 1             1 1 1                 1 1 1             2 2 2                 1 1",
+" 1                                   1 1 1                                   1 1",
+"                               1 1                                     1 1      ",
+"   1                                 1 1                                     1 1",
+"   1 1 1 1                           1 1                                     1 1",
+" 1                                   1 1 1                                   1 1",
+" 1                                   1 1 1                                   1 1",
+" 1                                   1 1 1                                   1 1",
+" 1             2 2 2                 1 1 1             2 2 2                 1 1",
+" 1         1 1 1 1   1   1   1       1 1 1         1 1 1 1   1   1   1       1 1",
+" 1                                   1 1 1                                   1 1",
+" 1 1                                         1 1                                ",
+" 1     1   1   1 1 1 1 1           1 1 1 1     1   1   1 1 1 1 1           1 1 1",
+" 1                             1 1 1 1 1 1                             1 1 1 1 1",
+" 1 1                 1 1 1 1 1 1 1 1 1 1 1 1                 1 1 1 1 1 1 1 1 1 1",
+" 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1     1 1 1 1 1 1 1 1 1",
+//*/
+"");
+var charTable=Array(
+//'<div style="border:1px solid #ffff99;width:100%;height:100%;text-align:center;vertic al-align:middle;margin:0;padding:0;"></div>',
+'',
+//'<img style="width:100%;height:100%;border:none;background:white">',
+'<div style="border:1px outset silver;width:100%;height:100%;text-align:center;verti cal-align:middle;margin:0;padding:0;back ground:gray;"></div>',
+//'<div style="border:4px outset silver;width:100%;height:100%;text-align:center;vertical-align:middle;margin:0;padding:0;background:gray;"></div>',
+'<img src="st07_i5.gif" style="width:100%;height:100%;border:none;">',
+'<img src="block.gif" style="width:100%;height:100%;border:none;backgr ound:darkred">',
+//'<div style="border:1px solid aqua;width:100%;height:100%;text-align:center;vertical-align:middle;"></div>',
+'',
+'',
+'',
+'',
+'');
+
+//--------------------------------------
+
+
+function gamePad(){
+	this.x=0;
+	this.y=0;
+	this.buttons=Array(0,0,0,0,0,0,0,0,0,0,0,0);
+} //
+
+
+//------------------------
+
+
+function scrollBG(x,y){
+	var xx=x * (document.body.clientWidth  / SCREEN_X);
+	var yy=y * (document.body.clientHeight / SCREEN_Y);
+	document.body.scrollLeft=xx;
+	document.body.scrollTop=yy;
+}
+
+
+function createSprite(){
+	var spriteHTML='<div style="position:absolute;top:0;left:0;z-index:5;display:none;filter:flipV(enabled=false) flipH(enabled=false) progid:DXImageTransform.Microsoft.Matrix(enabled=false) Alpha(enabled=false)" name="spriteHTML" id="spriteHTML"></div>';
+	for(var i=0;i<maxSprites;i++){
+//		document.write("["+spriteHTML+"]");
+		document.write(spriteHTML);
+	}
+} // 
+
+function createStage(dat,dat2,wx,wy){
+ var tbl='';
+ var dbw=document.body.clientWidth;
+ var dbh=document.body.clientHeight;
+ var tw=dbw  / SCREEN_X * wx;
+ var th=dbh / SCREEN_Y * wy;
+ var twi=parseInt(tw);
+ var twf=tw-twi;
+ var thi=parseInt(th);
+ var thf=th-thi;
+ var colcnt=0;
+ var colmax=0;
+ var rowmax=0;
+
+  if(!document.all){
+	// Mozilla スクロールバーの太さだけ引く(仮対応)
+	//	dbw-=19;	dbh-=19;
+	// Mozilla だと縦方向のborderが加算?される
+	thi-=2;
+  }
+
+	 var thftmp=0;
+  for(var i=0;i<dat.length;i++){
+	var line=dat[i];
+	if(line==""){i--;break;}
+	line=line.replace(/[ ]/gi,"0").replace(/[^0-9^a-f]/gi,"");
+
+	 thitmp=thi;
+	 thftmp+=thf;
+	  if(thftmp>=1){ // 小数点以下誤差補正
+		thitmp+=1;
+		thftmp-=1;
+	  }
+	rowmax+=thitmp;
+	tbl+='<tr>';
+	colcnt=0;
+	
+	 var twftmp=0;
+	 colmax=0;
+	while(line!=""){colcnt++;
+	 var twitmp=twi;
+	 twftmp+=twf;
+	  if(twftmp>=1){ // 小数点以下誤差補正
+		twitmp+=1;
+		twftmp-=1;
+	  }
+	  colmax+=twitmp;
+	  if(!document.all)rowmax-=2;
+	 var block=parseInt(line.substring(0,2));
+		tbl+='<td style="width:'+twitmp+';height:'+thitmp+'">'+
+//			'<div style="width:100%;height:100%;">'+
+			dat2[block]+
+//			'</div>'+
+		'</td>';
+		line=line.substring(2);
+	}
+	tbl+='</tr>';
+  }
+  tbl=
+  '<table style="position:absolute;table-layout:fixed;width:'+colmax+';height:'+rowmax+';top:0px;left:0px;z-index:1;margin:0;padding:0;" cellspacing=0 cellpadding=0 id="BGTABLE1">'
+  +tbl+
+  '</table>';
+  document.write(tbl);
+  SCROLL_X_MAX=colcnt*wx;
+  SCROLL_Y_MAX=i*wy;
+} //
+
+function getXYpointObject(x,y,dat,wx,wy){
+// var tw=document.body.clientWidth  / SCREEN_X * wx;
+// var ty=document.body.clientHeight / SCREEN_Y * wy;
+ 
+ if(!wx)wx=32;
+ if(!wy)wy=32;
+ 
+ var xx=parseInt(x/wx);
+ var yy=parseInt(y/wy);
+
+ if(!dat[yy])return "00"; 
+
+ var line=dat[yy].replace(/[ ]/gi,"0").replace(/[^0-9^a-f]/gi,"");
+
+ if(!line.substring( (yy*2),(yy*2)+2))return -1;
+
+	// status= dat[yy]+ " "+xx+" "+yy;//dat[yy].substring( (xx*2),(xx*2)+2);
+ return line.substring( (xx*2),(xx*2)+2);
+	
+} //
+
+
+
+
+
+
+
+
+function setSpriteVisibility(v,flag){
+	if(v==true){
+//		this.Body.style.display="";
+		this.Body.visible=true;
+	}else{
+//		this.Body.style.display="none";
+		this.Body.visible=false;
+	}
+	
+	if(flag && this.child){
+		this.child.setSpriteVisibility(v,flag);
+	}
+} // 
+
+
+function moveSpriteTo(xx,yy,flag){
+	var oldx=this.x;
+	var oldy=this.y;
+	this.x=xx;
+	this.y=yy;
+	this.Body.style.left = document.body.clientWidth  / SCREEN_X * xx;
+	this.Body.style.top  = document.body.clientHeight / SCREEN_Y * yy;
+	if(flag && this.child){
+		this.child.moveSpriteBy(this.x-oldx , this.y-oldy , flag);
+	}
+} // 
+
+function moveSpriteBy(xx,yy,flag){
+	this.moveSpriteTo(xx+this.x , yy+this.y , flag);
+} //
+
+function setSpriteZPosition(zz , flag){
+	this.Body.style.zIndex=zz;
+	if(flag && this.child){
+		this.child.setSpriteZPosition(zz,flag);
+	}
+} //
+
+function setSpriteBitmap(src,ww,hh){
+	var w='',h='';
+	if(ww)w='posWidth:' +(document.body.clientWidth  / SCREEN_X * ww);//+'px;';
+	if(hh)h='posHeight:'+(document.body.clientHeight / SCREEN_Y * hh);//+'px;';
+
+	this.Body.innerHTML='<img src="'+src+'" style="width:100%;height:100%;border:none;">';
+	
+	if(ww && hh)
+		this.setSpriteSize(ww,hh);
+	else
+		this.setSpriteSize(32,32);
+} //
+
+function setSpriteSize(ww,hh){
+	var obj=this.Body;
+	obj.style.posWidth  = (document.body.clientWidth  / SCREEN_X * ww);
+	obj.style.posHeight = (document.body.clientHeight / SCREEN_Y * hh);
+} //
+
+function updateSprite(){
+	var obj=this.Body;
+	
+	obj.style.zIndex = z;
+	obj.style[pxLeft] = document.body.clientWidth  / SCREEN_X * this.x;
+	obj.style[pxTop]  = document.body.clientHeight / SCREEN_Y * this.y;
+
+	obj.style.filters["flipV"].enabled=this.flipV;
+	obj.style.filters["flipH"].enabled=this.flipH;
+
+	obj.style.filters["Alpha"].enabled=(this.opacity != 1);
+	if(obj.style.filters["Alpha"].enabled)
+		obj.style.filters["Alpha"].opacity=this.opacity;
+	
+//	obj.style.filters["proxid:DXImageTransform.Microsoft.Matrix"].enabled=this.flipH;
+	
+	
+	this.setSpriteVisibility(this.visible,false);
+
+} // 
+
+function sprite(){
+	this.x=0;
+	this.y=0;
+	this.z=0;
+	this.rotate=0;
+	this.flipV=false;
+	this.flipH=false;
+	this.opacity=1;
+	this.visible=false;
+
+	 this.moveSpriteTo	 = moveSpriteTo;
+	 this.moveSpriteBy	 = moveSpriteBy;
+
+	 this.setSpriteVisibility= setSpriteVisibility;
+	 this.setSpriteZPosition = setSpriteZPosition;
+	 this.setSpriteBitmap	 = setSpriteBitmap;
+	 this.setSpriteSize	 = setSpriteSize;
+
+	 this.update		 = updateSprite;
+
+	this.name="sprite" + spriteCnt;
+	this.objType="IMAGE"; // TEXT 
+	
+	this.parent=null;
+	this.child=null;
+
+//	this.Body=document.all.spriteHTML[spriteCnt];
+	this.Body=document.getElementsByName("spriteHTML")[spriteCnt];
+//	this.Body=DGI("spriteHTML")[spriteCnt];
+//	this.initHTML=this.Body.innerHTML;
+	spriteCnt++;
+	
+} //
+
+//-------------------------
+
+// EVENTS--------------------
+lastkey=0;
+ function kDown(e){
+  var k;
+  var srcElement;
+  var tagName;
+  var shiftKey=false;
+  var altKey=false;
+  var ctrlKey=false;
+ if(DA){
+	k=event.keyCode;
+	srcElement=event.srcElement;
+	tagName=event.srcElement.tagName;
+	shiftKey= event.shiftKey;
+	altKey  = event.altKey;
+	ctrlKey = event.ctrlKey;
+ }else{
+	k=e.keyCode;
+	srcElement=e.target;
+	tagName=srcElement.nodeName;
+	shiftKey= e.shiftKey;
+	altKey  = e.altKey;
+	ctrlKey = e.ctrlKey;
+
+ }
+
+ if(tagName=="INPUT")return;
+ if(tagName=="TEXTAREA")return;
+
+// if(ctrlKey)k=17;
+// if(shiftKey)k=16;
+
+// status="keyDown="+k;
+ if(lastkey==k)return false;
+ lastkey=k;
+  switch (k){
+	case 17: // CTRL
+		PAD1.buttons[0]=1;
+	break;
+	case 16: // SHIFT
+//		alert();
+		PAD1.buttons[1]=1;
+		PAD1.buttons[2]++;
+	break;
+	case 37: //←
+		PAD1.x=-1;
+		return false;
+	break;
+	case 38: //↑
+		PAD1.y=-1;
+		return false;
+	break;
+	case 39: //→
+		PAD1.x= 1;
+		return false;
+	break;
+	case 40: //↓
+		PAD1.y= 1;
+		return false;
+	break;
+  }
+//  if(!altKey){
+//	return false;
+//   }
+ } // end kDown
+
+ function kUp(e){
+  var k;
+  var srcElement;
+  var tagName;
+  var shiftKey=false;
+  var altKey=false;
+  var ctrlKey=false;
+ if(DA){
+	k=event.keyCode;
+	srcElement=event.srcElement;
+	tagName=event.srcElement.tagName;
+	shiftKey= event.shiftKey;
+	altKey  = event.altKey;
+	ctrlKey = event.ctrlKey;
+ }else{
+	k=e.keyCode;
+	srcElement=e.target;
+	tagName=srcElement.nodeName;
+	shiftKey= e.shiftKey;
+	altKey  = e.altKey;
+	ctrlKey = e.ctrlKey;
+
+ }
+
+// status="keyUp="+k;
+
+ if(tagName=="INPUT")return;
+ if(tagName=="TEXTAREA")return;
+ 
+// if(ctrlKey)k=17;
+// if(shiftKey)k=16;
+	if(lastkey==k)lastkey=0;
+  switch (k){
+	case 17: // CTRL
+		PAD1.buttons[0]=0;
+	break;
+	case 16: // SHIFT
+		PAD1.buttons[1]=0;
+	break;
+	case 37: //←
+		PAD1.x=0;
+	break;
+	case 38: //↑
+		PAD1.y=0;
+	break;
+	case 39: //→
+		PAD1.x=0;
+	break;
+	case 40: //↓
+		PAD1.y=0;
+	break;
+  }
+ } // end kUp
+
+// EVENTS-------------------->
+  var cpuTM;
+  var XX=64;
+  var YY=0;
+
+  var xMove=0;
+  var xSpeedMax=7;
+  var xSpeedMaxTurbo=14;
+  var xSpeedMin=.9;
+  var xBrakeSlow =.75;
+  var xBrakeQuick=.6;
+  var xAccel=.9;
+  var xBounce=0;
+  
+  var yMove=0;
+  var yAccel=3;
+  var yDropSpeedMax=20;
+  var yJump    =26.7;//26.7;
+  var yJumpHigh=32.5;
+  var yJumpSpeeddown=.6;
+  var yBounce=-.3;
+
+
+  var charWidth=32;
+  var charHeight=32;
+  var charBodyWidth=24;
+  var charBodyHeight=24;
+ function cpuTimer(){
+//	XX+=PAD1.x;
+	var oldXX=XX;
+	var oldYY=YY;
+
+	var xMoveABS=Math.abs(xMove);
+	if(PAD1.x==0){
+		if(yMove==0)xMove*= xBrakeSlow; // 空中では減速しない
+		if(Math.abs(xMove)<=xSpeedMin)xMove=0;
+	}else{
+	 if(Math.abs(xMove)<=xSpeedMin)xMove=PAD1.x;
+	 else{
+	  if(xMove*PAD1.x > 0){
+		  xMove += xAccel*(xMove/xMoveABS);
+	  }else{// Brake!
+		  xMove *= xBrakeQuick;
+	  }
+
+	xMoveABS=Math.abs(xMove);
+	   if(xMoveABS > xSpeedMaxTurbo)
+		xMove=xSpeedMaxTurbo*(xMove/xMoveABS);
+	  if(PAD1.buttons[0]!=1){
+	xMoveABS=Math.abs(xMove);
+	   if(xMoveABS > xSpeedMax){
+		xMove*=xBrakeSlow*xBrakeSlow;
+		xMoveABS=Math.abs(xMove);
+		 if(xMoveABS < xSpeedMax)xMove=xSpeedMax*(xMove/xMoveABS);
+	   }
+	  }
+	 }
+	}
+	
+	
+	// 落下------------
+	if(PAD1.buttons[1] == 1 && yMove==0){
+	 if(Math.abs(xMove)>xSpeedMax){
+		yMove=-yJumpHigh;
+	  }else{
+		yMove=-yJump;
+	  }
+	}else{
+	 if(PAD1.buttons[1] == 0 && yMove < 0){
+		yMove*=yJumpSpeeddown;
+	 }
+	 yMove+=yAccel;
+	 if(yMove>yDropSpeedMax)yMove=yDropSpeedMax;
+	}
+	// 落下------------>
+
+
+	//地形判定---------
+
+
+	var blockP=getXYpointObject(XX+charBodyWidth/2,YY+charBodyHeight/2,stage,charWidth,charHeight);
+
+	var blockL=getXYpointObject(XX-xMove,YY+charBodyHeight*.5,stage,charWidth,charHeight);
+	var blockR=getXYpointObject(XX+charBodyWidth+xMove,YY+charBodyHeight*.5,stage,charWidth,charHeight);
+
+	 var floorL=getXYpointObject(XX,YY+charBodyHeight,stage,charWidth,charHeight);
+	 var floorR=getXYpointObject(XX+charBodyWidth-1,YY+charBodyHeight,stage,charWidth,charHeight);
+	 
+	status="L="+ blockL + " P=" +blockP + " R=" + blockR+ " fL="+floorL+ " fR="+floorR+" "+document.body.clientHeight;
+//	if(blockP ==1 && xMove>0){
+//		xMove=-3;
+//	}
+//	else 
+//	if(blockR ==1 && xMove>0){
+
+	if(xMove>0){
+	 var blPoint=XX+charBodyWidth+xMove;
+	 var blockR=getXYpointObject(blPoint,YY+charBodyHeight*.7,stage,charWidth,charHeight);
+		if(blockR == 1){
+		 XX=parseInt(blPoint/charWidth)*charWidth-charBodyWidth;
+		 xMove*=xBounce;
+		}
+	}
+	else 
+	if(xMove<0){
+	 var blPoint=XX+xMove;
+	 var blockL=getXYpointObject(blPoint,YY+charBodyHeight*.7,stage,charWidth,charHeight);
+		if(blockL==1){
+		 XX=parseInt(blPoint/charWidth + 1)*charWidth;
+		 xMove*=xBounce;
+		}
+	}
+
+
+
+	if(yMove>0){ //落下中
+	 var flPoint=YY+charBodyHeight+yMove;
+	 var floorL=getXYpointObject(XX,flPoint,stage,charWidth,charHeight);
+	 var floorR=getXYpointObject(XX+charBodyWidth-1,flPoint,stage,charWidth,charHeight);
+	  if(floorL==1 || floorR==1){
+//		if(yMove>2)
+//		alert(YY+" "+ floorR+ " "+ floorL + "  "+yMove);
+//		YY=parseInt(YY/charHeight)*charHeight+(charHeight-charBodyHeight);
+		YY=parseInt(flPoint/charHeight)*charHeight-charBodyHeight;
+		yMove=0;
+	  }
+		
+	}
+	else
+	if(yMove<0){ //上昇中
+	 var flPoint=YY; //+yMove;
+	 var blockHead=getXYpointObject(XX+charBodyWidth/2,flPoint,stage,charWidth,charHeight);
+	  if(blockHead==1){
+		YY=parseInt(flPoint/charHeight + 1)*charHeight;
+		yMove=.1;
+	  }
+	}
+	else{
+	}
+
+	XX+=xMove;
+	YY+=yMove;
+
+	//地形判定---------
+
+
+
+	if(yMove==0){
+		PAD1.buttons[1]=0;
+	}
+
+	if(XX > SCROLL_X_MAX - charWidth){XX=SCROLL_X_MAX -charWidth;xMove*=xBounce;}
+	if(XX < SCROLL_X_MIN){XX=SCROLL_X_MIN;xMove*=xBounce;}
+	if(YY > SCROLL_Y_MAX){
+		YY=0;//SCROLL_Y_MAX - charHeight;
+		yMove=0;
+		PAD1.buttons[1]=0;
+	}
+	
+	XX2=parseInt((XX+charWidth/2)/charWidth)*charWidth;
+	YY2=parseInt((YY+charHeight/2)/charHeight)*charHeight;
+ } //
+ 
+  var drawTM;
+ function drawTimer(){
+	var floor=getXYpointObject(XX+charWidth/2,YY+charHeight/2,stage,charWidth,charHeight);
+	DGI('dbg1').innerHTML=
+		"xMove="+xMove+"<br>"+
+		"XX="+parseInt(XX) +"<br>"+
+		"YY="+parseInt(YY) +"<br>"+
+		"X="+PAD1.x+"<br>"+
+		"Y="+PAD1.y+"<br>"+
+		"B"+PAD1.buttons[0]+"<br>"+
+		"A"+PAD1.buttons[1]+"  "+ PAD1.buttons[2]+"<br>"+
+		"floor="+floor+"<br>"+
+		"clientHeight"+document.body.clientHeight+"<br>"+
+		"";
+
+	OBJ1.moveSpriteTo(XX,YY,true);
+	OBJ2.moveSpriteTo(XX2,YY2,true);
+
+	scrollBG( XX-SCREEN_X/2 , YY-SCREEN_Y/2 );
+	
+	drawTM = setTimeout('drawTimer()',50);
+ } //
+
+
+ function init(){
+	document.onkeydown=kDown;
+	document.onkeyup  =kUp;
+
+	OBJ2=new sprite();
+	OBJ2.setSpriteBitmap("",32,32);
+	OBJ2.setSpriteVisibility(true,false);
+
+	OBJ1=new sprite();
+	OBJ1.setSpriteBitmap("swalk.gif",24,24);
+	OBJ1.setSpriteVisibility(true,false);
+
+
+
+//	createStage(stage,charTable,32,32);
+
+	cpuTM = setInterval('cpuTimer()',33);
+	drawTM = setTimeout('drawTimer()',50);
+ } // end init
+ 
+ 
+ onload = init;
+
+ onscroll= document.onselectstart=new Function("return false;");
+
+//-->
+</script>
+</head>
+<body style="overflow-x:hidden;overflow-y:hidden;background:#99bbff;width:110%;height:110%;" scroll="yes">
+<script type="text/javascript">
+<!--
+//	document.body.clientWidth=640;
+	//	IEで順番を逆にすると異様に重くなる
+	createSprite();
+	createStage(stage,charTable,32,32);
+//-->
+</script>
+<div id="BG1"></div>
+<div style="position:fixed;top:0;left:0;">
+<span id="dbg1" style="position:absolute;z-index:100;top:0;left:0;back ground:green;"></span>
+</div>
+</body>
+</html>
