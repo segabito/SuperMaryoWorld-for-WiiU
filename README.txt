@@ -43,4 +43,29 @@ http://www.nicovideo.jp/watch/sm19537324
 WiiUに対応する事よりも、昔のクソコードを解読する方が大変でした。
 
 ■ 参考文献
+ http://www.nintendo.co.jp/wiiu/hardware/features/internetbrowser/extended_functionality.html
  http://www.nintendo.co.jp/wiiu/hardware/features/internetbrowser/sample.html
+ 
+■WiiUの対応のためにやった事
+
+・viewport指定をつける (index.html)
+　これでズーム機能を切れるので、[+][-]を自由に使えるようになります
+　(本当はABXYを使いたいけど、メニューが出てしまう)
+
+・window.wiiu.gamepad をポーリング(cpu.html)
+　ボタンを押してもイベントは発行されないので、ポーリングする必要があります
+
+・画面内のinput要素にdisabledをつける
+　カーソルキーで余計なフォーカス移動をしてしまうのを防ぐためです
+
+・画面解像度の調整など
+　元からあらゆる解像度に対応できるような設計になっていたため、
+　viewport指定をつけた以外はなにもしていません。
+　(ウィンドウいっぱいに表示できないブラウザゲームは糞だ、という思想があった)
+
+入力まわりに対応した以外は、基本的に当時のコードそのままです。
+そのおかげで発売日から対応させる事ができました。
+
+ちなみに、リプレイの再生だけなら3DSのブラウザでも動きます。(1fpsくらいで…)
+Vitaにも対応させたかったのですが、ブラウザからボタンの入力を取得する方法が
+なさそうだったため、断念しました。
