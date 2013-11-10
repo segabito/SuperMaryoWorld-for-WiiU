@@ -7,7 +7,7 @@
 -->
 <html>
 <head><title>Javascript Virtual Machine  Stageloader </title>
-<meta http-equiv="Content-type" content="text/html; charset=Shift_JIS">
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
 <style type="text/css">
 <!--
  .bld{font-weight:bolder;background:#333333;color:yellow;}
@@ -21,49 +21,49 @@ var CPU,SCR1,SCR2;
  var SCREEN_X=512;
  var SCREEN_Y=448;
 
-	//ƒXƒ^[ƒg’n“_
+	//ã‚¹ã‚¿ãƒ¼ãƒˆåœ°ç‚¹
  var PLSTART_X  = 32*0;
  var PLSTART_Y  = 32*0;
-	// ŠJn‚ÌŠç‚ÌŒü‚« (-1= ¶ 1=‰E)
+	// é–‹å§‹æ™‚ã®é¡”ã®å‘ã (-1= å·¦ 1=å³)
  var PLSTART_HFACE= 1; 
-	// ŠJn‚Ìƒ‚[ƒVƒ‡ƒ“ "DOKAN_UP_OUT" "DOKAN_DOWN_OUT" "DOKAN_LEFT_OUT" "DOKAN_RIGHT_OUT"
+	// é–‹å§‹æ™‚ã®ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ "DOKAN_UP_OUT" "DOKAN_DOWN_OUT" "DOKAN_LEFT_OUT" "DOKAN_RIGHT_OUT"
  var PLSTART_ANIME=""; 
  var PLSTART_ANIME=""; 
 
-	//“r’†‚©‚ç•œŠˆ‚Ìê‡‚ÌŠJn’n“_
+	//é€”ä¸­ã‹ã‚‰å¾©æ´»ã®å ´åˆã®é–‹å§‹åœ°ç‚¹
  var PLSTART_X2 = -1;
  var PLSTART_Y2 = -1;
- var PLSTART_HFACE2= 1; // Šç‚ÌŒü‚« (-1= ¶ 1=‰E)
+ var PLSTART_HFACE2= 1; // é¡”ã®å‘ã (-1= å·¦ 1=å³)
  var PLSTART_ANIME2=""; 
 
-	// ƒƒCƒ“‰æ–Ê‚Ì”wŒiF
+	// ãƒ¡ã‚¤ãƒ³ç”»é¢ã®èƒŒæ™¯è‰²
  var SCREENBGCOLOR  = "skyblue";//"#333333";
-	// ã‰º˜g‚Ì”wŒiF
+	// ä¸Šä¸‹æ ã®èƒŒæ™¯è‰²
  var SCREENBGCOLOR2 = "#000000";
 
-	//ƒ{[ƒiƒXƒ][ƒ“‚È‚Ç‚Åƒ^ƒCƒ€‚ğˆø‚«Œp‚®ê‡‚Í-1‚Æ‚·‚é
+	//ãƒœãƒ¼ãƒŠã‚¹ã‚¾ãƒ¼ãƒ³ãªã©ã§ã‚¿ã‚¤ãƒ ã‚’å¼•ãç¶™ãå ´åˆã¯-1ã¨ã™ã‚‹
  var GAMETIMER=0;
 
 
-	// ‚»‚ê‚¼‚ê‚Ì•ûŒü‚Ö‚ÌƒXƒNƒ[ƒ‹‚ğ‹–‰Â‚·‚é‚©‚Ç‚¤‚©
+	// ãã‚Œãã‚Œã®æ–¹å‘ã¸ã®ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ã‚’è¨±å¯ã™ã‚‹ã‹ã©ã†ã‹
  var LEFTSCROLL =true;
  var RIGHTSCROLL=true;
  var UPSCROLL   =false;
  var DOWNSCROLL =false;
 
-	// ŠJn‚Ü‚Å‚ÌƒvƒŒƒCƒ„[c”•\¦ŠÔB
-	// ƒ{[ƒiƒXƒ][ƒ“‚È‚ÇA‚·‚®‚ÉŠJn‚µ‚½‚¢ê‡‚Íƒ[ƒ‚É‚·‚é
+	// é–‹å§‹ã¾ã§ã®ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼æ®‹æ•°è¡¨ç¤ºæ™‚é–“ã€‚
+	// ãƒœãƒ¼ãƒŠã‚¹ã‚¾ãƒ¼ãƒ³ãªã©ã€ã™ãã«é–‹å§‹ã—ãŸã„å ´åˆã¯ã‚¼ãƒ­ã«ã™ã‚‹
  var firstWaitTime=1000;
 // firstWaitTime=0;
-	// ŠJn‚Ì‰æ–ÊØ‘Ö‚¦ƒGƒtƒFƒNƒg(IE‚Ì‚İ)
+	// é–‹å§‹æ™‚ã®ç”»é¢åˆ‡æ›¿ãˆã‚¨ãƒ•ã‚§ã‚¯ãƒˆ(IEã®ã¿)
  var stageInitTrans="progid:DXImageTransform.Microsoft.pixelate(duration=1,maxsquare=50)";
 
  var STAGEMODE= "FIELD"; // FIELD WATER
  var GAMEMODE = "PLAY"; // PLAY AUTOPLAY REPLAY
 
- // border:Xpx‚Æw’è‚µ‚½ƒuƒƒbƒN‚ª‚ ‚é‚ÆA‚»‚Ì‘¾‚³‚¾‚¯
- // c•ûŒü‚É‰ÁZ‚³‚ê‚Ä‚µ‚Ü‚¤‚Ì‚ÅAˆø‚¢‚Ä‚¨‚­B
- // charTable“à‚Åborder‚ğg—p‚µ‚È‚¢‚È‚ç 0
+ // border:Xpxã¨æŒ‡å®šã—ãŸãƒ–ãƒ­ãƒƒã‚¯ãŒã‚ã‚‹ã¨ã€ãã®å¤ªã•ã ã‘
+ // ç¸¦æ–¹å‘ã«åŠ ç®—ã•ã‚Œã¦ã—ã¾ã†ã®ã§ã€å¼•ã„ã¦ãŠãã€‚
+ // charTableå†…ã§borderã‚’ä½¿ç”¨ã—ãªã„ãªã‚‰ 0
  var MozillaTableBoarderFix=0;
 
  var infotable1='';
@@ -174,9 +174,9 @@ charTable=Array(
 '',
 '');
 
-charTable[0x60]='<div style="border:1px solid blue;background:aqua;color:blue;font-size:16px">—¬©</div>';
-charTable[0x61]='<div style="border:1px solid blue;background:aqua;color:blue;font-size:16px">—¬¨</div>';
-charTable[0x62]='<div style="border:1px solid blue;background:aqua;color:blue;font-size:16px">—¬«</div>';
+charTable[0x60]='<div style="border:1px solid blue;background:aqua;color:blue;font-size:16px">æµâ†</div>';
+charTable[0x61]='<div style="border:1px solid blue;background:aqua;color:blue;font-size:16px">æµâ†’</div>';
+charTable[0x62]='<div style="border:1px solid blue;background:aqua;color:blue;font-size:16px">æµâ†“</div>';
 charTable[0x6c]='img/tsuta.gif';
 charTable[0x6d]='img/flag.gif';
 charTable[0x6e]='img/bar.gif';
@@ -190,8 +190,8 @@ charTable[0x7f]='<div style="width:100%;height:100%;background:black;filter:alph
  for(var i=1;i<256;i++)if(!charTable[i])charTable[i]="";
 
 
-// ƒIƒuƒWƒFƒNƒgì¬—áŠO
-// –¢’è‹`”Ô†‚ÉD‚«‚ÈƒIƒuƒWƒFƒNƒg‚ğŠ„‚è“–‚Ä‚Å‚«‚é
+// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆä½œæˆä¾‹å¤–
+// æœªå®šç¾©ç•ªå·ã«å¥½ããªã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’å‰²ã‚Šå½“ã¦ã§ãã‚‹
 function createObject(win,group,x,y,num,option,obj){
  with(win){
 	var tmp;
@@ -238,7 +238,7 @@ function createObject(win,group,x,y,num,option,obj){
 
 
 
-// ƒCƒxƒ“ƒg‘®«ƒuƒƒbƒN‚ÉG‚ê‚½‚ÉƒR[ƒ‹‚³‚ê‚é
+// ã‚¤ãƒ™ãƒ³ãƒˆå±æ€§ãƒ–ãƒ­ãƒƒã‚¯ã«è§¦ã‚ŒãŸæ™‚ã«ã‚³ãƒ¼ãƒ«ã•ã‚Œã‚‹
 function eventPointBlock(obj,win,block){
  with(win){
   switch(block){
@@ -247,7 +247,7 @@ function eventPointBlock(obj,win,block){
  }
 } //
 
-//ƒuƒƒbƒN‚ğ’@‚¢‚½‚ÉƒR[ƒ‹‚³‚ê‚é
+//ãƒ–ãƒ­ãƒƒã‚¯ã‚’å©ã„ãŸæ™‚ã«ã‚³ãƒ¼ãƒ«ã•ã‚Œã‚‹
 function eventUpperBlock(obj,win,block){
  with(win){
   switch(block){
@@ -261,7 +261,7 @@ function eventUpperBlock(obj,win,block){
  }
 } //
 
-// ƒS[ƒ‹ƒ|ƒCƒ“ƒg‚ÉG‚ê‚½‚ÉƒR[ƒ‹‚³‚ê‚é
+// ã‚´ãƒ¼ãƒ«ãƒã‚¤ãƒ³ãƒˆã«è§¦ã‚ŒãŸæ™‚ã«ã‚³ãƒ¼ãƒ«ã•ã‚Œã‚‹
 function eventGoalBlock(obj,win,block){
  with(win){
   switch(block){
@@ -271,7 +271,7 @@ function eventGoalBlock(obj,win,block){
  }
 } //
 
-// ƒ[ƒvƒ|ƒCƒ“ƒg‚ÉG‚ê‚½‚ÉƒR[ƒ‹‚³‚ê‚é
+// ãƒ¯ãƒ¼ãƒ—ãƒã‚¤ãƒ³ãƒˆã«è§¦ã‚ŒãŸæ™‚ã«ã‚³ãƒ¼ãƒ«ã•ã‚Œã‚‹
 function eventWarpBlock(obj,win,block,warpid){
  with(win){
   if(warpid>=8){
@@ -289,7 +289,7 @@ function eventWarpBlock(obj,win,block,warpid){
  }
 } //
 
-// ƒvƒŒƒCƒ„[‚ª—‰º‚µ‚½‚ÉƒR[ƒ‹‚³‚ê‚é
+// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãŒè½ä¸‹ã—ãŸæ™‚ã«ã‚³ãƒ¼ãƒ«ã•ã‚Œã‚‹
 function eventPlayerDrop(obj,win){
  with(win){
 	return 1;
@@ -297,7 +297,7 @@ function eventPlayerDrop(obj,win){
 } //
 
 
-function screen1BeforeInit(){ // screen1 ‚Ìƒ[ƒh’¼Œã‚ÉŒÄ‚Î‚ê‚é
+function screen1BeforeInit(){ // screen1 ã®ãƒ­ãƒ¼ãƒ‰ç›´å¾Œã«å‘¼ã°ã‚Œã‚‹
  SCR1.document.write(
 	'<table style="position:absolute;z-index:1001;top:10%;left:15%;width:70%;height:50%;color:white;border:3px outset;overflow:scroll;" id="titleTable">'+
 	'<tr><td>'+
@@ -310,7 +310,7 @@ function screen1BeforeInit(){ // screen1 ‚Ìƒ[ƒh’¼Œã‚ÉŒÄ‚Î‚ê‚é
  SCR1.document.write(
 	'<table style="position:absolute;z-index:50;top:65%;left:87.5%;width:12.4%;background:white;color:black;">'+
 	'<tr><td nowrap align="center">'+
-	'‚±‚±‚©‚ç<br>STARTI<br>'+
+	'ã“ã“ã‹ã‚‰<br>STARTï¼<br>'+
 	'&#8595;&#8595;&#8595;&#8595;'+
 	'</td></tr>'+
 	'</table>'+
@@ -322,40 +322,40 @@ function screen1BeforeInit(){ // screen1 ‚Ìƒ[ƒh’¼Œã‚ÉŒÄ‚Î‚ê‚é
 //	'Javascript Virtual Machine <br>'+
 	' 2004 <a href="mailto:segabito@gmail.com" style="color:red;">Kunio Makimoto</a><br>'+
 
-//	'ƒ\[ƒX‚Ìƒ_ƒEƒ“ƒ[ƒh‚Í [ <a href="download.html" target="manual" style="color:red;font-weight:bolder;">‚±‚¿‚ç</a> ]<br><br>'+
-	'¡XV—š—ğ<br>'+
-	'@@¡2012<br>'+
-	'@@E12/08@WiiU‚É‘Î‰‚³‚¹‚Ä‚İ‚é<br>'+
+//	'ã‚½ãƒ¼ã‚¹ã®ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ã¯ [ <a href="download.html" target="manual" style="color:red;font-weight:bolder;">ã“ã¡ã‚‰</a> ]<br><br>'+
+	'â– æ›´æ–°å±¥æ­´<br>'+
+	'ã€€ã€€â– 2012<br>'+
+	'ã€€ã€€ãƒ»12/08ã€€WiiUã«å¯¾å¿œã•ã›ã¦ã¿ã‚‹<br>'+
 	
-	'@@¡2004<br>'+
-	'@@E08/17@‚W|‚R’Ç‰Á<br>'+
-	'@@E08/15@ƒXƒe[ƒW‚W|‚Q’Ç‰Á<br>'+
-	'@@E07/24@ƒ_ƒEƒ“ƒ[ƒhƒy[ƒW‚Éà–¾•¶’Ç‰Á<br>'+
-	'@@E07/21@×•””÷’²®<br>'+
-	'@@E07/16-2@‚»‚Ì‘¼•s‹ï‡‚Ì”÷’²®<br>'+
-	'@@E07/16@ƒtƒ@ƒCƒA[ƒ{[ƒ‹‚Æ–C’e‚Ì”÷’²®<br>'+
-	'@@E07/15@ƒ\[ƒXŒöŠJ<br>'+
-	'@@E07/14@ˆÚ“®ƒpƒ‰ƒ[ƒ^’²®<br>'+
-	'@@E07/12@ƒXƒe[ƒW‚W|‚P’Ç‰Á<br>'+
-	'@@E07/08@ƒRƒCƒ“‚Æƒcƒ^‚Ì”»’è‚ğ‘å‚«‚­‚µ‚½<br>'+
-	'@@E07/07@–³“Gó‘Ô‚Ìc‚èŠÔ‚ğ•\¦<br>'+
+	'ã€€ã€€â– 2004<br>'+
+	'ã€€ã€€ãƒ»08/17ã€€ï¼˜âˆ’ï¼“è¿½åŠ <br>'+
+	'ã€€ã€€ãƒ»08/15ã€€ã‚¹ãƒ†ãƒ¼ã‚¸ï¼˜âˆ’ï¼’è¿½åŠ <br>'+
+	'ã€€ã€€ãƒ»07/24ã€€ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ãƒšãƒ¼ã‚¸ã«èª¬æ˜æ–‡è¿½åŠ <br>'+
+	'ã€€ã€€ãƒ»07/21ã€€ç´°éƒ¨å¾®èª¿æ•´<br>'+
+	'ã€€ã€€ãƒ»07/16-2ã€€ãã®ä»–ä¸å…·åˆã®å¾®èª¿æ•´<br>'+
+	'ã€€ã€€ãƒ»07/16ã€€ãƒ•ã‚¡ã‚¤ã‚¢ãƒ¼ãƒœãƒ¼ãƒ«ã¨ç ²å¼¾ã®å¾®èª¿æ•´<br>'+
+	'ã€€ã€€ãƒ»07/15ã€€ã‚½ãƒ¼ã‚¹å…¬é–‹<br>'+
+	'ã€€ã€€ãƒ»07/14ã€€ç§»å‹•ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿èª¿æ•´<br>'+
+	'ã€€ã€€ãƒ»07/12ã€€ã‚¹ãƒ†ãƒ¼ã‚¸ï¼˜âˆ’ï¼‘è¿½åŠ <br>'+
+	'ã€€ã€€ãƒ»07/08ã€€ã‚³ã‚¤ãƒ³ã¨ãƒ„ã‚¿ã®åˆ¤å®šã‚’å¤§ããã—ãŸ<br>'+
+	'ã€€ã€€ãƒ»07/07ã€€ç„¡æ•µçŠ¶æ…‹ã®æ®‹ã‚Šæ™‚é–“ã‚’è¡¨ç¤º<br>'+
 	'</div>'+
 	'');
  SCR1.document.write(
 	'<button style="cursor:hand;background:#c0c0c0;position:absolute;z-index:1300;top:30%;left:0%;width:15%;color:blue;background:white;font-weight:bolder;"  onclick="parent.gameover(false,\'file\',\'autodemo.html\');">'+
-	'™DEMO PLAY™<br>(2-1‚Ü‚Å)'+
+	'â˜†DEMO PLAYâ˜†<br>(2-1ã¾ã§)'+
 	'</button>'+
 	'');
 
  SCR1.document.write(
 	'<button style="cursor:hand;background:#c0c0c0;position:absolute;z-index:1300;top:40%;left:0%;width:15%;color:green;background:white;font-weight:bolder;font-size:140%;"  onclick="parent.gameover(false,\'file\',\'fastestdemo.html\');">'+
-	'Å’ZƒNƒŠƒADEMO'+
+	'æœ€çŸ­ã‚¯ãƒªã‚¢DEMO'+
 	'</button>'+
 	'');
 //*
  SCR1.document.write(
 	'<button style="cursor:hand;background:#c0c0c0;position:absolute;z-index:1300;top:50%;left:0%;width:15%;color:red;background:white;font-weight:bolder;font-size:140%;"  onclick="parent.gameover(false,\'file\',\'alldemo.html\');">'+
-	'‘SƒNƒŠƒADEMO'+
+	'å…¨ã‚¯ãƒªã‚¢DEMO'+
 	'</button>'+
 	'');
 //*/
@@ -364,8 +364,8 @@ function screen1BeforeInit(){ // screen1 ‚Ìƒ[ƒh’¼Œã‚ÉŒÄ‚Î‚ê‚é
 /*
  SCR1.document.write(
 	'<div align="center" style="position:absolute;top:3%;left:0;z-index:1200;width:100%;">'+
-		'<a href="http://jt.mozilla.gr.jp/" target="_blank"><img src="http://www.mozilla.org/images/hack.gif" alt="Mozilla.org" width="88" height="31" border="0" /></a>@@<a href="http://www.microsoft.com/japan/ie/" target="_blank"><img src="http://www.microsoft.com/mscorp/images/IE_6_v06.gif" alt="Internet Explorer Home" width="88" height="31" border="0" /></a><br>'+
-//		'<span style="color:red;background:white;">ªMozilla‚Ì‚Ù‚¤‚ªƒLƒrƒLƒr“®‚«‚Ü‚·</span>'+
+		'<a href="http://jt.mozilla.gr.jp/" target="_blank"><img src="http://www.mozilla.org/images/hack.gif" alt="Mozilla.org" width="88" height="31" border="0" /></a>ã€€ã€€<a href="http://www.microsoft.com/japan/ie/" target="_blank"><img src="http://www.microsoft.com/mscorp/images/IE_6_v06.gif" alt="Internet Explorer Home" width="88" height="31" border="0" /></a><br>'+
+//		'<span style="color:red;background:white;">â†‘Mozillaã®ã»ã†ãŒã‚­ãƒ“ã‚­ãƒ“å‹•ãã¾ã™</span>'+
 	'</div>'+
 	"");
 //*/
@@ -373,7 +373,7 @@ function screen1BeforeInit(){ // screen1 ‚Ìƒ[ƒh’¼Œã‚ÉŒÄ‚Î‚ê‚é
 	'<table style="position:absolute;z-index:50;top:45%;left:100%;width:12.4%;background:orange;color:black;">'+
 	'<tr><td nowrap align="center">'+
 	'CONTINUE<br>'+
-	'¨'+
+	'â†’'+
 	'</td></tr>'+
 	'</table>'+
 	'');
@@ -389,7 +389,7 @@ function screen1BeforeInit(){ // screen1 ‚Ìƒ[ƒh’¼Œã‚ÉŒÄ‚Î‚ê‚é
 		}
 	}
 } //
-function screen1Init(){ // screen1 ‚Ìƒ[ƒhI—¹Œã‚ÉŒÄ‚Î‚ê‚é
+function screen1Init(){ // screen1 ã®ãƒ­ãƒ¼ãƒ‰çµ‚äº†å¾Œã«å‘¼ã°ã‚Œã‚‹
 
  var sdb=SCR1.document.body;
 	sdb.style.background=SCREENBGCOLOR;
@@ -418,30 +418,30 @@ function screen1Init(){ // screen1 ‚Ìƒ[ƒhI—¹Œã‚ÉŒÄ‚Î‚ê‚é
 
 } // 
 
-function screen1BeforeUnload(){ // screen1 ‚ÌƒAƒ“ƒ[ƒh‚ÉŒÄ‚Î‚ê‚é
+function screen1BeforeUnload(){ // screen1 ã®ã‚¢ãƒ³ãƒ­ãƒ¼ãƒ‰æ™‚ã«å‘¼ã°ã‚Œã‚‹
 
 } // 
 
 
-function screen2BeforeInit(){ // screen2 ‚Ìƒ[ƒh’¼Œã‚ÉŒÄ‚Î‚ê‚é
+function screen2BeforeInit(){ // screen2 ã®ãƒ­ãƒ¼ãƒ‰ç›´å¾Œã«å‘¼ã°ã‚Œã‚‹
 	SCR2.document.body.style.background=SCREENBGCOLOR2;
 } //
-function screen2Init(){ // screen2 ‚Ìƒ[ƒhI—¹Œã‚ÉŒÄ‚Î‚ê‚é
+function screen2Init(){ // screen2 ã®ãƒ­ãƒ¼ãƒ‰çµ‚äº†å¾Œã«å‘¼ã°ã‚Œã‚‹
 } // 
-function screen2BeforeUnload(){ // screen2 ‚Ìƒ[ƒhI—¹Œã‚ÉŒÄ‚Î‚ê‚é
+function screen2BeforeUnload(){ // screen2 ã®ãƒ­ãƒ¼ãƒ‰çµ‚äº†å¾Œã«å‘¼ã°ã‚Œã‚‹
 } // 
 
 
 
-function cpuBeforeInit(){ // CPU ‚Ìƒ[ƒh’¼Œã‚ÉŒÄ‚Î‚ê‚é
+function cpuBeforeInit(){ // CPU ã®ãƒ­ãƒ¼ãƒ‰ç›´å¾Œã«å‘¼ã°ã‚Œã‚‹
 	parent.cpu.LIFTWIDTH=3;
 
 } // 
-function cpuInit(){ // CPU ‚Ìƒ[ƒhI—¹Œã‚ÉŒÄ‚Î‚ê‚é
+function cpuInit(){ // CPU ã®ãƒ­ãƒ¼ãƒ‰çµ‚äº†å¾Œã«å‘¼ã°ã‚Œã‚‹
 	var lw=parent.lostWorld-1;
 	if(parent.REPLAYMODE==true)lw=parent.lostWorldRP-1;
 
-	// ƒRƒ“ƒeƒBƒjƒ…[“yŠÇ‚ğŒ©‚¹‚é
+	// ã‚³ãƒ³ãƒ†ã‚£ãƒ‹ãƒ¥ãƒ¼åœŸç®¡ã‚’è¦‹ã›ã‚‹
 	CPU.SCROLL_X_MAX  =
 	SCR1.SCROLL_X_MAX = 
 		SCREEN_X + parent.BGBLOCKSIZE_X * 2 * lw;
@@ -450,12 +450,12 @@ function cpuInit(){ // CPU ‚Ìƒ[ƒhI—¹Œã‚ÉŒÄ‚Î‚ê‚é
 } // 
 
 
-function cpuBeforeUnload(){ // CPU ‚ÌƒAƒ“ƒ[ƒh‚ÉŒÄ‚Î‚ê‚é
+function cpuBeforeUnload(){ // CPU ã®ã‚¢ãƒ³ãƒ­ãƒ¼ãƒ‰æ™‚ã«å‘¼ã°ã‚Œã‚‹
 
 } // 
 
 var CNT=0;
-function onCPUTimer(win,P1,tm){ // CPU‚Ìƒ^ƒCƒ}[ƒCƒxƒ“ƒg‚²‚Æ‚ÉŒÄ‚Î‚ê‚é
+function onCPUTimer(win,P1,tm){ // CPUã®ã‚¿ã‚¤ãƒãƒ¼ã‚¤ãƒ™ãƒ³ãƒˆã”ã¨ã«å‘¼ã°ã‚Œã‚‹
   if(CNT==0)win.P1.o.setZPosition(1200);
 CNT++;
 } //
@@ -502,16 +502,16 @@ body.wiiU .wiiUcontrol{
 <body bgcolor="black" text="white" onfocus="parent.cpu.focus();">
 <div align="center">
 <span style="background:black;" class="pccontrol">
-   <span class="bld">[©][¨]</span> or <span class="bld">[S][F]</span> - ¶‰EˆÚ“®@@@
-	<span class="bld">[CTRL]</span> or <span class="bld">[Z]</span>or <span class="bld">[J]</span> - <span class="bld2">‘–‚é • ƒtƒ@ƒCƒA</span>
-    @@@ 
-	<span class="bld">[SHIFT]</span> or <span class="bld">[SPACE]</span> or <span class="bld">[X]</span> or <span class="bld">[K]</span> - <span class="bld2">ƒWƒƒƒ“ƒv</span>
+   <span class="bld">[â†][â†’]</span> or <span class="bld">[S][F]</span> - å·¦å³ç§»å‹•ã€€ã€€ã€€
+	<span class="bld">[CTRL]</span> or <span class="bld">[Z]</span>or <span class="bld">[J]</span> - <span class="bld2">èµ°ã‚‹ ï¼† ãƒ•ã‚¡ã‚¤ã‚¢</span>
+    ã€€ã€€ã€€ 
+	<span class="bld">[SHIFT]</span> or <span class="bld">[SPACE]</span> or <span class="bld">[X]</span> or <span class="bld">[K]</span> - <span class="bld2">ã‚¸ãƒ£ãƒ³ãƒ—</span>
 </span>
 <span style="background:black;" class="wiiUcontrol">
-   <span class="bld">[©][¨]</span> - ¶‰EˆÚ“®@@@
-	<span class="bld">[-]</span><span class="bld2">‘–‚é • ƒtƒ@ƒCƒA</span>
-    @@@ 
-	<span class="bld">[+]</span><span class="bld2">ƒWƒƒƒ“ƒv</span>
+   <span class="bld">[â†][â†’]</span> - å·¦å³ç§»å‹•ã€€ã€€ã€€
+	<span class="bld">[-]</span><span class="bld2">èµ°ã‚‹ ï¼† ãƒ•ã‚¡ã‚¤ã‚¢</span>
+    ã€€ã€€ã€€ 
+	<span class="bld">[+]</span><span class="bld2">ã‚¸ãƒ£ãƒ³ãƒ—</span>
 </span>
 <script type="text/javascript">
 if (window.wiiu) {
@@ -529,7 +529,7 @@ if (window.wiiu) {
 <span style="font-size:30%;color:black">
 <br />
 <br />
-JavaScriptEActiveX‚ğ—LŒø‰»‚·‚é•K—v‚ª‚ ‚è‚Ü‚·B
+JavaScriptãƒ»ActiveXã‚’æœ‰åŠ¹åŒ–ã™ã‚‹å¿…è¦ãŒã‚ã‚Šã¾ã™ã€‚
 </span>
 </span>
 </body>

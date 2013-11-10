@@ -7,7 +7,7 @@
 -->
 <html>
 <head><title>Javascript Virtual Machine  Stageloader </title>
-<meta http-equiv="Content-type" content="text/html; charset=Shift_JIS">
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
 <script>
 <!--
 var LOADER=false;
@@ -15,13 +15,13 @@ var CPU,SCR1,SCR2;
  var SCREEN_X=512;
  var SCREEN_Y=448;
 
-	//ƒXƒ^[ƒg’n“_
+	//ã‚¹ã‚¿ãƒ¼ãƒˆåœ°ç‚¹
  var PLSTART_X  = 32*3;
  var PLSTART_Y  = 32*12-24;
-	// ŠJn‚ÌŠç‚ÌŒü‚« (1= ¶ 2=‰E)
- var PLSTART_HFACE= 1; // ŠJn‚Ìƒ‚[ƒVƒ‡ƒ“ "DOKAN_UP_OUT" "DOKAN_DOWN_OUT" "DOKAN_LEFT_OUT" "DOKAN_RIGHT_OUT"
+	// é–‹å§‹æ™‚ã®é¡”ã®å‘ã (1= å·¦ 2=å³)
+ var PLSTART_HFACE= 1; // é–‹å§‹æ™‚ã®ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ "DOKAN_UP_OUT" "DOKAN_DOWN_OUT" "DOKAN_LEFT_OUT" "DOKAN_RIGHT_OUT"
  var PLSTART_ANIME=""; // var PLSTART_ANIME="DOKAN_UP_OUT"; 
-	//“r’†‚©‚ç•œŠˆ‚Ìê‡‚ÌŠJn’n“_
+	//é€”ä¸­ã‹ã‚‰å¾©æ´»ã®å ´åˆã®é–‹å§‹åœ°ç‚¹
  var PLSTART_X2 = 32*69-12;
  var PLSTART_Y2 = 31*2-24;
  var PLSTART_HFACE2= 1; 
@@ -33,42 +33,42 @@ var CPU,SCR1,SCR2;
  var WARPSTART_HFACE=Array();
  var WARPSTART_ANIME=Array();
 
-	// “yŠÇ‚È‚Ç‚Ìƒ[ƒv‚©‚ç‚ÌŠJn“_(”z—ñ)
+	// åœŸç®¡ãªã©ã®ãƒ¯ãƒ¼ãƒ—ã‹ã‚‰ã®é–‹å§‹ç‚¹(é…åˆ—)
  WARPSTART_X[0]=32*114-12;
  WARPSTART_Y[0]=32*12;
  WARPSTART_HFACE[0]=1;
  WARPSTART_ANIME[0]="DOKAN_UP_OUT";
 
 
-	// ƒƒCƒ“‰æ–Ê‚Ì”wŒiF
+	// ãƒ¡ã‚¤ãƒ³ç”»é¢ã®èƒŒæ™¯è‰²
  var SCREENBGCOLOR  = "skyblue";//"#333333";
-	// ã‰º˜g‚Ì”wŒiF
+	// ä¸Šä¸‹æ ã®èƒŒæ™¯è‰²
  var SCREENBGCOLOR2 = "#333366";
 
-	//ƒ{[ƒiƒXƒ][ƒ“‚È‚Ç‚Åƒ^ƒCƒ€‚ğˆø‚«Œp‚®ê‡‚Í-1‚Æ‚·‚é
+	//ãƒœãƒ¼ãƒŠã‚¹ã‚¾ãƒ¼ãƒ³ãªã©ã§ã‚¿ã‚¤ãƒ ã‚’å¼•ãç¶™ãå ´åˆã¯-1ã¨ã™ã‚‹
  var GAMETIMER=200;
 
 
-	// ‚»‚ê‚¼‚ê‚Ì•ûŒü‚Ö‚ÌƒXƒNƒ[ƒ‹‚ğ‹–‰Â‚·‚é‚©‚Ç‚¤‚©
+	// ãã‚Œãã‚Œã®æ–¹å‘ã¸ã®ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ã‚’è¨±å¯ã™ã‚‹ã‹ã©ã†ã‹
  var LEFTSCROLL =false;
  var RIGHTSCROLL=false;
  var UPSCROLL   =false;
  var DOWNSCROLL =false;
 
-	// ŠJn‚Ü‚Å‚ÌƒvƒŒƒCƒ„[c”•\¦ŠÔB
-	// ƒ{[ƒiƒXƒ][ƒ“‚È‚ÇA‚·‚®‚ÉŠJn‚µ‚½‚¢ê‡‚Íƒ[ƒ‚É‚·‚é
+	// é–‹å§‹ã¾ã§ã®ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼æ®‹æ•°è¡¨ç¤ºæ™‚é–“ã€‚
+	// ãƒœãƒ¼ãƒŠã‚¹ã‚¾ãƒ¼ãƒ³ãªã©ã€ã™ãã«é–‹å§‹ã—ãŸã„å ´åˆã¯ã‚¼ãƒ­ã«ã™ã‚‹
  var firstWaitTime=1000;
 // firstWaitTime=0;
-	// ŠJn‚Ì‰æ–ÊØ‘Ö‚¦ƒGƒtƒFƒNƒg(IE‚Ì‚İ)
+	// é–‹å§‹æ™‚ã®ç”»é¢åˆ‡æ›¿ãˆã‚¨ãƒ•ã‚§ã‚¯ãƒˆ(IEã®ã¿)
 // var stageInitTrans="progid:DXImageTransform.Microsoft.pixelate(duration=1,maxsquare=50)";
  var stageInitTrans="revealTrans(duration=1,Transition=3)";
 
  var STAGEMODE= "FIELD"; // FIELD WATER
  var GAMEMODE = "PLAY"; // PLAY AUTOPLAY REPLAY
 
- // border:Xpx‚Æw’è‚µ‚½ƒuƒƒbƒN‚ª‚ ‚é‚ÆA‚»‚Ì‘¾‚³‚¾‚¯
- // c•ûŒü‚É‰ÁZ‚³‚ê‚Ä‚µ‚Ü‚¤‚Ì‚ÅAˆø‚¢‚Ä‚¨‚­B
- // charTable“à‚Åborder‚ğg—p‚µ‚È‚¢‚È‚ç 0
+ // border:Xpxã¨æŒ‡å®šã—ãŸãƒ–ãƒ­ãƒƒã‚¯ãŒã‚ã‚‹ã¨ã€ãã®å¤ªã•ã ã‘
+ // ç¸¦æ–¹å‘ã«åŠ ç®—ã•ã‚Œã¦ã—ã¾ã†ã®ã§ã€å¼•ã„ã¦ãŠãã€‚
+ // charTableå†…ã§borderã‚’ä½¿ç”¨ã—ãªã„ãªã‚‰ 0
  var MozillaTableBoarderFix=0;
 
  var infotable1='';
@@ -134,7 +134,7 @@ charTable=Array(
 
 //10
 'img/hatenaA.gif',
-//'<div style="border:1px outset silver;width:100%;height:100%;text-align:center;vertical-align:middle;margin:0;padding:0;background:gray;"></div>',
+//'<div style="border:1px outset silver;width:100%;height:100%;text-align:center;vertical-align:middle;margin:0;padding:0;background:gray;">ï¼„</div>',
 //11
 'img/hatenaA.gif',
 //12
@@ -177,11 +177,11 @@ charTable=Array(
 '',
 //36 37 38 39 3a 3b 3c 3d 3e 3f
   '','','','','','','','','','',
-//40 ”wŒi—p(“–‚½‚è”»’è‚ ‚è)
+//40 èƒŒæ™¯ç”¨(å½“ãŸã‚Šåˆ¤å®šã‚ã‚Š)
 'img/grnfloorL.gif',
-//41 ”wŒi—p(“–‚½‚è”»’è‚ ‚è)
+//41 èƒŒæ™¯ç”¨(å½“ãŸã‚Šåˆ¤å®šã‚ã‚Š)
 'img/grnfloor.gif',
-//42 ”wŒi—p(“–‚½‚è”»’è‚ ‚è)
+//42 èƒŒæ™¯ç”¨(å½“ãŸã‚Šåˆ¤å®šã‚ã‚Š)
 'img/grnfloorR.gif',
 //43
 '',
@@ -210,11 +210,11 @@ charTable=Array(
 //4f
 'img/dokanLU-C.gif',
 
-//50 ”wŒi—p(“–‚½‚è”»’è‚È‚µ)
+//50 èƒŒæ™¯ç”¨(å½“ãŸã‚Šåˆ¤å®šãªã—)
 '<div style="background:brown;color:blue;border:1px inset">50</div>',
-//51 ”wŒi—p(“–‚½‚è”»’è‚È‚µ)
+//51 èƒŒæ™¯ç”¨(å½“ãŸã‚Šåˆ¤å®šãªã—)
 'img/block8.gif',
-//52 ”wŒi—p(“–‚½‚è”»’è‚È‚µ)
+//52 èƒŒæ™¯ç”¨(å½“ãŸã‚Šåˆ¤å®šãªã—)
 'img/bridge1U.gif',
 
 '',
@@ -234,7 +234,7 @@ charTable[0x6d]='img/ball.gif';
  for(var i=1;i<256;i++)if(!charTable[i])charTable[i]="";
 
 
-// ƒCƒxƒ“ƒg‘®«ƒuƒƒbƒN‚ÉG‚ê‚½‚ÉƒR[ƒ‹‚³‚ê‚é
+// ã‚¤ãƒ™ãƒ³ãƒˆå±æ€§ãƒ–ãƒ­ãƒƒã‚¯ã«è§¦ã‚ŒãŸæ™‚ã«ã‚³ãƒ¼ãƒ«ã•ã‚Œã‚‹
 function eventPointBlock(obj,win,block){
  with(win){
   switch(block){
@@ -243,7 +243,7 @@ function eventPointBlock(obj,win,block){
  }
 } //
 
-//ƒuƒƒbƒN‚ğ’@‚¢‚½‚ÉƒR[ƒ‹‚³‚ê‚é
+//ãƒ–ãƒ­ãƒƒã‚¯ã‚’å©ã„ãŸæ™‚ã«ã‚³ãƒ¼ãƒ«ã•ã‚Œã‚‹
 function eventUpperBlock(obj,win,block){
  with(win){
   switch(block){
@@ -252,7 +252,7 @@ function eventUpperBlock(obj,win,block){
  }
 } //
 
-// ƒS[ƒ‹ƒ|ƒCƒ“ƒg‚ÉG‚ê‚½‚ÉƒR[ƒ‹‚³‚ê‚é
+// ã‚´ãƒ¼ãƒ«ãƒã‚¤ãƒ³ãƒˆã«è§¦ã‚ŒãŸæ™‚ã«ã‚³ãƒ¼ãƒ«ã•ã‚Œã‚‹
 function eventGoalBlock(obj,win,block){
  with(win){
   switch(block){
@@ -262,7 +262,7 @@ function eventGoalBlock(obj,win,block){
  }
 } //
 
-// ƒ[ƒvƒ|ƒCƒ“ƒg‚ÉG‚ê‚½‚ÉƒR[ƒ‹‚³‚ê‚é
+// ãƒ¯ãƒ¼ãƒ—ãƒã‚¤ãƒ³ãƒˆã«è§¦ã‚ŒãŸæ™‚ã«ã‚³ãƒ¼ãƒ«ã•ã‚Œã‚‹
 function eventWarpBlock(obj,win,block,WARPPTR){
  with(win){
 //	alert(WARPPTR);
@@ -282,7 +282,7 @@ function eventWarpBlock(obj,win,block,WARPPTR){
  }
 } //
 
-// ƒvƒŒƒCƒ„[‚ª—‰º‚µ‚½‚ÉƒR[ƒ‹‚³‚ê‚é
+// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãŒè½ä¸‹ã—ãŸæ™‚ã«ã‚³ãƒ¼ãƒ«ã•ã‚Œã‚‹
 function eventPlayerDrop(obj,win){
  with(win){
 	return 1;
@@ -290,7 +290,7 @@ function eventPlayerDrop(obj,win){
 } //
 
 
-function screen1BeforeInit(){ // screen1 ‚Ìƒ[ƒh’¼Œã‚ÉŒÄ‚Î‚ê‚é
+function screen1BeforeInit(){ // screen1 ã®ãƒ­ãƒ¼ãƒ‰ç›´å¾Œã«å‘¼ã°ã‚Œã‚‹
  SCR1.SCREEN_X=SCREEN_X;
  SCR1.SCREEN_Y=SCREEN_Y;
 	if(document.all && firstWaitTime > 300){
@@ -301,7 +301,7 @@ function screen1BeforeInit(){ // screen1 ‚Ìƒ[ƒh’¼Œã‚ÉŒÄ‚Î‚ê‚é
 		}
 	}
 } //
-function screen1Init(){ // screen1 ‚Ìƒ[ƒhI—¹Œã‚ÉŒÄ‚Î‚ê‚é
+function screen1Init(){ // screen1 ã®ãƒ­ãƒ¼ãƒ‰çµ‚äº†å¾Œã«å‘¼ã°ã‚Œã‚‹
 
  var sdb=SCR1.document.body;
 	sdb.style.background=SCREENBGCOLOR;
@@ -332,39 +332,39 @@ function screen1Init(){ // screen1 ‚Ìƒ[ƒhI—¹Œã‚ÉŒÄ‚Î‚ê‚é
 
 } // 
 
-function screen1BeforeUnload(){ // screen1 ‚ÌƒAƒ“ƒ[ƒh‚ÉŒÄ‚Î‚ê‚é
+function screen1BeforeUnload(){ // screen1 ã®ã‚¢ãƒ³ãƒ­ãƒ¼ãƒ‰æ™‚ã«å‘¼ã°ã‚Œã‚‹
 
 } // 
 
-function screen2BeforeInit(){ // screen2 ‚Ìƒ[ƒh’¼Œã‚ÉŒÄ‚Î‚ê‚é
+function screen2BeforeInit(){ // screen2 ã®ãƒ­ãƒ¼ãƒ‰ç›´å¾Œã«å‘¼ã°ã‚Œã‚‹
 	SCR2.document.body.style.background=SCREENBGCOLOR2;
 } //
-function screen2Init(){ // screen2 ‚Ìƒ[ƒhI—¹Œã‚ÉŒÄ‚Î‚ê‚é
+function screen2Init(){ // screen2 ã®ãƒ­ãƒ¼ãƒ‰çµ‚äº†å¾Œã«å‘¼ã°ã‚Œã‚‹
 } // 
-function screen2BeforeUnload(){ // screen2 ‚Ìƒ[ƒhI—¹Œã‚ÉŒÄ‚Î‚ê‚é
+function screen2BeforeUnload(){ // screen2 ã®ãƒ­ãƒ¼ãƒ‰çµ‚äº†å¾Œã«å‘¼ã°ã‚Œã‚‹
 } // 
 
 
 
-function cpuBeforeInit(){ // CPU ‚Ìƒ[ƒh’¼Œã‚ÉŒÄ‚Î‚ê‚é
+function cpuBeforeInit(){ // CPU ã®ãƒ­ãƒ¼ãƒ‰ç›´å¾Œã«å‘¼ã°ã‚Œã‚‹
 
 } // 
-function cpuInit(){ // CPU ‚Ìƒ[ƒhI—¹Œã‚ÉŒÄ‚Î‚ê‚é
+function cpuInit(){ // CPU ã®ãƒ­ãƒ¼ãƒ‰çµ‚äº†å¾Œã«å‘¼ã°ã‚Œã‚‹
 	SCR1.onCpuInit();
 } // 
 
 
-function cpuBeforeUnload(){ // CPU ‚ÌƒAƒ“ƒ[ƒh‚ÉŒÄ‚Î‚ê‚é
+function cpuBeforeUnload(){ // CPU ã®ã‚¢ãƒ³ãƒ­ãƒ¼ãƒ‰æ™‚ã«å‘¼ã°ã‚Œã‚‹
 
 } // 
 
-function onCPUTimer(win,P1,tm){ // CPU‚Ìƒ^ƒCƒ}[ƒCƒxƒ“ƒg‚²‚Æ‚ÉŒÄ‚Î‚ê‚é
+function onCPUTimer(win,P1,tm){ // CPUã®ã‚¿ã‚¤ãƒãƒ¼ã‚¤ãƒ™ãƒ³ãƒˆã”ã¨ã«å‘¼ã°ã‚Œã‚‹
  with(win){
 	var L=WIN.SCROLL_LEFT;
 	var S=WIN.SCREEN_X;
 	var SX=WIN.SCROLL_X_MAX;
   //if(L < SX-S*2.5)
-  if((L < SX-S*1.8) )WIN.SCROLL_LEFT+=3; //‹­§ƒXƒNƒ[ƒ‹‚È‚Ç
+  if((L < SX-S*1.8) )WIN.SCROLL_LEFT+=3; //å¼·åˆ¶ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ãªã©
 
   if(	(L > S*.5) && (L < SX-S*3) ){
 	if(RND(100)<=3)callEnemy(-1,-1,EnemyCode.FLYFISH);
@@ -401,10 +401,10 @@ onunload=bye;
 </script>
 </head>
 <body bgcolor="black" onfocus="parent.cpu.focus();">
-<span style="background:#888888;color:black">ƒ_ƒbƒVƒ…-[CTRL] ƒWƒƒƒ“ƒv-[SHIFT]</span>
+<span style="background:#888888;color:black">ãƒ€ãƒƒã‚·ãƒ¥-[CTRL] ã‚¸ãƒ£ãƒ³ãƒ—-[SHIFT]</span>
 
 <span id="infotable1" style="display:none;">
-‰º‚©‚ç‚­‚é‚¼I@‹C‚ğ‚Â‚¯‚ëI
+ä¸‹ã‹ã‚‰ãã‚‹ãï¼ã€€æ°—ã‚’ã¤ã‘ã‚ï¼
 </span>
 <span id="infotable2" style="display:none;">
 </span>

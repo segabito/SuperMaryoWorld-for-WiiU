@@ -10,7 +10,7 @@ function DummySprite(name){
 	this.rotate=0;
 	this.flipV=false;
 	this.flipH=false;
-	this.opacity=100; // 0 �` 100
+	this.opacity=100; // 0 〜 100
 	this.visible=false;
 	this.alive=1;
 	this.width=32;
@@ -129,12 +129,12 @@ function ItemObject(obj,option,x,y){
 	T.alive  = 1;
 	T.score  = 1000;
 	T.cCounter=12;
- 	// ��̌���
+ 	// 顔の向き
 	T.vFace=0; // 1 = up    -1 = down
 	T.hFace=1; // 1 = right -1 = left
 
 
- //�ړ��p�����[�^ ---
+ //移動パラメータ ---
 	T.xMove=5;
 	T.xSpeedMax=4;
 	T.xSpeedMaxTurbo=4;
@@ -153,9 +153,9 @@ function ItemObject(obj,option,x,y){
 	T.yBounce=-.3;
 	
 	T.checkStage= true;
-	T.checkFloor= false; // ���̒[�Ń^�[�����邩
-	T.checkWall = true;  // �ǂ𖳎����邩
- //�ړ��p�����[�^ --->
+	T.checkFloor= false; // 床の端でターンするか
+	T.checkWall = true;  // 壁を無視するか
+ //移動パラメータ --->
 
 	T.imgWalk  = "img/kinoko";
 	T.imgDie   = "";
@@ -327,13 +327,13 @@ function BounceObject(obj,num,x,y){
 
 	T.alive  = 1;
 
-	T.replaceItem=-1; // �I����ɒu��������A�C�e��
+	T.replaceItem=-1; // 終了後に置き換えるアイテム
 
- 	// ��̌���
+ 	// 顔の向き
 	T.vFace=0; // 1 = up    -1 = down
 	T.hFace=1; // 1 = right -1 = left
 
- //�ړ��p�����[�^ ---
+ //移動パラメータ ---
 	T.xMove=0;
 	T.xSpeedMax=0;
 	T.xSpeedMaxTurbo=0;
@@ -352,9 +352,9 @@ function BounceObject(obj,num,x,y){
 	T.yBounce=-.3;
 	
 	T.checkStage= false;
-	T.checkFloor= false; // ���̒[�Ń^�[�����邩
-	T.checkWall = true;  // �ǂ𖳎����邩
- //�ړ��p�����[�^ --->
+	T.checkFloor= false; // 床の端でターンするか
+	T.checkWall = true;  // 壁を無視するか
+ //移動パラメータ --->
 
 	T.imgWalk  = "";
 	T.imgDie   = "";
@@ -461,11 +461,11 @@ function callDyingCharacter(obj,option,x,y){
 	if(option=="press"){
 		xMove  = yMove  =
 		xAccel = yAccel = 0;
-	  if(obj.peta==true){	//�ׂ��
+	  if(obj.peta==true){	//潰れる
 		YY=obj.YY+obj.charBodyHeight/2;
 		obj.charSpriteHeight = obj.charBodyHeight/2;
 		animateCounter=10;
-	  }else{		//�ׂ�Ȃ�
+	  }else{		//潰れない
 		yAccel=3;
 		animateCounter=15;
 		opa=50;
@@ -504,8 +504,8 @@ function callDyingCharacter(obj,option,x,y){
 
 
 //---------------------------------------------------------
-// �ԉ΁E�q�b�g�}�[�N�E�R�C���E�X�R�A�E1UP�Ȃ�
-// �{���͓��I�ɐ������������AIE���Ƃ������肷��̂ŌŒ�ŗp�ӂ��Ă���
+// 花火・ヒットマーク・コイン・スコア・1UPなど
+// 本当は動的に生成したいが、IEだともっさりするので固定で用意しておく
 function EffectObjectGroup(obj,max){
 	this.maxObjects=10;	if(max)this.maxObjects=max;
 	this.master=obj;
@@ -567,9 +567,9 @@ function EffectObject(obj,etype,option){
 
 	T.charWidth  = 32;
 	T.charHeight = 32;
-	T.charBodyWidth  = 32;	//�����蔻��T�C�Y
+	T.charBodyWidth  = 32;	//当たり判定サイズ
 	T.charBodyHeight = 32;
-	T.charSpriteWidth  = 32; //�O���t�B�b�N�̃T�C�Y
+	T.charSpriteWidth  = 32; //グラフィックのサイズ
 	T.charSpriteHeight = 32;
 		T.cSprX = ( T.charSpriteWidth  - T.charBodyWidth  ) / 2;
 		T.cSprY = ( T.charSpriteHeight - T.charBodyHeight );
@@ -681,7 +681,7 @@ function callEffectObject(obj,etype,x,y,option){
 	 o.setZPosition(150);
 	 break;
 
-	case 0x4005://EffectCode.AWA:// �����œf���A
+	case 0x4005://EffectCode.AWA:// 水中で吐く泡
 	 active=true;
 	 alive=1;
 	 xMove=0;
@@ -757,9 +757,9 @@ function DokanWarpObject(obj,atype,x,y){
 
 	T.charWidth  = 32;
 	T.charHeight = 32;
-	T.charBodyWidth  = 16;	//�����蔻��T�C�Y
+	T.charBodyWidth  = 16;	//当たり判定サイズ
 	T.charBodyHeight = 16;
-	T.charSpriteWidth  = 16; //�O���t�B�b�N�̃T�C�Y
+	T.charSpriteWidth  = 16; //グラフィックのサイズ
 	T.charSpriteHeight = 16;
 	
 	var xx=parseInt( x / T.charWidth  ) * T.charWidth;
@@ -871,13 +871,13 @@ function LiftObject(obj,mode,x,y,w){
 	T.oldYY=T.YY;
 	T.alive  = 1;
 	T.score  = 1000;
- 	// ��̌���
+ 	// 顔の向き
 	T.vFace=0; // 1 = up    -1 = down
 	T.hFace=1; // 1 = right -1 = left
 	T.autoMove=0;
 
 
- //�ړ��p�����[�^ ---
+ //移動パラメータ ---
 	T.xMove=0;
 	T.xSpeedMax=8;
 	T.xSpeedMin=.9;
@@ -896,9 +896,9 @@ function LiftObject(obj,mode,x,y,w){
 	T.yBounce=-.3;
 	
 	T.checkStage= false;
-	T.checkFloor= false; // ���̒[�Ń^�[�����邩
-	T.checkWall = true;  // �ǂ𖳎����邩
- //�ړ��p�����[�^ --->
+	T.checkFloor= false; // 床の端でターンするか
+	T.checkWall = true;  // 壁を無視するか
+ //移動パラメータ --->
 
 	T.imgWalk  = "img/lift";
 	T.imgDie   = "";
@@ -1145,7 +1145,7 @@ function killLift(){
  }
 } //
 
-function BalanceLiftObject(obj,option,x,y,group){ // �V�����t�g
+function BalanceLiftObject(obj,option,x,y,group){ // 天秤リフト
 	var T=this;
 	T.active = true;
 	T.alive  = 1;
@@ -1166,13 +1166,13 @@ function BalanceLiftObject(obj,option,x,y,group){ // �V�����t�g
 
 	T.charWidth  = BGBLOCKSIZE_X;
 	T.charHeight = BGBLOCKSIZE_Y;
-	T.charBodyWidth  = 32;	//�����蔻��T�C�Y
+	T.charBodyWidth  = 32;	//当たり判定サイズ
 	T.charBodyHeight = 32;
-	T.charSpriteWidth  = T.charWidth*6; //�O���t�B�b�N�̃T�C�Y
+	T.charSpriteWidth  = T.charWidth*6; //グラフィックのサイズ
 	T.charSpriteHeight = 32;
 
 	T.wireLength=T.charHeight*12;
-	T.charWireWidth  = 32; //�O���t�B�b�N�̃T�C�Y
+	T.charWireWidth  = 32; //グラフィックのサイズ
 	T.charWireHeight = T.wireLength/2;
 
 
@@ -1267,9 +1267,9 @@ function TenCoinBlock(obj,mode,x,y){
 
 	T.charWidth  = BGBLOCKSIZE_X;
 	T.charHeight = BGBLOCKSIZE_Y;
-	T.charBodyWidth  = BGBLOCKSIZE_X;	//�����蔻��T�C�Y
+	T.charBodyWidth  = BGBLOCKSIZE_X;	//当たり判定サイズ
 	T.charBodyHeight = BGBLOCKSIZE_Y;//*1.3;
-	T.charSpriteWidth  = BGBLOCKSIZE_X; //�O���t�B�b�N�̃T�C�Y
+	T.charSpriteWidth  = BGBLOCKSIZE_X; //グラフィックのサイズ
 	T.charSpriteHeight = BGBLOCKSIZE_Y;
 		T.cSprX = ( T.charSpriteWidth  - T.charBodyWidth  ) / 2;
 		T.cSprY = ( T.charSpriteHeight - T.charBodyHeight );
@@ -1350,9 +1350,9 @@ function JumpBlock(obj,atype,x,y){
 
 	T.charWidth  =	BGBLOCKSIZE_X;
 	T.charHeight =	BGBLOCKSIZE_Y;
-	T.charBodyWidth  = BGBLOCKSIZE_X;	//�����蔻��T�C�Y
+	T.charBodyWidth  = BGBLOCKSIZE_X;	//当たり判定サイズ
 	T.charBodyHeight = BGBLOCKSIZE_X*2;
-	T.charSpriteWidth  = BGBLOCKSIZE_X; //�O���t�B�b�N�̃T�C�Y
+	T.charSpriteWidth  = BGBLOCKSIZE_X; //グラフィックのサイズ
 	T.charSpriteHeight = BGBLOCKSIZE_X*2;
 		  T.sprX=(T.charSpriteWidth  - T.charBodyWidth  ) / 2;
 		  T.sprY=(T.charSpriteHeight - T.charBodyHeight ) / 2;
@@ -1476,7 +1476,7 @@ function actJumpBlock(){
 } //
 
 
-function AxeObject(obj,atype,x,y){ // �{�X�ʂ̕�  ����I�u�W�F�N�g
+function AxeObject(obj,atype,x,y){ // ボス面の斧  特殊オブジェクト
 	var T=this;
 	T.active = true;
 	T.alive  = 1;
@@ -1496,9 +1496,9 @@ function AxeObject(obj,atype,x,y){ // �{�X�ʂ̕�  ����I�u�W�F�N�g
 
 	T.charWidth  = BGBLOCKSIZE_X;
 	T.charHeight = BGBLOCKSIZE_Y;
-	T.charBodyWidth  = 32;	//�����蔻��T�C�Y
+	T.charBodyWidth  = 32;	//当たり判定サイズ
 	T.charBodyHeight = 32;
-	T.charSpriteWidth  = 32; //�O���t�B�b�N�̃T�C�Y
+	T.charSpriteWidth  = 32; //グラフィックのサイズ
 	T.charSpriteHeight = 32;
 
 
@@ -1616,7 +1616,7 @@ function castle(x,y,b){
 	 img3 = "img/castlewall.gif";
 	}
 	
-	if(xx>SCREEN_X){// �E�X�N���[����O��ɂ����蔲��
+	if(xx>SCREEN_X){// 右スクロールを前提にした手抜き
 		setXYpointObject(xx+BGBLOCKSIZE_X,yy,0x7f,-1);
 		setXYpointObject(xx+BGBLOCKSIZE_X,yy+BGBLOCKSIZE_Y,0x7f,-1);
 

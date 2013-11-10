@@ -8,7 +8,7 @@
 <html>
 <head>
 <title>Replay Code</title>
-<meta http-equiv="Content-type" content="text/html; charset=Shift_JIS">
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
 <script type="text/javascript">
 function gameContinue(){
 	parent.currentStage=parent.continueStage;
@@ -28,38 +28,38 @@ function codeReplay(){
 <table style="position:absolute;top:0;left:0;width:100%;height:100%;">
  <tr>
   <td style="text-align:center;word-break:break-all;">
-  <span style="font-size:20pt;">���v���C�R�[�h����/�o��</span>
+  <span style="font-size:20pt;">リプレイコード入力/出力</span>
 
 	<br />
 	<br />
-	���̃��v���C�R�[�h���e�L�X�g�ɕۑ����Ă����΁A
-	�܂���Ń��v���C���Đ����邱�Ƃ��ł��܂��B<br>
-	�܂��A���v���C���~�߂��ꏊ����Q�[���𑱂��邱�Ƃ��\�ł��B<br /><br />
-	<span style="font-size:80%;color:red;">�� 2005/09/12�ȍ~�̃o�[�W�����́A�ȑO�̃o�[�W�����̃��v���C�R�[�h�ƌ݊���������܂���(�^���ǂ���Α��v����)</span><br />
+	このリプレイコードをテキストに保存しておけば、
+	また後でリプレイを再生することができます。<br>
+	また、リプレイを止めた場所からゲームを続けることが可能です。<br /><br />
+	<span style="font-size:80%;color:red;">※ 2005/09/12以降のバージョンは、以前のバージョンのリプレイコードと互換性がありません(運が良ければ大丈夫かも)</span><br />
 	<br />
 	<br />
 	<br />
-	���v���C���e�f�����J�����ł��B
+	リプレイ投稿掲示板も開発中です。
 	<br />
 	<br />
 	<table align="center">
 	<script type="text/javascript">
-	 document.write("<tr><td>�X�R�A</td><td>"+parent.PL1SCORE + "</td></tr>");
-	 document.write("<tr><td>�X�e�[�W</td><td>"+parent.getWorldNumber() + "-" + parent.getAreaNumber() + "</td></tr>");
-	 document.write("<tr><td>���t���[����</td><td>"+parent.REPLAYCNT + "</td></tr>");
+	 document.write("<tr><td>スコア</td><td>"+parent.PL1SCORE + "</td></tr>");
+	 document.write("<tr><td>ステージ</td><td>"+parent.getWorldNumber() + "-" + parent.getAreaNumber() + "</td></tr>");
+	 document.write("<tr><td>総フレーム数</td><td>"+parent.REPLAYCNT + "</td></tr>");
 
 	</script>
 	</table>
 	<br /><br />
 	<button onclick="codeReplay();" style="padding:15px;width:60%;font-weight:bolder;color:blue;">
-		���v���C�R�[�h���s�I
+		リプレイコード実行！
 	</button><button onclick="parent.gameStart()" style="padding:15;width:20%;">
-		�Q�[���ɖ߂�
+		ゲームに戻る
 	</button>
 <br>
 <!--
 	<button onclick="codeReplay();parent.replayGameStart()" style="padding:15px;width:40%;">
-		���v���C�R�[�h���s
+		リプレイコード実行
 	</button>
 -->
 	<textarea rows="10" cols="81" id="replayCode" style="word-break:break-all;" wrap="soft"></textarea>

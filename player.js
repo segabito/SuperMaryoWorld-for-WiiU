@@ -70,7 +70,7 @@ WarpMode();
 
 function Player(PAD,x,y,option){
 	
- //ó‘Ô ---
+ //çŠ¶æ…‹ ---
 	this.XX=0;	   if(x)this.XX=x;
 	this.YY=0;	   if(y)this.YY=y;
 
@@ -91,7 +91,7 @@ function Player(PAD,x,y,option){
 	this.star   = false;
 	 this.starTimer=0;
 	 this.starTimerLength=30*8;
-	this.ghost = false; // ƒ_ƒ[ƒW‚Å”¼“§–¾
+	this.ghost = false; // ãƒ€ãƒ¡ãƒ¼ã‚¸ã§åŠé€æ˜
 	  this.ghostTimer=0;
 	  this.ghostTimerLength=45;
 	this.coins  = 0;
@@ -110,12 +110,12 @@ function Player(PAD,x,y,option){
 
 	this.innerTimer=0;
 
- 	// Šç‚ÌŒü‚«
+ 	// é¡”ã®å‘ã
 	this.vFace=0; // 1 = up    -1 = down
 	this.hFace=1; // 1 = right -1 = left
- //ó‘Ô --->
+ //çŠ¶æ…‹ --->
 	
- //ˆÚ“®ƒpƒ‰ƒ[ƒ^ ---
+ //ç§»å‹•ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ ---
 	this.xMove=0;
 	this.xSpeedMax=3.5;
 	this.xSpeedMaxTurbo=11;
@@ -144,7 +144,7 @@ function Player(PAD,x,y,option){
 	
 	this.xScroll=0;
 	this.yScroll=0;
- //ˆÚ“®ƒpƒ‰ƒ[ƒ^ --->
+ //ç§»å‹•ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ --->
 
 	this.imgStand = "img/PLstand";
 	this.imgWalk  = "img/PLwalk";
@@ -154,11 +154,11 @@ function Player(PAD,x,y,option){
 	this.imgDie   = "img/PLdie";
 	this.imgFire  = "img/PLfire";
 	this.imgSit   = "img/PLsit";
-	this.imgClimb = "img/PLwall.gif"; // ƒcƒ^E•Çã‚è@’â~’†
-	this.imgClimbMove= "img/PLwallC.gif";// ˆÚ“®’†
+	this.imgClimb = "img/PLwall.gif"; // ãƒ„ã‚¿ãƒ»å£ä¸Šã‚Šã€€åœæ­¢ä¸­
+	this.imgClimbMove= "img/PLwallC.gif";// ç§»å‹•ä¸­
 	this.imgSwim = "img/PLswim"; 
 	this.imgSwimMove= "img/PLswimB";
-	this.imgBar   = "img/PLbar";// ƒ|[ƒ‹
+	this.imgBar   = "img/PLbar";// ãƒãƒ¼ãƒ«
 	
 	this.plRight = "R.gif";
 	this.plLeft  = "L.gif";
@@ -256,12 +256,12 @@ function actPlayer(){
   else
   if(starTimer>0){
 		if(starTimer<=30 && starTimer%6==0){
-			createEffect(XX+charWidth,YY,EffectCode.SCORE,"š"+(starTimer/6).toString(),this);
+			createEffect(XX+charWidth,YY,EffectCode.SCORE,"â˜…"+(starTimer/6).toString(),this);
 		}
 	if(document.all)
 	 Body.style.background=(parseInt(starTimer/4%2)==0)?"gold":"";
 	else
-	 createEffect(XX+Math.random()*charBodyWidth,YY+Math.random()*charBodyHeight,EffectCode.SCORE,'<span style="color:yellow;font-size:10px;">š</span>');
+	 createEffect(XX+Math.random()*charBodyWidth,YY+Math.random()*charBodyHeight,EffectCode.SCORE,'<span style="color:yellow;font-size:10px;">â˜…</span>');
 	
   }
   xScroll+=xMove;
@@ -274,7 +274,7 @@ function actPlayerRun(plObj){
 	oldXX=XX;
 	oldYY=YY;
 
-	if(steponFlag==10000){ // ‚È‚É‚©‚ğ“¥‚İ‚Â‚¯‚½ƒtƒ‰ƒO
+	if(steponFlag==10000){ // ãªã«ã‹ã‚’è¸ã¿ã¤ã‘ãŸãƒ•ãƒ©ã‚°
 	 yMove=-20.1;
 	 if(myPAD.buttons[1]==1)yMove-=20.1;
 	 steponFlag=3;
@@ -283,7 +283,7 @@ function actPlayerRun(plObj){
 	
 	
   if(mode!=PlayerMode.NORMAL && yMove == 0){
-	if(myPAD.y>0 && !climbFlag){ // ‚µ‚á‚ª‚Ş
+	if(myPAD.y>0 && !climbFlag){ // ã—ã‚ƒãŒã‚€
 		charBodyHeight=charSmallHeight;
 		charSpriteHeight=charSmallSpriteHeight;
 		if(!sitdown){
@@ -294,7 +294,7 @@ function actPlayerRun(plObj){
 		}
 		sitdown=true;
 	}else
-	if(myPAD.y<=0 || climbFlag){ //—§‚Â
+	if(myPAD.y<=0 || climbFlag){ //ç«‹ã¤
 		charBodyHeight=charBigHeight;
 		charSpriteHeight=charBigSpriteHeight;
 		if(sitdown){
@@ -306,11 +306,11 @@ function actPlayerRun(plObj){
 		sitdown=false;
 	}
  }
-	// ‚µ‚á‚ª‚Ş-->
+	// ã—ã‚ƒãŒã‚€-->
 ///*
 
 
-// ¶‰EˆÚ“®
+// å·¦å³ç§»å‹•
 	var xAccelT=xAccel;
 	 if(yMove!=0)xAccelT*=.8;
 	 else 
@@ -350,8 +350,8 @@ function actPlayerRun(plObj){
 	}
 
 
-	// —‰º‚ÆƒWƒƒƒ“ƒv------------(í‚É—‰º‚µ‚Ä‚¢‚é)
-	if(climbFlag){ //ƒcƒ^
+	// è½ä¸‹ã¨ã‚¸ãƒ£ãƒ³ãƒ—------------(å¸¸ã«è½ä¸‹ã—ã¦ã„ã‚‹)
+	if(climbFlag){ //ãƒ„ã‚¿
 	 yMove=0;
 	  yMove=myPAD.y*yClimbSpeed;
 	 if(myPAD.buttons[1] == 1){
@@ -375,10 +375,10 @@ function actPlayerRun(plObj){
 	  if(yMove>yDropSpeedMax)yMove=yDropSpeedMax;
 	 }
 	}
-	// —‰º------------>
+	// è½ä¸‹------------>
 
 
-	if(yMove>0){ //—‰º’†
+	if(yMove>0){ //è½ä¸‹ä¸­
 	 var flPoint=YY+charBodyHeight+yMove;
 	 var floorL=getXYpointObject(XX,flPoint);
 	 var floorR=getXYpointObject(XX+charBodyWidth-1,flPoint);
@@ -394,7 +394,7 @@ function actPlayerRun(plObj){
 //	 }
 	}
 	else
-	if(yMove<0){ //ã¸’†
+	if(yMove<0){ //ä¸Šæ˜‡ä¸­
 	 var flPoint=YY+yMove/2;
 	 var blockHead=getXYpointObject(XX+charBodyWidth/2,flPoint);
 	  if(checkUpperBlock(blockHead) > 0){
@@ -408,10 +408,10 @@ function actPlayerRun(plObj){
 	}
 
 
-	//’nŒ`”»’è---------
+	//åœ°å½¢åˆ¤å®š---------
 
-// if(mode=="normal"){ //ƒ`ƒr
-   if(charBodyHeight<charHeight){//ƒ`ƒr
+// if(mode=="normal"){ //ãƒãƒ“
+   if(charBodyHeight<charHeight){//ãƒãƒ“
 	var blockP=getXYpointObject(XX+charBodyWidth/2,YY+charBodyHeight/2);
 	var blockPL=getXYpointObject(XX+1,YY+charBodyHeight*.3);
 	var blockPR=getXYpointObject(XX+charBodyWidth-1,YY+charBodyHeight*.3);
@@ -420,35 +420,35 @@ function actPlayerRun(plObj){
 		var bp =checkWallBlock(blockP);
 		var bpl=checkWallBlock(blockPL);
 		var bpr=checkWallBlock(blockPR);
-	if(bpl > 0 && bpr < 0){ // ¶‚ß‚è‚±‚İ
+	if(bpl > 0 && bpr < 0){ // å·¦ã‚ã‚Šã“ã¿
 		 XX=parseInt(XX/charWidth + 1)*charWidth;
 		 if(xMove<0)xMove=0;
 	}
 	else 
-	if(bpl < 0 && bpr > 0){ //‰E‚ß‚è‚±‚İ
+	if(bpl < 0 && bpr > 0){ //å³ã‚ã‚Šã“ã¿
 		 XX=parseInt(XX/charWidth + 1)*charWidth-charBodyWidth;
 		 if(xMove>0)xMove=0;
 	}else
-	if(bp>0){ // Š®‘S‚ß‚è‚±‚İ (Šç‚Æ”½‘Î•ûŒü‚É‰Ÿ‚µo‚·)
+	if(bp>0){ // å®Œå…¨ã‚ã‚Šã“ã¿ (é¡”ã¨åå¯¾æ–¹å‘ã«æŠ¼ã—å‡ºã™)
 		xMove=0;XX-=4*hFace;
 	}
 
 	 if(bp!=-3)climbFlag=false;
 	else
-	if(myPAD.y < 0){ // ƒcƒ^ & ƒŒƒo[‚ğã
+	if(myPAD.y < 0){ // ãƒ„ã‚¿ & ãƒ¬ãƒãƒ¼ã‚’ä¸Š
 		climbFlag=true;
 		xMove=0;
 	 }
 
-	if(blockP>0){ // ”wŒi‚ÌƒIƒuƒWƒFƒNƒg‚ğƒ`ƒFƒbƒN
+	if(blockP>0){ // èƒŒæ™¯ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ãƒã‚§ãƒƒã‚¯
 	 var p=checkEventBlock(blockP);
 	 if(p==99)eventGoalBlock(plObj,blockP);
 	  else
 	 if(p>0)eventPointBlock(plObj,blockP);
 	}
 
-	var coinflag=false;// ‚QdƒQƒbƒg‚µ‚È‚¢‚½‚ß‚Ìƒtƒ‰ƒO
-	//ƒRƒCƒ“”»’è
+	var coinflag=false;// ï¼’é‡ã‚²ãƒƒãƒˆã—ãªã„ãŸã‚ã®ãƒ•ãƒ©ã‚°
+	//ã‚³ã‚¤ãƒ³åˆ¤å®š
 	if(blockPL > 0){
 	  var c=checkCoin(blockPL);
 	  if(c>0){
@@ -483,17 +483,17 @@ function actPlayerRun(plObj){
 		 xMove*=xBounce;
 		}
 	}
- }else{ // ƒX[ƒp[ƒ‚[ƒh
+ }else{ // ã‚¹ãƒ¼ãƒ‘ãƒ¼ãƒ¢ãƒ¼ãƒ‰
    var blCenterX = XX+charBodyWidth/2;
    var blRightX  = XX+charBodyWidth;
    var blLeftX   = XX;
    var yyHead = YY+charBodyHeight*.2;
    var yyFoot = YY+charBodyHeight*.75;
-    //“ª‘¤
+    //é ­å´
 	var blockHP  = getXYpointObject(blCenterX,yyHead);
 	var blockHPL = getXYpointObject(blLeftX  ,yyHead);
 	var blockHPR = getXYpointObject(blRightX ,yyHead);
-    //‘«‘¤
+    //è¶³å´
 	var blockFP  = getXYpointObject(blCenterX,yyFoot);
 	var blockFPL = getXYpointObject(blLeftX  ,yyFoot);
 	var blockFPR = getXYpointObject(blRightX ,yyFoot);
@@ -506,17 +506,17 @@ function actPlayerRun(plObj){
 	var bpFL=checkWallBlock(blockFPL);
 	var bpFR=checkWallBlock(blockFPR);
 
-	if( (bpHL > 0 || bpFL > 0) && (bpHR < 0 && bpFR < 0) ){ // ¶‚ß‚è‚±‚İ
+	if( (bpHL > 0 || bpFL > 0) && (bpHR < 0 && bpFR < 0) ){ // å·¦ã‚ã‚Šã“ã¿
 		 XX=parseInt(XX/charWidth + 1)*charWidth;
 		 if(xMove<0)xMove=0;
 	}
 	else 
-	if( (bpHL < 0 && bpFL < 0) && (bpHR > 0 || bpFR > 0) ){ //‰E‚ß‚è‚±‚İ
+	if( (bpHL < 0 && bpFL < 0) && (bpHR > 0 || bpFR > 0) ){ //å³ã‚ã‚Šã“ã¿
 		 XX=parseInt(XX/charWidth + 1)*charWidth-charBodyWidth;
 		 if(xMove>0)xMove=0;
 	}
 	else
-	if(bpH > 0 || bpF > 0){ // Š®‘S‚ß‚è‚±‚İ (Šç‚Æ”½‘Î•ûŒü‚É‰Ÿ‚µo‚·)
+	if(bpH > 0 || bpF > 0){ // å®Œå…¨ã‚ã‚Šã“ã¿ (é¡”ã¨åå¯¾æ–¹å‘ã«æŠ¼ã—å‡ºã™)
 		xMove=0;XX-=4*hFace;
 	}
 
@@ -524,7 +524,7 @@ function actPlayerRun(plObj){
 //	 if((bpHL!=-3 && bpHR!=-3))climbFlag=false;
 	 if(bpH!=-3)climbFlag=false;
 	 else
-	 if( myPAD.y < 0){ // ƒcƒ^ & ƒŒƒo[‚ğã
+	 if( myPAD.y < 0){ // ãƒ„ã‚¿ & ãƒ¬ãƒãƒ¼ã‚’ä¸Š
 		climbFlag=true;
 		xMove=0;
 //		jumpBonus=0;
@@ -541,7 +541,7 @@ function actPlayerRun(plObj){
 	 if(p  >  0)eventPointBlock(plObj,blockTMP);
 	}
 
-	var coinflag=false;// ‚QdƒQƒbƒg‚µ‚È‚¢‚½‚ß‚Ìƒtƒ‰ƒO
+	var coinflag=false;// ï¼’é‡ã‚²ãƒƒãƒˆã—ãªã„ãŸã‚ã®ãƒ•ãƒ©ã‚°
 	  if(blockHPL > 0){
 	   var c=checkCoin(blockHPL);
 	   if(c>0){
@@ -602,17 +602,17 @@ function actPlayerRun(plObj){
 	XX+=xMove;
 	YY+=yMove;
 
-	//’nŒ`”»’è--------->
+	//åœ°å½¢åˆ¤å®š--------->
 
 
-	// Šç‚ÌŒü‚« --
+	// é¡”ã®å‘ã --
 	 var facetmp=face;
-	  if( (yMove <= yAccel && yMove >= 0 && !jumpFlag) || yMove==0){ // ‹ó’†‚Å‚Í•ûŒü“]Š·‚µ‚È‚¢
+	  if( (yMove <= yAccel && yMove >= 0 && !jumpFlag) || yMove==0){ // ç©ºä¸­ã§ã¯æ–¹å‘è»¢æ›ã—ãªã„
 		if(myPAD.x > 0)hFace=1;
 		else if(myPAD.x < 0)hFace=-1;
 	  }
 
-	  if(yMove < 0 && !sitdown){ //ã¸’†
+	  if(yMove < 0 && !sitdown){ //ä¸Šæ˜‡ä¸­
 		facetmp=imgJump;
 		face=facetmp+((hFace > 0 ) ? plRight : plLeft);
 	  }else
@@ -630,7 +630,7 @@ function actPlayerRun(plObj){
 		else
 		facetmp=imgStand;
 
-		if(sitdown)facetmp=imgSit; // ‚µ‚á‚ª‚ñ‚Å‚é
+		if(sitdown)facetmp=imgSit; // ã—ã‚ƒãŒã‚“ã§ã‚‹
 		
 		face=facetmp+((hFace > 0 ) ? plRight : plLeft);
 
@@ -638,9 +638,9 @@ function actPlayerRun(plObj){
 	  if(climbFlag){
 		face=(yMove!=0)?imgClimbMove:imgClimb;
 	  }else
-	// Šç‚ÌŒü‚« -->
+	// é¡”ã®å‘ã -->
 
-	// ƒtƒ@ƒCƒA[”­Ë
+	// ãƒ•ã‚¡ã‚¤ã‚¢ãƒ¼ç™ºå°„
 	if(fire && !sitdown){
 	 if(myPAD.buttons[0]==1 && !fireFlag){
 	  fireball.call();fireFlag=true;
@@ -677,7 +677,7 @@ function actPlayerSwim(plObj){
 	oldYY=YY;
 
   if(mode!=PlayerMode.NORMAL && yMove == 0){
-	if(myPAD.y>0){ // ‚µ‚á‚ª‚Ş
+	if(myPAD.y>0){ // ã—ã‚ƒãŒã‚€
 //		if(!sitdown){
 		charBodyHeight=charSmallHeight;
 		if(charSpriteHeight == charBigSpriteHeight){
@@ -689,7 +689,7 @@ function actPlayerSwim(plObj){
 //		charSpriteHeight=charSmallSpriteHeight;
 		sitdown=true;
 	}else
-	if(myPAD.y<=0){ //—§‚Â
+	if(myPAD.y<=0){ //ç«‹ã¤
 //		if(sitdown){
 //		if(charBodyHeight != charBigHeight){
 		charBodyHeight=charBigHeight;
@@ -702,7 +702,7 @@ function actPlayerSwim(plObj){
 		sitdown=false;
 	}
  }else{
-   if(mode!=PlayerMode.NORMAL){ //‚µ‚á‚ª‚İ‰j‚¬
+   if(mode!=PlayerMode.NORMAL){ //ã—ã‚ƒãŒã¿æ³³ã
 	if(myPAD.y>0){
 	 if(charSpriteHeight != charBigSpriteHeight){
 		//YY+=(charBigHeight-charSmallHeight);
@@ -711,7 +711,7 @@ function actPlayerSwim(plObj){
 		o.moveTo(XX,YY,false);
 	 }
 	 }else
-	 if(myPAD.y<=0){ //—§‚Â
+	 if(myPAD.y<=0){ //ç«‹ã¤
 		charBodyHeight=charBigHeight;
 		if(sitdown){
 			YY-=(charBigHeight-charSmallHeight);
@@ -720,9 +720,9 @@ function actPlayerSwim(plObj){
 	 }
    }
  }
-	// ‚µ‚á‚ª‚Ş-->
+	// ã—ã‚ƒãŒã‚€-->
 
-// ¶‰EˆÚ“®
+// å·¦å³ç§»å‹•
 	var xAccelT=xAccel;
 	 if(yMove!=0)xAccelT*=.5;
 	var xMoveABS=Math.abs(xMove);
@@ -748,7 +748,7 @@ function actPlayerSwim(plObj){
 
 //*/
 
-	// —‰º‚ÆƒWƒƒƒ“ƒv------------(í‚É—‰º‚µ‚Ä‚¢‚é)
+	// è½ä¸‹ã¨ã‚¸ãƒ£ãƒ³ãƒ—------------(å¸¸ã«è½ä¸‹ã—ã¦ã„ã‚‹)
 
 	 if(myPAD.buttons[1] == 1 && !jumpFlag){
 		yMove=-yJumpSwim;
@@ -758,9 +758,9 @@ function actPlayerSwim(plObj){
 	  if(yMove>yDropSpeedMaxSwim)yMove=yDropSpeedMaxSwim;
 	 }
 
-	// —‰º------------>
+	// è½ä¸‹------------>
 
-	if(yMove>0){ //—‰º’†
+	if(yMove>0){ //è½ä¸‹ä¸­
 	 var flPoint=YY+charBodyHeight+yMove;
 	 var floorL=getXYpointObject(XX,flPoint);
 	 var floorR=getXYpointObject(XX+charBodyWidth-1,flPoint);
@@ -774,7 +774,7 @@ function actPlayerSwim(plObj){
 
 	}
 	else
-	if(yMove<0){ //ã¸’†
+	if(yMove<0){ //ä¸Šæ˜‡ä¸­
 	 var flPoint=YY+yMove/2;
 	 var blockHead=getXYpointObject(XX+charBodyWidth/2,flPoint);
 	  if(checkUpperBlock(blockHead) > 0){
@@ -785,7 +785,7 @@ function actPlayerSwim(plObj){
 	else{
 	}
 
-   if(charBodyHeight<charHeight){//ƒ`ƒr
+   if(charBodyHeight<charHeight){//ãƒãƒ“
 	var blockP=getXYpointObject(XX+charBodyWidth/2,YY+charBodyHeight/2);
 	var blockPL=getXYpointObject(XX+1,YY+charBodyHeight*.3);
 	var blockPR=getXYpointObject(XX+charBodyWidth-1,YY+charBodyHeight*.3);
@@ -794,16 +794,16 @@ function actPlayerSwim(plObj){
 		var bp =checkWallBlock(blockP);
 		var bpl=checkWallBlock(blockPL);
 		var bpr=checkWallBlock(blockPR);
-	if(bpl > 0 && bpr < 0){ // ¶‚ß‚è‚±‚İ
+	if(bpl > 0 && bpr < 0){ // å·¦ã‚ã‚Šã“ã¿
 		 XX=parseInt(XX/charWidth + 1)*charWidth;
 		 if(xMove<0)xMove=0;
 	}
 	else 
-	if(bpl < 0 && bpr > 0){ //‰E‚ß‚è‚±‚İ
+	if(bpl < 0 && bpr > 0){ //å³ã‚ã‚Šã“ã¿
 		 XX=parseInt(XX/charWidth + 1)*charWidth-charBodyWidth;
 		 if(xMove>0)xMove=0;
 	}else
-	if(bp>0){ // Š®‘S‚ß‚è‚±‚İ (Šç‚Æ”½‘Î•ûŒü‚É‰Ÿ‚µo‚·)
+	if(bp>0){ // å®Œå…¨ã‚ã‚Šã“ã¿ (é¡”ã¨åå¯¾æ–¹å‘ã«æŠ¼ã—å‡ºã™)
 		xMove=0;XX-=4*hFace;
 	}
 
@@ -822,7 +822,7 @@ function actPlayerSwim(plObj){
 	}
 
 
-	if(blockP>0){ // ”wŒi‚ÌƒIƒuƒWƒFƒNƒg‚ğƒ`ƒFƒbƒN
+	if(blockP>0){ // èƒŒæ™¯ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ãƒã‚§ãƒƒã‚¯
 	 var p=checkEventBlock(blockP);
 	 if(p==99)eventGoalBlock(plObj,blockP);
 	  else
@@ -830,8 +830,8 @@ function actPlayerSwim(plObj){
 	 else{
 	 }
 	}
-		var coinflag=false;// ‚QdƒQƒbƒg‚µ‚È‚¢‚½‚ß‚Ìƒtƒ‰ƒO
-		//ƒRƒCƒ“”»’è
+		var coinflag=false;// ï¼’é‡ã‚²ãƒƒãƒˆã—ãªã„ãŸã‚ã®ãƒ•ãƒ©ã‚°
+		//ã‚³ã‚¤ãƒ³åˆ¤å®š
 		if(blockPL > 0){
 		  var c=checkCoin(blockPL);
 		  if(c>0){
@@ -866,17 +866,17 @@ function actPlayerSwim(plObj){
 		 xMove*=xBounce;
 		}
 	}
- }else{ // ƒX[ƒp[ƒ‚[ƒh
+ }else{ // ã‚¹ãƒ¼ãƒ‘ãƒ¼ãƒ¢ãƒ¼ãƒ‰
    var blCenterX = XX+charBodyWidth/2;
    var blRightX  = XX+charBodyWidth;
    var blLeftX   = XX;
    var yyHead = YY+charBodyHeight*.2;
    var yyFoot = YY+charBodyHeight*.75;
-    //“ª‘¤
+    //é ­å´
 	var blockHP  = getXYpointObject(blCenterX,yyHead);
 	var blockHPL = getXYpointObject(blLeftX  ,yyHead);
 	var blockHPR = getXYpointObject(blRightX ,yyHead);
-    //‘«‘¤
+    //è¶³å´
 	var blockFP  = getXYpointObject(blCenterX,yyFoot);
 	var blockFPL = getXYpointObject(blLeftX  ,yyFoot);
 	var blockFPR = getXYpointObject(blRightX ,yyFoot);
@@ -889,17 +889,17 @@ function actPlayerSwim(plObj){
 	var bpFL=checkWallBlock(blockFPL);
 	var bpFR=checkWallBlock(blockFPR);
 
-	if( (bpHL > 0 || bpFL > 0) && (bpHR < 0 && bpFR < 0) ){ // ¶‚ß‚è‚±‚İ
+	if( (bpHL > 0 || bpFL > 0) && (bpHR < 0 && bpFR < 0) ){ // å·¦ã‚ã‚Šã“ã¿
 		 XX=parseInt(XX/charWidth + 1)*charWidth;
 		 if(xMove<0)xMove=0;
 	}
 	else 
-	if( (bpHL < 0 && bpFL < 0) && (bpHR > 0 || bpFR > 0) ){ //‰E‚ß‚è‚±‚İ
+	if( (bpHL < 0 && bpFL < 0) && (bpHR > 0 || bpFR > 0) ){ //å³ã‚ã‚Šã“ã¿
 		 XX=parseInt(XX/charWidth + 1)*charWidth-charBodyWidth;
 		 if(xMove>0)xMove=0;
 	}
 	else
-	if(bpH > 0 || bpF > 0){ // Š®‘S‚ß‚è‚±‚İ (Šç‚Æ”½‘Î•ûŒü‚É‰Ÿ‚µo‚·)
+	if(bpH > 0 || bpF > 0){ // å®Œå…¨ã‚ã‚Šã“ã¿ (é¡”ã¨åå¯¾æ–¹å‘ã«æŠ¼ã—å‡ºã™)
 		xMove=0;XX-=4*hFace;
 	}
 
@@ -931,7 +931,7 @@ function actPlayerSwim(plObj){
 	}
 
 
-	var coinflag=false;// ‚QdƒQƒbƒg‚µ‚È‚¢‚½‚ß‚Ìƒtƒ‰ƒO
+	var coinflag=false;// ï¼’é‡ã‚²ãƒƒãƒˆã—ãªã„ãŸã‚ã®ãƒ•ãƒ©ã‚°
 	  if(blockHPL > 0){
 	   var c=checkCoin(blockHPL);
 	   if(c>0){
@@ -988,16 +988,16 @@ function actPlayerSwim(plObj){
 	XX+=xMove;
 	YY+=yMove;
 
-	//’nŒ`”»’è--------->
+	//åœ°å½¢åˆ¤å®š--------->
 
 
 
-	// Šç‚ÌŒü‚« --
+	// é¡”ã®å‘ã --
 	 var facetmp="";
 
 		if(myPAD.x > 0)hFace=1;
 		else if(myPAD.x < 0)hFace=-1;
-	  if(yMove < -9 ){ //ã¸’†
+	  if(yMove < -9 ){ //ä¸Šæ˜‡ä¸­
 		facetmp=imgSwimMove;
 		face=facetmp+((hFace > 0 ) ? plRight : plLeft);
 	  }else
@@ -1012,13 +1012,13 @@ function actPlayerSwim(plObj){
 		else
 		facetmp=imgStand;
 
-		if(sitdown)facetmp=imgSit; // ‚µ‚á‚ª‚ñ‚Å‚é
+		if(sitdown)facetmp=imgSit; // ã—ã‚ƒãŒã‚“ã§ã‚‹
 		
 		face=facetmp+((hFace > 0 ) ? plRight : plLeft);
 
 	  }
 
-	// ƒtƒ@ƒCƒA[”­Ë
+	// ãƒ•ã‚¡ã‚¤ã‚¢ãƒ¼ç™ºå°„
 	if(fire && (!sitdown || yMove!=0)){
 	 if(myPAD.buttons[0]==1 && !fireFlag){
 	  fireball.call();fireFlag=true;
@@ -1242,7 +1242,7 @@ function animDie(obj,cnt,mcnt){
 //if(cnt==mcnt){
   if(p==10){
 	o.setBitmap(face,charBodyWidth,charBodyHeight);
-   if(YY<WIN.SCROLL_TOP+SCREEN_Y)yMove=-24.5;// “]—€‚Í’µ‚Ë‚È‚¢
+   if(YY<WIN.SCROLL_TOP+SCREEN_Y)yMove=-24.5;// è»¢è½æ­»ã¯è·³ã­ãªã„
     ghost=true;
    }
 	yMove += yAccel;
@@ -1257,7 +1257,7 @@ function animGoal(obj,cnt,mcnt){
   var blockF  = getXYpointObject(XX+charBodyWidth/2,flPoint);
   var blockFC = checkFloorBlock(blockF);
 
-  var F=GOALFLAG; //@Šø
+  var F=GOALFLAG; //ã€€æ——
   var flPoint2 = F.YY+F.charBodyHeight+yMove;
   var blockP2  = getXYpointObject(XX+charBodyWidth/2,F.YY+F.charBodyHeight/2);
   var blockF2  = getXYpointObject(XX+charBodyWidth/2,flPoint2);
@@ -1270,7 +1270,7 @@ function animGoal(obj,cnt,mcnt){
   
   if(cnt>-10000){
 	if(cnt==-1){
-		//ƒ|[ƒ‹ƒ{[ƒiƒX‚ÌZo(Œø—¦ˆ«‚¢)
+		//ãƒãƒ¼ãƒ«ãƒœãƒ¼ãƒŠã‚¹ã®ç®—å‡º(åŠ¹ç‡æ‚ªã„)
 		var flagBonusTable=Array(50,100,200,400,800,1000,2000,2000);
 		var fl=YY+charBodyHeight - yMove;
 		var flagBonus=5000;
@@ -1665,7 +1665,7 @@ function getBonus(n){
 
 ///*
 //---------------------------------------------------------
-// –{“–‚Í“®“I‚É¶¬‚µ‚½‚¢‚ªAIE‚¾‚Æ‚à‚Á‚³‚è‚·‚é‚Ì‚ÅŒÅ’è‚É‚·‚é
+// æœ¬å½“ã¯å‹•çš„ã«ç”Ÿæˆã—ãŸã„ãŒã€IEã ã¨ã‚‚ã£ã•ã‚Šã™ã‚‹ã®ã§å›ºå®šã«ã™ã‚‹
 function FireballGroup(obj){
 	this.maxFireballs=2;
 	this.master=obj;
@@ -1730,9 +1730,9 @@ function Fireball(obj){
 
 	T.charWidth  = BGBLOCKSIZE_X;
 	T.charHeight = BGBLOCKSIZE_Y;
-	T.charBodyWidth  = 16;//18;	//“–‚½‚è”»’èƒTƒCƒY
+	T.charBodyWidth  = 16;//18;	//å½“ãŸã‚Šåˆ¤å®šã‚µã‚¤ã‚º
 	T.charBodyHeight = 12;//18;
-	T.charSpriteWidth  = 16;//12; //ƒOƒ‰ƒtƒBƒbƒN‚ÌƒTƒCƒY
+	T.charSpriteWidth  = 16;//12; //ã‚°ãƒ©ãƒ•ã‚£ãƒƒã‚¯ã®ã‚µã‚¤ã‚º
 	T.charSpriteHeight = 16;//12;
 		T.cSprX = ( T.charSpriteWidth  - T.charBodyWidth  ) / 2;
 		T.cSprY = ( T.charSpriteHeight - T.charBodyHeight ) / 2;

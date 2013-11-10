@@ -7,8 +7,8 @@
 -->
 <html>
 <head>
- <title>29ch - ƒƒ“ƒeƒiƒ“ƒX’†...</title>
-<meta http-equiv="Content-type" content="text/html; charset=Shift_JIS">
+ <title>29ch - ãƒ¡ãƒ³ãƒ†ãƒŠãƒ³ã‚¹ä¸­...</title>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
 <style type="text/css">
 <!--
 img {margin:0;padding:0;border:none;}
@@ -93,7 +93,7 @@ var BLOCK1COLOR="brown";
 var TOGECNT=0;
 var TOGECNTMAX=4;
 
-var FISHCNT=0; // ‹›EƒCƒJ‚ª‰æ–Ê“à‚É“¯‚ÉoŒ»‚·‚é”‚Ì§ŒÀ
+var FISHCNT=0; // é­šãƒ»ã‚¤ã‚«ãŒç”»é¢å†…ã«åŒæ™‚ã«å‡ºç¾ã™ã‚‹æ•°ã®åˆ¶é™
 var FISHCNTMAX=4;
 
 var CANNONBALLCNT=0;
@@ -107,7 +107,7 @@ var GOALFLAG2;
 
 
 var STAGENUM=0;
-// Mozilla‚Åƒe[ƒuƒ‹‚‚³‚ªboarder•ª‘‚¦‚Ä‚µ‚Ü‚¤‚½‚ß‚Ì•â³
+// Mozillaã§ãƒ†ãƒ¼ãƒ–ãƒ«é«˜ã•ãŒboarderåˆ†å¢—ãˆã¦ã—ã¾ã†ãŸã‚ã®è£œæ­£
 var MozillaTableBoarderFix=0;
 
 var DEBUGMODE=false;
@@ -293,7 +293,7 @@ function createStage(dat,dat2,wx,wy){
  var rowmax=0;
 
   if(!document.all){
-	// Mozilla ‚¾‚Æc•ûŒü‚Ìborder‚ª‰ÁZ?‚³‚ê‚é
+	// Mozilla ã ã¨ç¸¦æ–¹å‘ã®borderãŒåŠ ç®—?ã•ã‚Œã‚‹
 	thi+=MozillaTableBoarderFix;
   }
 
@@ -305,7 +305,7 @@ function createStage(dat,dat2,wx,wy){
 
 	 thitmp=thi;
 	 thftmp+=thf;
-	  if(thftmp>=1){ // ¬”“_ˆÈ‰ºŒë·•â³
+	  if(thftmp>=1){ // å°æ•°ç‚¹ä»¥ä¸‹èª¤å·®è£œæ­£
 		thitmp+=1;
 		thftmp-=1;
 	  }
@@ -318,7 +318,7 @@ function createStage(dat,dat2,wx,wy){
 	while(line!=""){colcnt++;
 	 var twitmp=twi;
 	 twftmp+=twf;
-	  if(twftmp>=1){ // ¬”“_ˆÈ‰ºŒë·•â³
+	  if(twftmp>=1){ // å°æ•°ç‚¹ä»¥ä¸‹èª¤å·®è£œæ­£
 		twitmp+=1;
 		twftmp-=1;
 	  }
@@ -338,7 +338,7 @@ function createStage(dat,dat2,wx,wy){
 	tbl+='</tr>';
 	if(colMax<colPix){colMax=colPix;colcntMax=colcnt;}
   }
-  // ‚¿‚å‚Á‚Æ‚¾‚¯”wŒi‚ğã‚É‚¸‚ç‚·‚ÆAƒLƒƒƒ‰‚ª’n–Ê‚É—§‚Á‚Ä‚¢‚é‚æ‚¤‚ÉŒ©‚¦‚é
+  // ã¡ã‚‡ã£ã¨ã ã‘èƒŒæ™¯ã‚’ä¸Šã«ãšã‚‰ã™ã¨ã€ã‚­ãƒ£ãƒ©ãŒåœ°é¢ã«ç«‹ã£ã¦ã„ã‚‹ã‚ˆã†ã«è¦‹ãˆã‚‹
   var m= dbh / dbHeight * 2 * -1;
   tbl=
   '<table style="position:absolute;table-layout:fixed;width:'+colMax+';hei ght:'+rowmax+';top:'+ m +'px;left:0px;z-index:100;margin:0;padding:0;" cellspacing=0 cellpadding=0 id="BGTABLE1" onclick="if(document.all)ff()" colcnt="'+ colcntMax +'">'
@@ -376,7 +376,7 @@ function createStageEnemies(dat,dat2,wx,wy){
 	 line=line.substring(2);
 	}
   }
-  // ƒLƒƒƒ‰ì¬‚ğYÀ•W‡‚Å‚Í‚È‚­XÀ•W‡‚É‚·‚é
+  // ã‚­ãƒ£ãƒ©ä½œæˆã‚’Yåº§æ¨™é †ã§ã¯ãªãXåº§æ¨™é †ã«ã™ã‚‹
  en=en.sort();
  for(var i=0;i<en.length;i++){
 	var tmp=en[i].split("\t");
@@ -396,7 +396,7 @@ function createStageEnemies(dat,dat2,wx,wy){
 
 
 var IMGCACHE=	[];
-function createCacheImage(id,img){ // ‘Š‘ÎURL‚Ìê‡‚Ícpu.html‚ªŠî€‚Æ‚È‚é‚Ì‚Å’ˆÓ
+function createCacheImage(id,img){ // ç›¸å¯¾URLã®å ´åˆã¯cpu.htmlãŒåŸºæº–ã¨ãªã‚‹ã®ã§æ³¨æ„
  var cc=document.getElementById('cacheImageArea');
 
  var imgs=arguments;
@@ -444,7 +444,7 @@ function setXYpointObject(x,y,num,option){
   var colcnt = parseInt(tb.colcnt);
 
  
- if(option!=-1){ // -1‚Ìê‡‚ÍƒOƒ‰ƒtƒBƒbƒN‚Ì•ÏX‚Í‚µ‚È‚¢
+ if(option!=-1){ // -1ã®å ´åˆã¯ã‚°ãƒ©ãƒ•ã‚£ãƒƒã‚¯ã®å¤‰æ›´ã¯ã—ãªã„
   if(DA){
 	var td=TD[colcnt*yy+xx];
     if(num==0){
@@ -891,7 +891,7 @@ function sprite(name){
 	this.rotate=0;
 	this.flipV=false;
 	this.flipH=false;
-	this.opacity=100; // 0 ` 100
+	this.opacity=100; // 0 ã€œ 100
 	this.visible=false;
 	this.alive=1;
 	this.width=0;
@@ -989,19 +989,19 @@ lastkey=0;
 	case 88: // X
 		PAD1.buttons[1]=1;
 	break;
-	case 37: //©
+	case 37: //â†
 		PAD1.x=-1;
 		return false;
 	break;
-	case 38: //ª
+	case 38: //â†‘
 		PAD1.y=-1;
 		return false;
 	break;
-	case 39: //¨
+	case 39: //â†’
 		PAD1.x= 1;
 		return false;
 	break;
-	case 40: //«
+	case 40: //â†“
 		PAD1.y= 1;
 		return false;
 	break;
@@ -1046,16 +1046,16 @@ lastkey=0;
 	case 88: // X
 		PAD1.buttons[1]=0;
 	break;
-	case 37: //©
+	case 37: //â†
 		PAD1.x=0;
 	break;
-	case 38: //ª
+	case 38: //â†‘
 		PAD1.y=0;
 	break;
-	case 39: //¨
+	case 39: //â†’
 		PAD1.x=0;
 	break;
-	case 40: //«
+	case 40: //â†“
 		PAD1.y=0;
 	break;
   }
@@ -1145,7 +1145,7 @@ lastkey=0;
 	P1.show();
 	OTHERS.show();
 	ENEMIES.show();
-	EFFECTS.show(); // Œy‚­‚·‚é‚½‚ß‚É•`‰æ‰ñ”‚ğŒ¸‚ç‚·
+	EFFECTS.show(); // è»½ãã™ã‚‹ãŸã‚ã«æç”»å›æ•°ã‚’æ¸›ã‚‰ã™
 
  if(DEBUGMODE){
 	XX2=parseInt((P1.XX + WIN.BGBLOCKSIZE_X/2) / WIN.BGBLOCKSIZE_X) * WIN.BGBLOCKSIZE_X;
@@ -1183,7 +1183,7 @@ CPULOCK=true;
 //	location.reload();
 } //
 
-// ƒCƒxƒ“ƒg‘®«ƒuƒƒbƒN‚ÉG‚ê‚½‚ÉƒR[ƒ‹‚³‚ê‚é
+// ã‚¤ãƒ™ãƒ³ãƒˆå±æ€§ãƒ–ãƒ­ãƒƒã‚¯ã«è§¦ã‚ŒãŸæ™‚ã«ã‚³ãƒ¼ãƒ«ã•ã‚Œã‚‹
 function eventPointBlock(obj,block){var r=0;
 	if(block>=0x6e && block<=0x6f){
 		obj.setAnimate("FLAG");
@@ -1193,13 +1193,13 @@ function eventPointBlock(obj,block){var r=0;
 	if(r<0)return;
 } //
 
-// ƒuƒƒbƒN‚ğ’@‚¢‚½‚ÉƒR[ƒ‹‚³‚ê‚é
+// ãƒ–ãƒ­ãƒƒã‚¯ã‚’å©ã„ãŸæ™‚ã«ã‚³ãƒ¼ãƒ«ã•ã‚Œã‚‹
 function eventUpperBlock(obj,block){var r=0;
 	if(WIN != window)r = LOADER.eventUpperBlock(obj,window,block);
 	if(r<0)return;
 } //
 
-// ƒS[ƒ‹ƒ|ƒCƒ“ƒg‚ÉG‚ê‚½‚ÉƒR[ƒ‹‚³‚ê‚é
+// ã‚´ãƒ¼ãƒ«ãƒã‚¤ãƒ³ãƒˆã«è§¦ã‚ŒãŸæ™‚ã«ã‚³ãƒ¼ãƒ«ã•ã‚Œã‚‹
 function eventGoalBlock(obj,block){var r=0;
 CPULOCK=true;
 	if(WIN != window)r = LOADER.eventGoalBlock(obj,window,block);
@@ -1208,7 +1208,7 @@ CPULOCK=true;
 	else		top.location.replace("http://www.yahoo.co.jp/");
 } //
 
-// ƒ[ƒvƒ|ƒCƒ“ƒg‚ÉG‚ê‚½‚ÉƒR[ƒ‹‚³‚ê‚é
+// ãƒ¯ãƒ¼ãƒ—ãƒã‚¤ãƒ³ãƒˆã«è§¦ã‚ŒãŸæ™‚ã«ã‚³ãƒ¼ãƒ«ã•ã‚Œã‚‹
 function eventWarpBlock(obj,atype){var r=0;
 CPULOCK=true;
 	if(WIN != window)r = LOADER.eventWarpBlock(obj,window,atype,WARPPTR);
@@ -1217,7 +1217,7 @@ CPULOCK=true;
 	else		top.location.replace("http://www.makimo.to/");
 } //
 
-// ƒvƒŒƒCƒ„[‚ª—‰º‚µ‚½‚ÉŒÄ‚Î‚ê‚é
+// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãŒè½ä¸‹ã—ãŸæ™‚ã«å‘¼ã°ã‚Œã‚‹
 function eventPlayerDrop(obj){var r=0;
 CPULOCK=true;
 	if(WIN != window)r = LOADER.eventPlayerDrop(obj,window);
@@ -1303,7 +1303,7 @@ var TD=Array();
 CPU=true;
 
 	if(WIN != window){
-	 // Mozilla‚Åu–ß‚év‚Å–ß‚Á‚½‚Æ‚«‚É’l‚ª‚¨‚©‚µ‚¢‘Îô
+	 // Mozillaã§ã€Œæˆ»ã‚‹ã€ã§æˆ»ã£ãŸã¨ãã«å€¤ãŒãŠã‹ã—ã„å¯¾ç­–
 	 if(isNaN(PL1COINS))top.location.replace(top.location);
 
 	 parent.CPUOK=true;
@@ -1452,7 +1452,7 @@ window.offscreenBuffering = true;
 </div>
 
 <div style="position:absolute;width:80%;left:10%;top:30%;background:white;color:black;font-size:200%;">
-‚½‚¾‚¢‚Üƒƒ“ƒeƒiƒ“ƒX’†‚Å‚·
+ãŸã ã„ã¾ãƒ¡ãƒ³ãƒ†ãƒŠãƒ³ã‚¹ä¸­ã§ã™
 </div>
 
 <div style="display:none;">

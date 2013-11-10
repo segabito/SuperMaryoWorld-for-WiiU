@@ -8,7 +8,7 @@
 <html>
 <head>
  <title>JavaScript Virtual Machine Screen2</title>
-<meta http-equiv="Content-type" content="text/html; charset=Shift_JIS">
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="imagetoolbar" content="no">
 <style type="text/css">
 <!--
@@ -73,7 +73,7 @@ function setBgColor(){
 function setEffectMode(obj){
 	parent.NOEFFECT = (!parent.NOEFFECT);
 	parent.cpu.NOEFFECT=parent.NOEFFECT;
-	obj.innerHTML=(parent.NOEFFECT)? 'ƒGƒtƒFƒNƒg<br>o‚·' : 'ƒGƒtƒFƒNƒg<br>Á‚·';
+	obj.innerHTML=(parent.NOEFFECT)? 'ã‚¨ãƒ•ã‚§ã‚¯ãƒˆ<br>å‡ºã™' : 'ã‚¨ãƒ•ã‚§ã‚¯ãƒˆ<br>æ¶ˆã™';
 	parent.ff();
 } //
 
@@ -99,7 +99,7 @@ function setReplayMode(){
 		parent.ff();
 		setButtonFace();
 	}else{
-//		if(confirm('ˆê“xƒQ[ƒ€‚ªI—¹‚µ‚Ü‚·‚ª‚æ‚ë‚µ‚¢‚Å‚·‚©H')){
+//		if(confirm('ä¸€åº¦ã‚²ãƒ¼ãƒ ãŒçµ‚äº†ã—ã¾ã™ãŒã‚ˆã‚ã—ã„ã§ã™ã‹ï¼Ÿ')){
 		if(true){
 			parent.gameover(false,'replayCode');
 		}
@@ -109,7 +109,7 @@ function setReplayMode(){
 }
 function setButtonFace(){
 	var btn=document.getElementById("replayModeButton");
-	btn.innerHTML = (parent.REPLAYMODE==true)? "ƒŠƒvƒŒƒC<br>’â~":"ƒŠƒvƒŒƒC<br>•Û‘¶/•œŒ³";
+	btn.innerHTML = (parent.REPLAYMODE==true)? "ãƒªãƒ—ãƒ¬ã‚¤<br>åœæ­¢":"ãƒªãƒ—ãƒ¬ã‚¤<br>ä¿å­˜/å¾©å…ƒ";
 	btn.style.color = (parent.REPLAYMODE==true)? "red":"blue";
 }
 //-->
@@ -118,7 +118,7 @@ function setButtonFace(){
 <body bgcolor="black;overflow:hidden;margin:0;padding:0;border:1px solid black;" scroll="no">
 <table style="width:100%;height:100%;position:absolute;top:0;left:0;" cellspacing="0" cellpadding="0"><tr><td>
 <button id="replayModeButton" style="background:white;height:100%;left:0;top:0;position:absolute;z-index:100;font-weight:bolder;"
-	onclick="setReplayMode()">ƒŠƒvƒŒƒCƒR[ƒh<br>•Û‘¶/•œŒ³</button>
+	onclick="setReplayMode()">ãƒªãƒ—ãƒ¬ã‚¤ã‚³ãƒ¼ãƒ‰<br>ä¿å­˜/å¾©å…ƒ</button>
 <script type="text/javascript">
  if(parent.loader.LOADER)parent.loader.screen2BeforeInit();
  setButtonFace();
@@ -154,9 +154,9 @@ function setButtonFace(){
   <td nowrap="nowrap">
 <script>
 {
-var TXT=(parent.NOEFFECT)? 'ƒGƒtƒFƒNƒg<br>o‚·' : 'ƒGƒtƒFƒNƒg<br>Á‚·';
+var TXT=(parent.NOEFFECT)? 'ã‚¨ãƒ•ã‚§ã‚¯ãƒˆ<br>å‡ºã™' : 'ã‚¨ãƒ•ã‚§ã‚¯ãƒˆ<br>æ¶ˆã™';
 document.write(
-	'<button onclick="setEffectMode(this)" style="width:100%;height:100%;font-weight:bolder;display:none;" title="Á‚·‚ÆáŠ±Œy‚­‚È‚è‚Ü‚·B">'+
+	'<button onclick="setEffectMode(this)" style="width:100%;height:100%;font-weight:bolder;display:none;" title="æ¶ˆã™ã¨è‹¥å¹²è»½ããªã‚Šã¾ã™ã€‚">'+
 	TXT+
 	'</button>'+
 	'');

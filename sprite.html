@@ -153,9 +153,9 @@ function createStage(dat,dat2,wx,wy){
  var rowmax=0;
 
   if(!document.all){
-	// Mozilla ƒXƒNƒ[ƒ‹ƒo[‚Ì‘¾‚³‚¾‚¯ˆø‚­(‰¼‘Î‰)
+	// Mozilla ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ãƒãƒ¼ã®å¤ªã•ã ã‘å¼•ã(ä»®å¯¾å¿œ)
 	//	dbw-=19;	dbh-=19;
-	// Mozilla ‚¾‚Æc•ûŒü‚Ìborder‚ª‰ÁZ?‚³‚ê‚é
+	// Mozilla ã ã¨ç¸¦æ–¹å‘ã®borderãŒåŠ ç®—?ã•ã‚Œã‚‹
 	thi-=2;
   }
 
@@ -167,7 +167,7 @@ function createStage(dat,dat2,wx,wy){
 
 	 thitmp=thi;
 	 thftmp+=thf;
-	  if(thftmp>=1){ // ¬”“_ˆÈ‰ºŒë·•â³
+	  if(thftmp>=1){ // å°æ•°ç‚¹ä»¥ä¸‹èª¤å·®è£œæ­£
 		thitmp+=1;
 		thftmp-=1;
 	  }
@@ -180,7 +180,7 @@ function createStage(dat,dat2,wx,wy){
 	while(line!=""){colcnt++;
 	 var twitmp=twi;
 	 twftmp+=twf;
-	  if(twftmp>=1){ // ¬”“_ˆÈ‰ºŒë·•â³
+	  if(twftmp>=1){ // å°æ•°ç‚¹ä»¥ä¸‹èª¤å·®è£œæ­£
 		twitmp+=1;
 		twftmp-=1;
 	  }
@@ -391,19 +391,19 @@ lastkey=0;
 		PAD1.buttons[1]=1;
 		PAD1.buttons[2]++;
 	break;
-	case 37: //©
+	case 37: //â†
 		PAD1.x=-1;
 		return false;
 	break;
-	case 38: //ª
+	case 38: //â†‘
 		PAD1.y=-1;
 		return false;
 	break;
-	case 39: //¨
+	case 39: //â†’
 		PAD1.x= 1;
 		return false;
 	break;
-	case 40: //«
+	case 40: //â†“
 		PAD1.y= 1;
 		return false;
 	break;
@@ -452,16 +452,16 @@ lastkey=0;
 	case 16: // SHIFT
 		PAD1.buttons[1]=0;
 	break;
-	case 37: //©
+	case 37: //â†
 		PAD1.x=0;
 	break;
-	case 38: //ª
+	case 38: //â†‘
 		PAD1.y=0;
 	break;
-	case 39: //¨
+	case 39: //â†’
 		PAD1.x=0;
 	break;
-	case 40: //«
+	case 40: //â†“
 		PAD1.y=0;
 	break;
   }
@@ -501,7 +501,7 @@ lastkey=0;
 
 	var xMoveABS=Math.abs(xMove);
 	if(PAD1.x==0){
-		if(yMove==0)xMove*= xBrakeSlow; // ‹ó’†‚Å‚ÍŒ¸‘¬‚µ‚È‚¢
+		if(yMove==0)xMove*= xBrakeSlow; // ç©ºä¸­ã§ã¯æ¸›é€Ÿã—ãªã„
 		if(Math.abs(xMove)<=xSpeedMin)xMove=0;
 	}else{
 	 if(Math.abs(xMove)<=xSpeedMin)xMove=PAD1.x;
@@ -527,7 +527,7 @@ lastkey=0;
 	}
 	
 	
-	// —‰º------------
+	// è½ä¸‹------------
 	if(PAD1.buttons[1] == 1 && yMove==0){
 	 if(Math.abs(xMove)>xSpeedMax){
 		yMove=-yJumpHigh;
@@ -541,10 +541,10 @@ lastkey=0;
 	 yMove+=yAccel;
 	 if(yMove>yDropSpeedMax)yMove=yDropSpeedMax;
 	}
-	// —‰º------------>
+	// è½ä¸‹------------>
 
 
-	//’nŒ`”»’è---------
+	//åœ°å½¢åˆ¤å®š---------
 
 
 	var blockP=getXYpointObject(XX+charBodyWidth/2,YY+charBodyHeight/2,stage,charWidth,charHeight);
@@ -582,7 +582,7 @@ lastkey=0;
 
 
 
-	if(yMove>0){ //—‰º’†
+	if(yMove>0){ //è½ä¸‹ä¸­
 	 var flPoint=YY+charBodyHeight+yMove;
 	 var floorL=getXYpointObject(XX,flPoint,stage,charWidth,charHeight);
 	 var floorR=getXYpointObject(XX+charBodyWidth-1,flPoint,stage,charWidth,charHeight);
@@ -596,7 +596,7 @@ lastkey=0;
 		
 	}
 	else
-	if(yMove<0){ //ã¸’†
+	if(yMove<0){ //ä¸Šæ˜‡ä¸­
 	 var flPoint=YY; //+yMove;
 	 var blockHead=getXYpointObject(XX+charBodyWidth/2,flPoint,stage,charWidth,charHeight);
 	  if(blockHead==1){
@@ -610,7 +610,7 @@ lastkey=0;
 	XX+=xMove;
 	YY+=yMove;
 
-	//’nŒ`”»’è---------
+	//åœ°å½¢åˆ¤å®š---------
 
 
 
@@ -686,7 +686,7 @@ lastkey=0;
 <script type="text/javascript">
 <!--
 //	document.body.clientWidth=640;
-	//	IE‚Å‡”Ô‚ğ‹t‚É‚·‚é‚ÆˆÙ—l‚Éd‚­‚È‚é
+	//	IEã§é †ç•ªã‚’é€†ã«ã™ã‚‹ã¨ç•°æ§˜ã«é‡ããªã‚‹
 	createSprite();
 	createStage(stage,charTable,32,32);
 //-->

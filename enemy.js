@@ -104,7 +104,7 @@ function getCharObject(){
 function createEnemy(group,x,y,num,option,obj){
 // var crEL=getCharObject();
  var newEnemy;
- // switch“à‚Í’è”‚¶‚á‚È‚¢‚Æ’x‚­‚È‚é‚©‚à
+ // switchå†…ã¯å®šæ•°ã˜ã‚ƒãªã„ã¨é…ããªã‚‹ã‹ã‚‚
  switch(num){
 	case 0x80://EnemyCode.KURI://0x80:
 		newEnemy= new Kuri(obj,"KURI",x,y,option);
@@ -458,7 +458,7 @@ function callEnemy(x,y,mode){
 	break;
 	case EnemyCode.CANNONBALL:
 //	case "CANNONBALL":
-	 var hFace=RND(2)*2-1;// 0<->1 ¨ 0<->2 ¨ -1 <-> 1
+	 var hFace=RND(2)*2-1;// 0<->1 â†’ 0<->2 â†’ -1 <-> 1
 	 var xx=(hFace<0)?(rx+50):(lx-82);
 	 var yy=-1;
 	 while(yy<0)yy=Math.abs(py)+(RND(4)-2)*BGBLOCKSIZE_Y;
@@ -490,7 +490,7 @@ function callEnemy(x,y,mode){
 	case EnemyCode.FLYFISH:
 //	case "FLYFISH":
 	 if(FISHCNT<FISHCNTMAX){
-	 var hFace=RND(2)*2-1;// 0<->1 ¨ 0<->2 ¨ -1 <-> 1
+	 var hFace=RND(2)*2-1;// 0<->1 â†’ 0<->2 â†’ -1 <-> 1
 	 var xx=0;
 	 if(hFace>0)
 	     xx=RND(SCREEN_X*.5)+WIN.SCROLL_LEFT-SCREEN_X*.25;
@@ -569,13 +569,13 @@ function enemiesCollision(obj){
  return ret;
 } //
 
-function stepOnEnemyCollision(player,enemy){ // “¥‚İ‚Â‚¯”»’è
+function stepOnEnemyCollision(player,enemy){ // è¸ã¿ã¤ã‘åˆ¤å®š
 // if(player.yMove<-player.yAccel || enemy.YY <= player.YY || STAGEMODE == "WATER")return -1;
  if(enemy.YY <= player.YY || STAGEMODE == "WATER")return -1;
   var playerF=player.YY+player.charBodyHeight;
   var enemyF =enemy.YY+enemy.charBodyHeight;
   var playerC=player.XX+player.charBodyWidth/2;
- if(player.yMove - enemy.yMove >= 16)return 1;	// ‘Š‘Î—‰º‘¬“x
+ if(player.yMove - enemy.yMove >= 16)return 1;	// ç›¸å¯¾è½ä¸‹é€Ÿåº¦
  if(playerF < enemyF && player.yMove>10)return 1;
  if(player.yMove==0 && playerF > enemyF)return -1;
  if(enemy.YY+enemy.charBodyHeight*.8 > playerF)return 1;
@@ -598,7 +598,7 @@ function basicEnemyInitParam(T,obj,mode,x,y){
 	T.score      = 100;
 	T.stepScore  = 100;
 	T.upperScore  = 100;
-	// Šç‚ÌŒü‚«
+	// é¡”ã®å‘ã
 	T.vFace=0; // 1 = up    -1 = down
 	T.hFace=-1; // 1 = right -1 = left
 	
@@ -625,21 +625,21 @@ function basicEnemyInitMove(T,obj,mode,x,y){
 	T.yJumpSpeeddown=.6;
 	T.yBounce=-25.5;
 	
-	T.checkStage= true;  // ”wŒi‚ÌƒIƒuƒWƒFƒNƒg‚Æ‚Ì”»’è‚ğ‚·‚é‚©‚Ç‚¤‚©
-	T.checkFloor= false; // °‚Ì’[‚Åƒ^[ƒ“‚·‚é‚©
-	T.checkWall = true;  // •Ç‚ğ–³‹‚·‚é‚©
-	T.hasGroupCollision=true; // –¡•û“¯m‚ÅÕ“Ë”»’è‚·‚é‚©
-	T.screenDrop=false; // ‰æ–ÊŠO‚Éo‚½“_‚Å€–S‚Æ‚·‚é
-	T.yDropKill=true; //—‚¿‚½“_‚Å€–S‚Æ‚·‚é‚©
+	T.checkStage= true;  // èƒŒæ™¯ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã¨ã®åˆ¤å®šã‚’ã™ã‚‹ã‹ã©ã†ã‹
+	T.checkFloor= false; // åºŠã®ç«¯ã§ã‚¿ãƒ¼ãƒ³ã™ã‚‹ã‹
+	T.checkWall = true;  // å£ã‚’ç„¡è¦–ã™ã‚‹ã‹
+	T.hasGroupCollision=true; // å‘³æ–¹åŒå£«ã§è¡çªåˆ¤å®šã™ã‚‹ã‹
+	T.screenDrop=false; // ç”»é¢å¤–ã«å‡ºãŸæ™‚ç‚¹ã§æ­»äº¡ã¨ã™ã‚‹
+	T.yDropKill=true; //è½ã¡ãŸæ™‚ç‚¹ã§æ­»äº¡ã¨ã™ã‚‹ã‹
 } //
 function basicEnemyInitCharacter(T,obj,mode,x,y,z,cw,ch,sw,sh){
  if(!sw)sw=cw;
  if(!sh)sh=ch;
 	T.charWidth  = BGBLOCKSIZE_X;
 	T.charHeight = BGBLOCKSIZE_Y;
-	T.charBodyWidth  = cw;	//“–‚½‚è”»’èƒTƒCƒY
+	T.charBodyWidth  = cw;	//å½“ãŸã‚Šåˆ¤å®šã‚µã‚¤ã‚º
 	T.charBodyHeight = ch;
-	T.charSpriteWidth  = sw; //ƒOƒ‰ƒtƒBƒbƒN‚ÌƒTƒCƒY
+	T.charSpriteWidth  = sw; //ã‚°ãƒ©ãƒ•ã‚£ãƒƒã‚¯ã®ã‚µã‚¤ã‚º
 	T.charSpriteHeight = sh;
 		T.cSprX=(sw-cw)/2;
 		T.cSprY=(sh-ch);
@@ -699,7 +699,7 @@ function basicMove(obj){
 	oldYY=YY;
 	
 
-	// —‰º------------
+	// è½ä¸‹------------
 
 	if(yMove==0 && yJump!=0){
 //	 if(Math.abs(xMove)>xSpeedMax)
@@ -709,10 +709,10 @@ function basicMove(obj){
 	 yMove+=yAccel;
 	 if(yMove>yDropSpeedMax)yMove=yDropSpeedMax;
 	}
-	// —‰º------------>
+	// è½ä¸‹------------>
 
  if(checkStage==true){
-	if(yMove>0){ //—‰º’†
+	if(yMove>0){ //è½ä¸‹ä¸­
 	 var flPoint=YY+charBodyHeight+yMove;
 	 var floor=getXYpointObject(XX+charBodyWidth*.5,flPoint);
 	  if(checkFloorBlock(floor) > 0){
@@ -776,8 +776,8 @@ function basicMove(obj){
 
 
 
-function Kuri(obj,mode,x,y,option){ // Šî–{ƒUƒR
-// ˆÚ“®ƒpƒ‰ƒ[ƒ^‚ğ•Ï‚¦‚é‚¾‚¯‚Å ŒIE’eŠÛE‰Î‰ŠE‹›E’µ‹TE™‹T ‚ğƒJƒo[‚Å‚«‚é
+function Kuri(obj,mode,x,y,option){ // åŸºæœ¬ã‚¶ã‚³
+// ç§»å‹•ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã‚’å¤‰ãˆã‚‹ã ã‘ã§ æ —ãƒ»å¼¾ä¸¸ãƒ»ç«ç‚ãƒ»é­šãƒ»è·³äº€ãƒ»æ£˜äº€ ã‚’ã‚«ãƒãƒ¼ã§ãã‚‹
 	basicEnemyInitParam(this,obj,mode,x,y);
 	basicEnemyInitMove(this,obj,mode,x,y);
 
@@ -890,7 +890,7 @@ function Kuri(obj,mode,x,y,option){ // Šî–{ƒUƒR
 		case "CANNONBALL":
 		 if(mode=="CANNONBALL"){
 			 face = imgDie= imgWalk="img/cannonball";
-			 if(RND(128)==64){ // ƒŒƒAƒ‚ƒ“ƒXƒ^[
+			 if(RND(128)==64){ // ãƒ¬ã‚¢ãƒ¢ãƒ³ã‚¹ã‚¿ãƒ¼
 			 score*=20;
 			 stepScore*=20;
 			 face = imgDie= imgWalk="img/toriyama";
@@ -1061,7 +1061,7 @@ function kuriCollision(obj){
 		obj.getScore(score);
 		kill("STAR");
 	}else{
-	 var h = stepOnEnemyCollision(obj,this); // “¥‚İ‚Â‚¯”»’è
+	 var h = stepOnEnemyCollision(obj,this); // è¸ã¿ã¤ã‘åˆ¤å®š
 
 	  if(	
 	  	(mode == "PATA" || mode == "SQUID") && 
@@ -1204,7 +1204,7 @@ function killKuri(kmode){
 } //
 
 
-function Kame(obj,mode,x,y,option){ // Šî–{ƒUƒR
+function Kame(obj,mode,x,y,option){ // åŸºæœ¬ã‚¶ã‚³
 	var T=this;
 	basicEnemyInitParam(this,obj,mode,x,y);
 	basicEnemyInitMove(this,obj,mode,x,y);
@@ -1240,7 +1240,7 @@ function Kame(obj,mode,x,y,option){ // Šî–{ƒUƒR
 		T.imgSleep = "img/KMBsleep";
 		T.imgWake  = "img/KMBwake";
 		T.imgDie   = "img/KMBsleep";
-		if(RND(64)==10){ //ƒŒƒAƒ‚ƒ“ƒXƒ^[
+		if(RND(64)==10){ //ãƒ¬ã‚¢ãƒ¢ãƒ³ã‚¹ã‚¿ãƒ¼
 			mode="KATO";
 			T.score    = 3000;
 			T.stepScore= 1000;
@@ -1392,7 +1392,7 @@ function kameCollision(obj){
 	kill("FIRE");
    break;
    case MindCode.UPPER:
-	if(kMode=="SLEEP"){ //ƒ{[ƒiƒXŠÖŒW
+	if(kMode=="SLEEP"){ //ãƒœãƒ¼ãƒŠã‚¹é–¢ä¿‚
 		if(sleepCounter < 64){
 			var c=parseInt((64-sleepCounter)/8);
 			var b=obj.master.getBonus(c);
@@ -1420,7 +1420,7 @@ function kameCollision(obj){
 	}else{
 	 if(ghostTimer>0)break;
 
-	 var h = stepOnEnemyCollision(obj,this); // “¥‚İ‚Â‚¯”»’è
+	 var h = stepOnEnemyCollision(obj,this); // è¸ã¿ã¤ã‘åˆ¤å®š
 	 if(kMode=="SLEEP"){
 		master=obj;
 		setKMode("KICK");
@@ -1446,7 +1446,7 @@ function kameCollision(obj){
 		obj.stepOnEnemy(this);
 		setKMode("SLEEP");
 	 }else{ // 
-//	 	if(kMode=="KICK" && obj.xMove*xMove>0)return; //is•ûŒü‚ª“¯‚¶
+//	 	if(kMode=="KICK" && obj.xMove*xMove>0)return; //é€²è¡Œæ–¹å‘ãŒåŒã˜
 		if(obj.damage(this)){
 		 if(obj.XX > this.XX)this.xMove=Math.abs(xMove);
 		 else this.xMove = -Math.abs(xMove);
@@ -1563,7 +1563,7 @@ function actMFlower(){
 	var pl=P.XX,pr=P.XX+P.charBodyWidth;
 	var dp=charWidth-charBodyWidth / 2  + 3;
 
-	// “yŠÇ–§’…”»’è
+	// åœŸç®¡å¯†ç€åˆ¤å®š
 	if(pr > XX-dp && pl < XX+charBodyWidth+dp){
 		touch=true;
 //		Body.style.border="1px solid red";
@@ -1785,7 +1785,7 @@ function Kumozo(obj,mode,x,y,option){
 	T.XX=parseInt(x/T.charWidth)*T.charWidth;
 	T.YY=parseInt(y/T.charHeight) * T.charHeight;
 
-	T.oldXX=T.XX;T.oldYY=T.YY;// ‰ŠúˆÊ’u‚ğ•œŠˆƒ|ƒCƒ“ƒg‚É‚·‚é
+	T.oldXX=T.XX;T.oldYY=T.YY;// åˆæœŸä½ç½®ã‚’å¾©æ´»ãƒã‚¤ãƒ³ãƒˆã«ã™ã‚‹
 
 	T.XX=WIN.SCROLL_LEFT+SCREEN_X/2;
 
@@ -1818,7 +1818,7 @@ function actKumozo(){
   var oscreen=checkScreen(oldXX,WIN.SCROLL_TOP,charBodyWidth,charBodyHeight);
   var P=getPlayerObject(0);
 
- // €‚ñ‚Åˆê’èŠÔ‚½‚Á‚½‚ç•œŠˆ‚³‚¹‚é‚ªA•œŠˆƒ|ƒCƒ“ƒg‚ª‰æ–Ê“à‚É‚ ‚Á‚½‚ç•œŠˆ‚µ‚È‚¢
+ // æ­»ã‚“ã§ä¸€å®šæ™‚é–“ãŸã£ãŸã‚‰å¾©æ´»ã•ã›ã‚‹ãŒã€å¾©æ´»ãƒã‚¤ãƒ³ãƒˆãŒç”»é¢å†…ã«ã‚ã£ãŸã‚‰å¾©æ´»ã—ãªã„
   if(sleepCounter==0){
 	if(oscreen < 0){
 		XX=oldXX;
@@ -1904,7 +1904,7 @@ function kumozoOnCollision(obj){
 		obj.getScore(score);
 		kill("FIRE");
 	}else{
-	 var h = stepOnEnemyCollision(obj,this); // “¥‚İ‚Â‚¯”»’è
+	 var h = stepOnEnemyCollision(obj,this); // è¸ã¿ã¤ã‘åˆ¤å®š
 	 if(h > 0){ // PRESS
 		obj.stepOnEnemy(this);
 		obj.getScore(score);
@@ -2138,10 +2138,10 @@ function collisionFirebar(x,y,w,h,obj){
    if(checkScreen(XX,YY,charBodyWidth,charBodyHeight) < 0)return -1;
 
 
- // ‚Í‚¶‚ß‚É‚¨‚¨‚Ü‚©‚È“–‚½‚è”»’è
+ // ã¯ã˜ã‚ã«ãŠãŠã¾ã‹ãªå½“ãŸã‚Šåˆ¤å®š
  if(Math.abs(XX-x) > rLength + w)return -1;
  if(Math.abs(YY-y) > rLength + y)return -1;
- if(rotate % 180 == 90)return -1; //è”²‚«
+ if(rotate % 180 == 90)return -1; //æ‰‹æŠœã
 
 
   var xp=Array(x,x+w,x,x+w);
@@ -2151,20 +2151,20 @@ function collisionFirebar(x,y,w,h,obj){
   var xm=0;
 
 
-  // ü‚Ì^‚ñ’†
+  // ç·šã®çœŸã‚“ä¸­
   var rr=rLength * rLength / 4;
   var rrcX=rx*len/2+XX;
   var rrcY=ry*len/2+YY;
 
   var xm=-ry/rx;
   var rgt=0,lft=0;
-  for(var i=0;i<xp.length;i++){ //ü‚Ì‰E‚É‚ ‚é“_‚Æ¶‚É‚ ‚é“_‚ğƒJƒEƒ“ƒg
+  for(var i=0;i<xp.length;i++){ //ç·šã®å³ã«ã‚ã‚‹ç‚¹ã¨å·¦ã«ã‚ã‚‹ç‚¹ã‚’ã‚«ã‚¦ãƒ³ãƒˆ
 	var xs=XX-xp[i];
 	if(xm*xs + YY > yp[i])	lft++;
 	else			rgt++;
   }
 
-	// ü‚ğŠ®‘S‚ÉˆÍ‚ñ‚Å‚µ‚Ü‚¤‘å‚«‚³‚ÌƒLƒƒƒ‰‚É‚Íg‚¦‚È‚¢
+	// ç·šã‚’å®Œå…¨ã«å›²ã‚“ã§ã—ã¾ã†å¤§ãã•ã®ã‚­ãƒ£ãƒ©ã«ã¯ä½¿ãˆãªã„
   if( rgt > 0 && lft > 0 ){
    for(var i=0;i<xp.length;i++){
 	var cx=rrcX-xp[i];
@@ -2185,7 +2185,7 @@ function onCollisionFirebar(obj){
  }
 } //
 
-function HammerBaki(obj,mode,x,y,option,group){ //”Í”nŒZ’í
+function HammerBaki(obj,mode,x,y,option,group){ //ç¯„é¦¬å…„å¼Ÿ
 	var T=this;
 	basicEnemyInitParam(this,obj,mode,x,y);
 	basicEnemyInitMove(this,obj,mode,x,y);
@@ -2273,7 +2273,7 @@ function actBaki(){
  var PL=getPlayerObject(0);
 
   yMove+=yAccel;
-// ƒRƒCƒ“‚Ìã‚É‚àæ‚Á‚½‚è‚·‚é‚Ì‚ÍŒ´ì‚É’‰À‚ç‚µ‚¢
+// ã‚³ã‚¤ãƒ³ã®ä¸Šã«ã‚‚ä¹—ã£ãŸã‚Šã™ã‚‹ã®ã¯åŸä½œã«å¿ å®Ÿã‚‰ã—ã„
    var flPoint  = YY + charBodyHeight     + yMove;
    var flPoint2 = flPoint + charHeight;
   if(yMove>0){
@@ -2345,7 +2345,7 @@ function actBaki_n(){
  var PL=getPlayerObject(0);
 
   yMove+=yAccel;
-// ƒRƒCƒ“‚Ìã‚É‚àæ‚Á‚½‚è‚·‚é‚Ì‚ÍŒ´ì‚É’‰À‚ç‚µ‚¢
+// ã‚³ã‚¤ãƒ³ã®ä¸Šã«ã‚‚ä¹—ã£ãŸã‚Šã™ã‚‹ã®ã¯åŸä½œã«å¿ å®Ÿã‚‰ã—ã„
    var ctX = XX + charBodyWidth / 2;
    var flPoint  = YY + charBodyHeight     + yMove;
    var flPoint2 = flPoint + charHeight;
@@ -2445,7 +2445,7 @@ function bakiOnCollision(obj){
 		obj.getStarBonus();
 		kill("FIRE");
 	}else{
-	 var h = stepOnEnemyCollision(obj,this); // “¥‚İ‚Â‚¯”»’è
+	 var h = stepOnEnemyCollision(obj,this); // è¸ã¿ã¤ã‘åˆ¤å®š
 	 if(h>0){
 		kill("PRESS");
 		obj.stepOnEnemy(this);
@@ -2481,7 +2481,7 @@ function killBaki(kmode){
  }
 } //
 
-function Kamezo(obj,mode,x,y,option,group){ //ƒ{ƒX
+function Kamezo(obj,mode,x,y,option,group){ //ãƒœã‚¹
 	var T=this;
 	basicEnemyInitParam(this,obj,mode,x,y);
 	basicEnemyInitMove(this,obj,mode,x,y);
@@ -2505,9 +2505,9 @@ function Kamezo(obj,mode,x,y,option,group){ //ƒ{ƒX
 	T.yJump =6.5;//6.1;
 	T.hasGroupCollision=false;
 
-	T.fireReach = 5; // ‹T‘ ‚³‚ñ‚Ì‰½‰æ–Êè‘O‚©‚ç‰Š‚ª”ò‚ñ‚Å‚­‚é‚©
+	T.fireReach = 5; // äº€è”µã•ã‚“ã®ä½•ç”»é¢æ‰‹å‰ã‹ã‚‰ç‚ãŒé£›ã‚“ã§ãã‚‹ã‹
 
-  // ƒ[ƒ‹ƒh‚²‚Æ‚Ì•Ï‰»	
+  // ãƒ¯ãƒ¼ãƒ«ãƒ‰ã”ã¨ã®å¤‰åŒ–	
 	 var w=getWorldNumber();
 	 T.nakami=Array(
 		'img/KRwalkL.gif',
@@ -2648,7 +2648,7 @@ function actKamezo(){
   if(lastBreath){
 	if(lastBreath.counter <  15){
 //		imgtmp=imgFire;
-	 if(lastBreath.counter <  8){ // “f‚¢‚½’¼Œã‚Íˆê‚É“®‚­
+	 if(lastBreath.counter <  8){ // åã„ãŸç›´å¾Œã¯ä¸€ç·’ã«å‹•ã
 		lastBreath.YY+=yMove+2;
 	 }
 	}
@@ -2824,9 +2824,9 @@ function HammerObject(obj){
 
 	T.charWidth  = BGBLOCKSIZE_X;
 	T.charHeight = BGBLOCKSIZE_Y;
-	T.charBodyWidth  = 12;	//“–‚½‚è”»’èƒTƒCƒY
+	T.charBodyWidth  = 12;	//å½“ãŸã‚Šåˆ¤å®šã‚µã‚¤ã‚º
 	T.charBodyHeight = 12;
-	T.charSpriteWidth  = 16; //ƒOƒ‰ƒtƒBƒbƒN‚ÌƒTƒCƒY
+	T.charSpriteWidth  = 16; //ã‚°ãƒ©ãƒ•ã‚£ãƒƒã‚¯ã®ã‚µã‚¤ã‚º
 	T.charSpriteHeight = 16;
 	
 	T.o=new Sprite();

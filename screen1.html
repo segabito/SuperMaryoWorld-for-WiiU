@@ -8,7 +8,7 @@
 <html>
 <head>
  <title>Javascript Virtual Machine Screen</title>
-<meta http-equiv="Content-type" content="text/html; charset=Shift_JIS" />
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8" />
 <meta http-equiv="imagetoolbar" content="no" />
 <meta http-equiv="MSThemeCompatible" content="no" />
 <style type="text/css">
@@ -83,15 +83,15 @@ var BLOCK1COLOR="brown";
 
 
 
- // http://hogehoge/fuga/ ‚È‚Ç
- // ‰æ‘œ‚¾‚¯•Ê‚ÌƒT[ƒo[‚É’u‚«‚½‚¢‚Éİ’è‚µ‚½‚èAA
- // / ƒXƒe[ƒW‚²‚Æ‚ÉƒLƒƒƒ‰ƒNƒ^[ƒOƒ‰ƒtƒBƒbƒN‚ğƒ`ƒFƒ“ƒW‚µ‚½‚è‚Å‚«‚é
+ // http://hogehoge/fuga/ ãªã©
+ // ç”»åƒã ã‘åˆ¥ã®ã‚µãƒ¼ãƒãƒ¼ã«ç½®ããŸã„æ™‚ã«è¨­å®šã—ãŸã‚Šã€ã€
+ // / ã‚¹ãƒ†ãƒ¼ã‚¸ã”ã¨ã«ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ã‚°ãƒ©ãƒ•ã‚£ãƒƒã‚¯ã‚’ãƒã‚§ãƒ³ã‚¸ã—ãŸã‚Šã§ãã‚‹
 var IMAGEBASEURL="";
 
-// Mozilla‚Åƒe[ƒuƒ‹‚‚³‚ªboarder•ª‘‚¦‚Ä‚µ‚Ü‚¤‚½‚ß‚Ì•â³
+// Mozillaã§ãƒ†ãƒ¼ãƒ–ãƒ«é«˜ã•ãŒboarderåˆ†å¢—ãˆã¦ã—ã¾ã†ãŸã‚ã®è£œæ­£
 var MozillaTableBoarderFix=-2;
 
-var stageIntArray = new Array(); // ƒXƒe[ƒWƒf[ƒ^(ƒeƒLƒXƒg)‚ğ•ªŠ„‚µ‚ÄInt”z—ñ‚É‚µ‚½•¨B
+var stageIntArray = new Array(); // ã‚¹ãƒ†ãƒ¼ã‚¸ãƒ‡ãƒ¼ã‚¿(ãƒ†ã‚­ã‚¹ãƒˆ)ã‚’åˆ†å‰²ã—ã¦Inté…åˆ—ã«ã—ãŸç‰©ã€‚
 
 
 if(D.all){
@@ -215,7 +215,7 @@ function createStage_img(dat,charTable,wx,wy){
  var colMax=0;
  var colPix=0;
  var rowmax=0;
-  if(!DA)thi+=MozillaTableBoarderFix;// Mozilla ‚¾‚Æc•ûŒü‚Ìborder‚ª‰ÁZ?‚³‚ê‚é
+  if(!DA)thi+=MozillaTableBoarderFix;// Mozilla ã ã¨ç¸¦æ–¹å‘ã®borderãŒåŠ ç®—?ã•ã‚Œã‚‹
   var nameId = (DA) ? 'id="DIVTD"' : 'name="DIVTD"';
 	 var thftmp=0;
   for(var i=0;i<dat.length;i++){
@@ -226,7 +226,7 @@ function createStage_img(dat,charTable,wx,wy){
 
 	 thitmp=thi;
 	 thftmp+=thf;
-	  if(thftmp>=1){ // ¬”“_ˆÈ‰ºŒë·•â³
+	  if(thftmp>=1){ // å°æ•°ç‚¹ä»¥ä¸‹èª¤å·®è£œæ­£
 		thitmp+=1;
 		thftmp-=1;
 	  }
@@ -240,7 +240,7 @@ function createStage_img(dat,charTable,wx,wy){
 	 colcnt++;
 	 var twitmp=twi;
 	 twftmp+=twf;
-	  if(twftmp>=1){ // ¬”“_ˆÈ‰ºŒë·•â³
+	  if(twftmp>=1){ // å°æ•°ç‚¹ä»¥ä¸‹èª¤å·®è£œæ­£
 		twitmp+=1;
 		twftmp-=1;
 	  }
@@ -261,7 +261,7 @@ function createStage_img(dat,charTable,wx,wy){
 	rowmax+=thitmp;
 	if(colMax<colPix){colMax=colPix;colcntMax=colcnt;}
   }
-  // ‚¿‚å‚Á‚Æ‚¾‚¯”wŒi‚ğã‚É‚¸‚ç‚·‚ÆAƒLƒƒƒ‰‚ª’n–Ê‚É—§‚Á‚Ä‚¢‚é‚æ‚¤‚ÉŒ©‚¦‚é
+  // ã¡ã‚‡ã£ã¨ã ã‘èƒŒæ™¯ã‚’ä¸Šã«ãšã‚‰ã™ã¨ã€ã‚­ãƒ£ãƒ©ãŒåœ°é¢ã«ç«‹ã£ã¦ã„ã‚‹ã‚ˆã†ã«è¦‹ãˆã‚‹
   var m= dbh / dbHeight * 2 * -1;
   document.write(tbl);
   SCROLL_X_MAX=colcntMax*wx;
@@ -284,7 +284,7 @@ function createStage(dat,charTable,wx,wy){
  var colMax=0;
  var colPix=0;
  var rowmax=0;
-  if(!document.all)thi+=MozillaTableBoarderFix;// Mozilla ‚¾‚Æc•ûŒü‚Ìborder‚ª‰ÁZ?‚³‚ê‚é
+  if(!document.all)thi+=MozillaTableBoarderFix;// Mozilla ã ã¨ç¸¦æ–¹å‘ã®borderãŒåŠ ç®—?ã•ã‚Œã‚‹
 
 	 var thftmp=0;
   for(var i=0;i<dat.length;i++){
@@ -295,7 +295,7 @@ function createStage(dat,charTable,wx,wy){
 
 	 thitmp=thi;
 	 thftmp+=thf;
-	  if(thftmp>=1){ // ¬”“_ˆÈ‰ºŒë·•â³
+	  if(thftmp>=1){ // å°æ•°ç‚¹ä»¥ä¸‹èª¤å·®è£œæ­£
 		thitmp+=1;
 		thftmp-=1;
 	  }
@@ -311,7 +311,7 @@ function createStage(dat,charTable,wx,wy){
 	 colcnt++;
 	 var twitmp=twi;
 	 twftmp+=twf;
-	  if(twftmp>=1){ // ¬”“_ˆÈ‰ºŒë·•â³
+	  if(twftmp>=1){ // å°æ•°ç‚¹ä»¥ä¸‹èª¤å·®è£œæ­£
 		twitmp+=1;
 		twftmp-=1;
 	  }
@@ -331,7 +331,7 @@ function createStage(dat,charTable,wx,wy){
 	tbl+='</tr>';
 	if(colMax<colPix){colMax=colPix;colcntMax=colcnt;}
   }
-  // ‚¿‚å‚Á‚Æ‚¾‚¯”wŒi‚ğã‚É‚¸‚ç‚·‚ÆAƒLƒƒƒ‰‚ª’n–Ê‚É—§‚Á‚Ä‚¢‚é‚æ‚¤‚ÉŒ©‚¦‚é
+  // ã¡ã‚‡ã£ã¨ã ã‘èƒŒæ™¯ã‚’ä¸Šã«ãšã‚‰ã™ã¨ã€ã‚­ãƒ£ãƒ©ãŒåœ°é¢ã«ç«‹ã£ã¦ã„ã‚‹ã‚ˆã†ã«è¦‹ãˆã‚‹
   var m= dbh / dbHeight * 2 * -1;
   tbl=
   '<table style="position:absolute;table-layout:fixed;width:'+colMax+';hei ght:'+rowmax+';top:'+ m +'px;left:0px;z-index:100;margin:0;padding:0;" cellspacing=0 cellpadding=0 id="BGTABLE1" onclick="if(document.all)ff()" colcnt="'+ colcntMax +'" unselectable="true">'
@@ -362,7 +362,7 @@ function createStage_bk(dat,dat2,wx,wy){
  var colMax=0;
  var colPix=0;
  var rowmax=0;
-  if(!document.all)thi+=MozillaTableBoarderFix;// Mozilla ‚¾‚Æc•ûŒü‚Ìborder‚ª‰ÁZ?‚³‚ê‚é
+  if(!document.all)thi+=MozillaTableBoarderFix;// Mozilla ã ã¨ç¸¦æ–¹å‘ã®borderãŒåŠ ç®—?ã•ã‚Œã‚‹
 
 	 var thftmp=0;
   for(var i=0;i<dat.length;i++){
@@ -373,7 +373,7 @@ function createStage_bk(dat,dat2,wx,wy){
 
 	 thitmp=thi;
 	 thftmp+=thf;
-	  if(thftmp>=1){ // ¬”“_ˆÈ‰ºŒë·•â³
+	  if(thftmp>=1){ // å°æ•°ç‚¹ä»¥ä¸‹èª¤å·®è£œæ­£
 		thitmp+=1;
 		thftmp-=1;
 	  }
@@ -389,7 +389,7 @@ function createStage_bk(dat,dat2,wx,wy){
 	 colcnt++;
 	 var twitmp=twi;
 	 twftmp+=twf;
-	  if(twftmp>=1){ // ¬”“_ˆÈ‰ºŒë·•â³
+	  if(twftmp>=1){ // å°æ•°ç‚¹ä»¥ä¸‹èª¤å·®è£œæ­£
 		twitmp+=1;
 		twftmp-=1;
 	  }
@@ -410,7 +410,7 @@ function createStage_bk(dat,dat2,wx,wy){
 	tbl+='</tr>';
 	if(colMax<colPix){colMax=colPix;colcntMax=colcnt;}
   }
-  // ‚¿‚å‚Á‚Æ‚¾‚¯”wŒi‚ğã‚É‚¸‚ç‚·‚ÆAƒLƒƒƒ‰‚ª’n–Ê‚É—§‚Á‚Ä‚¢‚é‚æ‚¤‚ÉŒ©‚¦‚é
+  // ã¡ã‚‡ã£ã¨ã ã‘èƒŒæ™¯ã‚’ä¸Šã«ãšã‚‰ã™ã¨ã€ã‚­ãƒ£ãƒ©ãŒåœ°é¢ã«ç«‹ã£ã¦ã„ã‚‹ã‚ˆã†ã«è¦‹ãˆã‚‹
   var m= dbh / dbHeight * 2 * -1;
   tbl=
   '<table style="position:absolute;table-layout:fixed;width:'+colMax+';hei ght:'+rowmax+';top:'+ m +'px;left:0px;z-index:100;margin:0;padding:0;" cellspacing=0 cellpadding=0 id="BGTABLE1" onclick="if(document.all)ff()" colcnt="'+ colcntMax +'">'
@@ -444,15 +444,15 @@ function createStage_bk(dat,dat2,wx,wy){
 	 	inf2=parent.loader.infotable2;
 
   if(world > 0){
-	var life=(PL1LIFE > 15) ? "‚à‚¤‚¸‚Á‚Æl‘å™" : PL1LIFE;
+	var life=(PL1LIFE > 15) ? "ã‚‚ã†ãšã£ã¨äººå¤§æ‰" : PL1LIFE;
 	document.write(
-	'<table id="INFOTABLE1" style="position:absolute;z-index:3000;top:0;left:0;background:black;color:white;width:100%;height:100%;font-size:20px;font-weight:bolder:font-family:\'‚l‚r ƒSƒVƒbƒN\" border=10>'+
+	'<table id="INFOTABLE1" style="position:absolute;z-index:3000;top:0;left:0;background:black;color:white;width:100%;height:100%;font-size:20px;font-weight:bolder:font-family:\'ï¼­ï¼³ ã‚´ã‚·ãƒƒã‚¯\" border=10>'+
 	'<tr><td align="center">'+
 	'<div id="infoarea1" style="margin-bottom:5%;">'+inf1+'</div>'+
 	'<br />'+
-	'STAGE '+world+' | '+area+'<br /><br />'+
+	'STAGE '+world+' âˆ’ '+area+'<br /><br />'+
 	''+
-	'<img src="img/PLjumpR.gif" style="width:32;height:32;">@~@'+
+	'<img src="img/PLjumpR.gif" style="width:32;height:32;">ã€€Ã—ã€€'+
 	life +
 	'<br />'+
 	'<div id="infoarea2" style="margin-top:5%;">'+inf2+'</div>'+
@@ -466,7 +466,7 @@ function createStage_bk(dat,dat2,wx,wy){
 	'<table id="INFOTABLE1" style="position:absolute;z-index:3000;top:0;left:0;background:white;color:blue;width:100%;height:100%;font-size:250%;font-weight:bolder:font-family:impact;letter-spacint:3;">'+
 	'<tr><td align="center">'+
 	'<div id="infoarea1">'+inf1+'</div>'+
-	'ƒX[ƒp[ƒ}ƒŠƒ‡[ƒ[ƒ‹ƒh(‰¼)<br>'+
+	'ã‚¹ãƒ¼ãƒ‘ãƒ¼ãƒãƒªãƒ§ãƒ¼ãƒ¯ãƒ¼ãƒ«ãƒ‰(ä»®)<br>'+
 	'Super Maryo World'+
 	'<div id="infoarea2">'+inf2+'</div>'+
 	''+
@@ -503,7 +503,7 @@ function createStage_bk(dat,dat2,wx,wy){
 
  } //
 
- // cpu.html‚Ìƒ[ƒhI—¹Œã‚ÉŒÄ‚Î‚ê‚é
+ // cpu.htmlã®ãƒ­ãƒ¼ãƒ‰çµ‚äº†å¾Œã«å‘¼ã°ã‚Œã‚‹
  function onCpuInit(){
 //	alert("screen1.html onCpuinit();");
 	document.getElementById('INFOTABLE1').style.display="none";
@@ -627,7 +627,7 @@ window.offscreenBuffering = true;
 </script>
 <div id="BG1"></div>
 <comment>
-<div id="dmy" style="position:absolute;top:100000px;left:3000px;font-size:1%;">Firefox‚Ì‚¿‚ç‚Â‚«‚ğ’áŒ¸‚·‚é‚¨‚Ü‚¶‚È‚¢</div>
+<div id="dmy" style="position:absolute;top:100000px;left:3000px;font-size:1%;">Firefoxã®ã¡ã‚‰ã¤ãã‚’ä½æ¸›ã™ã‚‹ãŠã¾ã˜ãªã„</div>
 <div style="position:fixed;top:0;left:0;">
 <span id="dbg1" style="position:absolute;z-index:100;top:0;left:0;back ground:green;"></span>
 </div>

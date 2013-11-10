@@ -9,7 +9,7 @@
 <head>
 <title>"Super Maryo World" - Javascript Virtual Machine</title>
 <meta http-equiv="imagetoolbar" content="no">
-<meta http-equiv="Content-type" content="text/html; charset=Shift_JIS">
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="MSThemeCompatible" content="no" />
 <meta name="viewport" content="width=854 height=450 user-scalable=no" />
 <script type="text/javascript">
@@ -33,10 +33,10 @@ var SCROLL_X_MIN=0;
 var SCROLL_Y_MAX=480;
 var SCROLL_Y_MIN=-32*5;
 var WIN=window;
-var RATE_DRAW  = 50;	 // •`‰æƒŒ[ƒg
-var RATE_DRAW_SLOW = 500; // ”ñƒAƒNƒeƒBƒuŽž‚Ì•`‰æƒŒ[ƒg
+var RATE_DRAW  = 50;	 // æç”»ãƒ¬ãƒ¼ãƒˆ
+var RATE_DRAW_SLOW = 500; // éžã‚¢ã‚¯ãƒ†ã‚£ãƒ–æ™‚ã®æç”»ãƒ¬ãƒ¼ãƒˆ
 var RATE_DRAW_FAST = RATE_DRAW;
-var RATE_CPU = 33;	 // ˆ—ƒŒ[ƒg
+var RATE_CPU = 33;	 // å‡¦ç†ãƒ¬ãƒ¼ãƒˆ
 
 if (window.wiiu) {
 	RATE_DRAW_FAST=RATE_DRAW=50;
@@ -81,9 +81,9 @@ var GAMETIMER=500;
 var DEFAULTGAMETIMER=500;
 var GAMECLOCK=parseInt(Math.random()*1024);
 
- // http://hogehoge/fuga/ ‚È‚Ç
- // ‰æ‘œ‚¾‚¯•Ê‚ÌƒT[ƒo[‚É’u‚«‚½‚¢Žž‚ÉÝ’è‚µ‚½‚èAA
- // ƒXƒe[ƒW‚²‚Æ‚ÉƒLƒƒƒ‰ƒNƒ^[ƒOƒ‰ƒtƒBƒbƒN‚ðƒ`ƒFƒ“ƒW‚µ‚½‚è‚Å‚«‚é
+ // http://hogehoge/fuga/ ãªã©
+ // ç”»åƒã ã‘åˆ¥ã®ã‚µãƒ¼ãƒãƒ¼ã«ç½®ããŸã„æ™‚ã«è¨­å®šã—ãŸã‚Šã€ã€
+ // ã‚¹ãƒ†ãƒ¼ã‚¸ã”ã¨ã«ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ã‚°ãƒ©ãƒ•ã‚£ãƒƒã‚¯ã‚’ãƒã‚§ãƒ³ã‚¸ã—ãŸã‚Šã§ãã‚‹
 var IMAGEBASEURL="";
 
 
@@ -157,7 +157,7 @@ var charTable=Array();
 function init(){
 	if(!document.getElementById) return;
 
-// ƒtƒŒ[ƒ€•
+// ãƒ•ãƒ¬ãƒ¼ãƒ å¹…
 	var frm=document.getElementById("gameframe") || {rows: ''};
 	var dbh=document.body.clientHeight;
 	var dbw=document.body.clientWidth;
@@ -345,13 +345,13 @@ function playerDies(obj){
  warpFlag=false;
  warpNum=0;
  
- // Ž€–SŽž“r’†•œ‹A‚ÌŠÈˆÕ‘Î‰ž
- // cƒXƒNƒ[ƒ‹–ÊE•ªŠò–Ê‚Í–¢‘Î‰ž
+ // æ­»äº¡æ™‚é€”ä¸­å¾©å¸°ã®ç°¡æ˜“å¯¾å¿œ
+ // ç¸¦ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«é¢ãƒ»åˆ†å²é¢ã¯æœªå¯¾å¿œ
   var plx1=loader.PLSTART_X;
   var plx2=loader.PLSTART_X2;
  if(plx2>0 && plx1!=plx2){
-  if( ((obj.XX > plx2) && (plx1 < plx2)) ||	// ‰EƒXƒNƒ[ƒ‹
-      ((obj.XX < plx2) && (plx1 > plx2))		// ¶ƒXƒNƒ[ƒ‹
+  if( ((obj.XX > plx2) && (plx1 < plx2)) ||	// å³ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«
+      ((obj.XX < plx2) && (plx1 > plx2))		// å·¦ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«
       )retryFlag=true;
  }
 
