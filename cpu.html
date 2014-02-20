@@ -1046,13 +1046,13 @@ lastkey=0;
 	ctrlKey = e.ctrlKey;
 
  }
-
 //  if(WIN != window){
 //	if(parent.REPLAYMODE==true)return;
 //  }
 
  if(tagName=="INPUT")return;
  if(tagName=="TEXTAREA")return;
+	if (e.preventDefault) { e.preventDefault(); }
 
 // if(ctrlKey)k=17;
 // if(shiftKey)k=16;
@@ -1060,12 +1060,14 @@ lastkey=0;
  if(lastkey==k)return false;
  lastkey=k;
   switch (k){
+	case 112: case 113: // PS4 △ □
 	case 74: // J
 	case 90: // Z
 	case 17: // CTRL
 	case WiiCode.bt1:
 		PAD1.buttons[0]=1;
 	break;
+	case 27: // PS4 ×
 	case 75: // K
 	case 88: // X
 	case 16: // SHIFT

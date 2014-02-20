@@ -375,6 +375,7 @@ lastkey=0;
 
  if(tagName=="INPUT")return;
  if(tagName=="TEXTAREA")return;
+	if (e.preventDefault) { e.preventDefault(); }
 
 // if(ctrlKey)k=17;
 // if(shiftKey)k=16;
@@ -383,9 +384,11 @@ lastkey=0;
  if(lastkey==k)return false;
  lastkey=k;
   switch (k){
+	case 112: case 113: // △ □
 	case 17: // CTRL
 		PAD1.buttons[0]=1;
 	break;
+	case 27: // PS4 ×
 	case 16: // SHIFT
 //		alert();
 		PAD1.buttons[1]=1;
